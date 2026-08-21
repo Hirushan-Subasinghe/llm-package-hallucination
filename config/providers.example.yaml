@@ -1,0 +1,44 @@
+providers:
+  openai:
+    provider: OpenAI
+    tool_name: Codex CLI
+    enabled: false
+    execution_mode: null  # TODO: define during provider integration
+    executable: null      # TODO: configure explicitly
+    exact_model_id: null  # TODO: record an exact, verified identifier
+    cli_version: null     # Captured at execution time
+    timeout_seconds: null # TODO: define during provider integration
+
+  claude:
+    provider: Anthropic
+    tool_name: Claude Code
+    enabled: false
+    execution_mode: null
+    executable: null
+    exact_model_id: null
+    cli_version: null
+    timeout_seconds: null
+
+  gemini:
+    provider: Google
+    tool_name: Gemini CLI
+    enabled: false
+    execution_mode: null
+    executable: null
+    exact_model_id: null
+    cli_version: null
+    timeout_seconds: null
+
+  copilot:
+    provider: GitHub
+    tool_name: GitHub Copilot CLI
+    enabled: false
+    execution_mode: null
+    executable: null
+    exact_model_id: null
+    cli_version: null
+    timeout_seconds: null
+
+# Freeze exact_model_id before final data collection. Capture cli_version at
+# execution time. Do not assume that provider or model settings are equivalent
+# across tools.

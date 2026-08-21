@@ -1,0 +1,65 @@
+# Local secrets and environment files. Never commit credentials.
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+*.p12
+*.pfx
+*secrets*.yaml
+*secrets*.yml
+*secrets*.json
+credentials.json
+
+# Authentication, tokens, cookies, and provider session state
+*.token
+*.tokens
+*token*.json
+*cookies*.txt
+*cookies*.json
+.auth/
+.credentials/
+.sessions/
+.provider-state/
+
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Python build and packaging artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# IDE and editor temporary files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Operating-system temporary files
+.DS_Store
+Thumbs.db
+
+# Runtime logs and temporary working directories
+logs/*
+!logs/.gitkeep
+*.log
+tmp/
+temp/
+.tmp/
+.temp/
+work/
+
+# Research data is intentionally NOT ignored wholesale. Dataset inclusion must be
+# decided deliberately, with raw evidence and sensitive metadata reviewed before
+# staging. Add narrowly scoped rules only when the research methodology requires it.
