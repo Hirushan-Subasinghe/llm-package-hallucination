@@ -12,7 +12,7 @@ providers:
   claude:
     provider: Anthropic
     tool_name: Claude Code
-    enabled: false
+    enabled: false        # Provider access pending; retain for planned integration
     execution_mode: null
     executable: null
     exact_model_id: null

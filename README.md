@@ -7,3 +7,22 @@ The planned high-level pipeline is: task definitions, deterministic prompt rende
 > **Safety:** AI-generated code is research evidence. Do not execute it or install dependencies named within it.
 
 **Development status:** Environment setup.
+
+## Development setup
+
+This project uses a `src/` package layout. Create and activate a virtual
+environment, then install the project in editable mode before running tests or
+development commands:
+
+```sh
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install -e .
+python -m unittest discover -s tests -v
+```
+
+Render the canonical pilot prompts with:
+
+```sh
+python scripts/render_prompts.py
+```
