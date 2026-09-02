@@ -8,6 +8,8 @@ import json
 from pathlib import Path
 from typing import Any, Iterable
 
+from experiment.schema_validation import validate_task
+
 PLACEHOLDER = "{{TASK_DESCRIPTION}}"
 REQUIRED_TASK_FIELDS = (
     "task_id",
@@ -69,6 +71,12 @@ def read_tasks(path: Path) -> list[dict[str, Any]]:
             task_id = task["task_id"]
             if task_id in seen_ids:
                 raise PromptValidationError(f"duplicate task_id: {task_id}")
+            try:
+                validate_task(task)
+            except ValueError as error:
+                raise PromptValidationError(
+                    f"task at line {line_number} violates task schema: {error}"
+                ) from error
             if Path(task_id).name != task_id or task_id in {".", ".."}:
                 raise PromptValidationError(f"task_id is not path-safe: {task_id}")
             seen_ids.add(task_id)

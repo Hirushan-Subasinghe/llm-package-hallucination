@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/llm-package-hallucination/generation-metadata.schema.json",
+  "title": "Experimental generation technical-attempt metadata",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "experiment_run_id": { "type": "string", "pattern": "^run-[A-Za-z0-9][A-Za-z0-9._-]*$" },
+    "generation_id": { "type": "string", "pattern": "^generation-[A-Za-z0-9][A-Za-z0-9._-]*$" },
+    "attempt_id": { "type": "string", "pattern": "^attempt-[A-Za-z0-9][A-Za-z0-9._-]*$" },
+    "task_id": { "type": "string", "pattern": "^(AUTH|DB|FILE|API|SEC|LOG)-[0-9]{3}$" },
+    "repetition": { "type": "integer", "minimum": 1, "maximum": 2 },
+    "task_set_version": { "type": "string", "pattern": "^(pilot|final)-[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "template_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "canonical_prompt_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "tool_name": { "type": "string", "minLength": 1 }, "provider_name": { "type": "string", "minLength": 1 },
+    "model_name": { "type": "string", "minLength": 1 }, "model_selection_mode": { "enum": ["fixed", "provider-default", "unavailable"] },
+    "workflow_type": { "const": "agentic-coding" }, "interface": { "const": "cli" },
+    "cli_version": { "type": ["string", "null"] }, "runner_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "experiment_protocol_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "timestamp_started": { "type": "string", "format": "date-time" }, "timestamp_finished": { "type": "string", "format": "date-time" },
+    "timezone": { "type": "string", "minLength": 1 }, "execution_duration_ms": { "type": ["integer", "null"], "minimum": 0 },
+    "workspace_id": { "type": "string", "minLength": 1 }, "workspace_provenance": { "const": "fresh-temporary" },
+    "workspace_base_version": { "type": "string", "minLength": 1 }, "filesystem_access": { "const": "isolated-workspace-only" },
+    "shell_access": { "enum": ["enabled", "disabled"] }, "network_policy": { "enum": ["disabled", "restricted"] },
+    "package_install_policy": { "const": "blocked-and-recorded" }, "process_exit_code": { "type": ["integer", "null"] },
+    "timeout": { "type": "boolean" }, "success": { "type": "boolean" }, "failure_category": { "enum": ["process-launch-failure", "generation-timeout-before-start", "local-runner-failure", "authentication-service-failure", "unknown-infrastructure-failure", null] },
+    "raw_stdout_path": { "type": ["string", "null"] }, "raw_stderr_path": { "type": ["string", "null"] }, "raw_response_path": { "type": ["string", "null"] },
+    "raw_response_sha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" }, "raw_response_bytes": { "type": ["integer", "null"], "minimum": 0 },
+    "files_created": { "type": "array", "items": { "type": "string" } }, "files_modified": { "type": "array", "items": { "type": "string" } }, "files_deleted": { "type": "array", "items": { "type": "string" } },
+    "commands_attempted": { "type": "array", "items": { "type": "string" } }, "package_install_attempted": { "type": "boolean" }, "package_install_commands": { "type": "array", "items": { "type": "string" } }
+  },
+  "required": ["experiment_run_id", "generation_id", "attempt_id", "task_id", "repetition", "task_set_version", "template_version", "canonical_prompt_sha256", "tool_name", "provider_name", "model_name", "model_selection_mode", "workflow_type", "interface", "cli_version", "runner_version", "experiment_protocol_version", "timestamp_started", "timestamp_finished", "timezone", "execution_duration_ms", "workspace_id", "workspace_provenance", "workspace_base_version", "filesystem_access", "shell_access", "network_policy", "package_install_policy", "process_exit_code", "timeout", "success", "failure_category", "raw_stdout_path", "raw_stderr_path", "files_created", "files_modified", "files_deleted", "commands_attempted", "package_install_attempted", "package_install_commands"],
+  "allOf": [
+    {
+      "if": { "properties": { "success": { "const": true } } },
+      "then": {
+        "properties": { "timeout": { "const": false }, "failure_category": { "const": null }, "raw_response_path": { "type": "string", "minLength": 1 }, "raw_response_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }, "raw_response_bytes": { "type": "integer", "minimum": 0 } },
+        "required": ["raw_response_path", "raw_response_sha256", "raw_response_bytes"]
+      },
+      "else": {
+        "properties": { "failure_category": { "enum": ["process-launch-failure", "generation-timeout-before-start", "local-runner-failure", "authentication-service-failure", "unknown-infrastructure-failure"] } },
+        "required": ["failure_category"]
+      }
+    }
+  ]
+}

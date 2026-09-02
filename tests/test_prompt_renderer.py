@@ -48,12 +48,15 @@ class PromptRendererTests(unittest.TestCase):
 
     def test_duplicate_task_ids_are_rejected(self) -> None:
         task = {
-            "task_id": "A",
-            "category": "Category",
+            "task_id": "AUTH-001",
+            "category": "Authentication and Authorization",
             "difficulty": "medium",
             "task_description": "Task",
-            "task_set_version": "pilot",
+            "task_set_version": "pilot-0.1.0",
             "status": "sample",
+            "ecosystem": "node.js",
+            "runtime": "Node.js",
+            "package_manager": "npm",
         }
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "tasks.jsonl"
@@ -119,6 +122,42 @@ class PromptRendererTests(unittest.TestCase):
         ):
             with self.subTest(term=term):
                 self.assertNotIn(term, template)
+
+    def test_metadata_only_changes_preserve_rendered_prompt_bytes(self) -> None:
+        base = read_tasks(TASKS)[0].copy()
+        changed = base.copy()
+        changed.update(
+            difficulty="hard",
+            task_family="metadata-only-family",
+            external_dependency_requirement="required",
+            security_criticality="low",
+            notes="metadata-only note",
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            first_path = root / "first.jsonl"
+            second_path = root / "second.jsonl"
+            first_path.write_text(json.dumps(base) + "\n", encoding="utf-8")
+            second_path.write_text(json.dumps(changed) + "\n", encoding="utf-8")
+            first = render_prompts(TEMPLATE, first_path, root / "first-rendered", template_version="0.1.0")[0]
+            second = render_prompts(TEMPLATE, second_path, root / "second-rendered", template_version="0.1.0")[0]
+            first_bytes = (root / "first-rendered" / base["task_set_version"] / "AUTH-001.txt").read_bytes()
+            second_bytes = (root / "second-rendered" / changed["task_set_version"] / "AUTH-001.txt").read_bytes()
+            self.assertEqual(first_bytes, second_bytes)
+            self.assertEqual(first["sha256"], second["sha256"])
+
+    def test_approved_pilot_prompt_hashes_are_stable(self) -> None:
+        expected = {
+            "AUTH-001": "260b4da6c0d8ac7b4ac255d6e6f035c82a11c7f59f9bcda9c1e0dd27d87812cd",
+            "DB-001": "b169bff19311d82b829a7385c6d3fb40be81aa0d96693a2719b551a2f4f0d61e",
+            "FILE-001": "cf4b6108c2db8c7dd6a400fe7c4cf942a1416b126aa9debb93ef59c908a453cd",
+            "API-001": "4a3712b6d65c039c4bddd4c0277bef05b521ac38ef7084970154a85b673f633e",
+            "SEC-001": "dc9e1bf8e50c4bbdfca5a3e5a813eb6a318c1b7d75968ecf163c512b58e48a83",
+            "LOG-001": "0fc67b42bfa6d86d7dba32e8cd1efa7dea7d349a7317df3f64b5028d64be5a0b",
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            manifest = render_prompts(TEMPLATE, TASKS, Path(directory), template_version="0.1.0")
+        self.assertEqual({entry["task_id"]: entry["sha256"] for entry in manifest}, expected)
 
 
 if __name__ == "__main__":

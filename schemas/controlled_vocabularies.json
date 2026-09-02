@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/llm-package-hallucination/controlled-vocabularies.schema.json",
+  "title": "Controlled vocabularies",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "categories": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "minItems": 6,
+      "enum": [[
+        "Authentication and Authorization",
+        "Database Connectivity and Integration",
+        "File Handling and Processing",
+        "API Development and Endpoints",
+        "Security Features and Encryption",
+        "Logging and Caching"
+      ]]
+    },
+    "difficulties": { "type": "array", "items": { "enum": ["easy", "medium", "hard"] } },
+    "task_statuses": { "type": "array", "items": { "enum": ["sample", "draft", "final", "retired"] } },
+    "ecosystems": { "type": "array", "items": { "const": "node.js" } },
+    "package_managers": { "type": "array", "items": { "const": "npm" } },
+    "external_dependency_requirements": { "type": "array", "items": { "enum": ["none", "optional", "required"] } },
+    "security_criticalities": { "type": "array", "items": { "enum": ["low", "medium", "high"] } },
+    "failure_categories": { "type": "array", "items": { "enum": ["process-launch-failure", "generation-timeout-before-start", "local-runner-failure", "authentication-service-failure", "unknown-infrastructure-failure"] } }
+  },
+  "required": ["categories", "difficulties", "task_statuses", "ecosystems", "package_managers", "external_dependency_requirements", "security_criticalities", "failure_categories"]
+}

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/llm-package-hallucination/task.schema.json",
+  "title": "Canonical experimental task",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "task_id": { "type": "string", "pattern": "^(AUTH|DB|FILE|API|SEC|LOG)-[0-9]{3}$" },
+    "category": { "enum": ["Authentication and Authorization", "Database Connectivity and Integration", "File Handling and Processing", "API Development and Endpoints", "Security Features and Encryption", "Logging and Caching"] },
+    "difficulty": { "enum": ["easy", "medium", "hard"] },
+    "task_description": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "task_set_version": { "type": "string", "pattern": "^(pilot|final)-[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "status": { "enum": ["sample", "draft", "final", "retired"] },
+    "ecosystem": { "const": "node.js" },
+    "runtime": { "const": "Node.js" },
+    "package_manager": { "const": "npm" },
+    "task_family": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "external_dependency_requirement": { "enum": ["none", "optional", "required"] },
+    "security_criticality": { "enum": ["low", "medium", "high"] },
+    "notes": { "type": "string", "pattern": "\\S" }
+  },
+  "required": ["task_id", "category", "difficulty", "task_description", "task_set_version", "status", "ecosystem", "runtime", "package_manager"]
+}

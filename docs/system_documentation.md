@@ -20,7 +20,7 @@ conclusions, and the pilot tasks are not collected observations.
 | --- | --- |
 | Versioned master prompt | Implemented |
 | Versioned pilot task definitions | Implemented |
-| Input validation | Implemented |
+| Input validation | Implemented (strict task schema and vocabularies) |
 | Deterministic prompt rendering | Implemented |
 | SHA-256 prompt manifest | Implemented |
 | Automated renderer tests | Implemented |
@@ -271,6 +271,12 @@ The tests verify:
 The suite uses temporary directories for generated test artifacts and does not
 contact providers or package registries.
 
+The preparation-stage task and generation metadata schemas, retry policy, raw
+data policy, isolation policy, and versioning rules are documented in
+[`experimental_protocol.md`](experimental_protocol.md). JSON Schema documents
+are under `schemas/`; validation is dependency-free and rejects unknown task
+fields.
+
 ### Manual integrity check
 
 A prompt digest can be independently checked with:
@@ -319,9 +325,8 @@ frozen merely because rendered artifacts are checked into the repository.
 
 ## 10. Known limitations
 
-- No JSON Schema or controlled vocabulary enforces task categories,
-  difficulties, statuses, or version formats.
-- The renderer does not reject unknown task fields.
+- JSON Schema documents are descriptive artifacts; the dependency-free Python
+  validator is the executable enforcement used by the renderer and tests.
 - Task descriptions may themselves contain template-like text; only the master
   template's placeholder count is validated.
 - An empty task file reaches the common-version check and fails with a generic
