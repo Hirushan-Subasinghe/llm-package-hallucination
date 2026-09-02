@@ -8,6 +8,11 @@ The planned high-level pipeline is: task definitions, deterministic prompt rende
 
 **Development status:** Environment setup.
 
+## Documentation
+
+- [Full system documentation](docs/system_documentation.md)
+- [Prompt generation protocol](docs/prompt_generation_protocol.md)
+
 ## Development setup
 
 This project uses a `src/` package layout. Create and activate a virtual
