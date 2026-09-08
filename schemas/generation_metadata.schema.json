@@ -5,7 +5,7 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "generation_id": { "type": "string", "pattern": "^generation-[A-Za-z0-9][A-Za-z0-9._-]*$" },
+    "generation_id": { "type": "string", "pattern": "^(generation-[A-Za-z0-9][A-Za-z0-9._-]*|(chatgpt-web|gemini-web|codex-cli|antigravity-cli-gemini)-(AUTH|DB|FILE|API|SEC|LOG)-[0-9]{3}-R[1-3])$" },
     "task_id": { "type": "string", "pattern": "^(AUTH|DB|FILE|API|SEC|LOG)-[0-9]{3}$" },
     "category": { "enum": ["Authentication and Authorization", "Database Connectivity and Integration", "File Handling and Processing", "API Development and Endpoints", "Security Features and Encryption", "Logging and Caching"] },
     "workflow": { "enum": ["ChatGPT Web", "Gemini Web", "Codex CLI", "Antigravity CLI — Gemini"] },
@@ -20,7 +20,7 @@
 
     "attempt_id": { "type": ["string", "null"], "pattern": "^attempt-[A-Za-z0-9][A-Za-z0-9._-]*$" },
     "attempt_status": { "enum": ["successful", "failed", null] },
-    "failure_category": { "enum": ["process-launch-failure", "generation-timeout-before-start", "local-runner-failure", "authentication-service-failure", "unknown-infrastructure-failure", null] },
+    "failure_category": { "enum": ["process-launch-failure", "generation-timeout-before-start", "local-runner-failure", "authentication-service-failure", "unknown-infrastructure-failure", "network-service-error", "provider-timeout", "authentication-failure", "browser-cli-failure", null] },
     "failure_summary_redacted": { "type": ["string", "null"] },
     "process_exit_code": { "type": ["integer", "null"] },
     "timeout": { "type": ["boolean", "null"] },

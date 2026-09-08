@@ -18,6 +18,7 @@ and metadata.
 - [Full system documentation](docs/system_documentation.md)
 - [Frozen experimental protocol](docs/experimental_protocol.md)
 - [Prompt generation protocol](docs/prompt_generation_protocol.md)
+- [Baseline manifest and evidence capture](docs/baseline_capture.md)
 
 ## Development setup
 
@@ -46,3 +47,13 @@ python scripts/render_prompts.py --task-set final
 
 Rendering creates canonical prompt artifacts only; it does not invoke an AI
 workflow or generate research data.
+
+Build the deterministic 360-cell baseline manifest with:
+
+```sh
+PYTHONPATH=src python scripts/build_baseline_manifest.py
+```
+
+Raw response capture and technical-failure recording are local, append-only
+operations documented in `docs/baseline_capture.md`; they do not automate or
+contact any provider.

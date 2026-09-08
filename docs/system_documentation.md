@@ -7,9 +7,9 @@ experiment for studying third-party npm package hallucination in AI-generated
 Node.js code.
 
 The implemented system converts versioned task definitions into canonical,
-provider-neutral prompts. It validates the inputs, renders prompts
-deterministically, stores the exact UTF-8 prompt bytes, and produces a JSONL
-manifest containing provenance metadata and a SHA-256 digest for every prompt.
+provider-neutral prompts, enumerates the frozen 360-cell baseline, and locally
+preserves already-obtained raw responses and technical-failure records without
+invoking providers.
 
 The repository is experimental infrastructure. It does not contain research
 conclusions, and the pilot tasks are not collected observations.
@@ -26,11 +26,15 @@ conclusions, and the pilot tasks are not collected observations.
 | Automated renderer tests | Implemented |
 | Provider configuration skeleton | Present, disabled |
 | Isolated provider execution | Not implemented |
-| Independent repetitions and retry recording | Not implemented |
-| Append-only raw response capture | Not implemented |
+| 360-cell deterministic baseline manifest | Implemented |
+| Local technical-failure/retry recording | Implemented |
+| Append-only local raw response capture | Implemented |
+| Provider execution automation | Not implemented |
+| Dependency extraction | Not implemented |
 | npm registry validation | Not implemented |
 | Hallucination classification | Not implemented |
 | Statistical analysis or risk scoring | Not implemented |
+| Persistence execution | Not implemented |
 
 ## 2. Research and safety constraints
 
@@ -71,7 +75,8 @@ Task definition -> Master template -> Deterministic renderer
                 -> Append-only raw evidence -> Later validation and analysis
 ```
 
-Only the stages through canonical prompt generation are implemented.
+Provider execution remains manual and outside this infrastructure. The local
+capture stage accepts response bytes already obtained by an operator.
 
 ### Component map
 
@@ -85,6 +90,10 @@ Only the stages through canonical prompt generation are implemented.
 | `scripts/render_prompts.py` | Repository-specific entry point for pilot or frozen final rendering |
 | `prompts/rendered/pilot-0.1.0/` | Versioned canonical prompt artifacts and manifest |
 | `tests/test_prompt_renderer.py` | Unit and reproducibility tests |
+| `src/experiment/baseline_manifest.py` | Frozen baseline enumeration and validation |
+| `src/experiment/evidence_capture.py` | Append-only raw and failure evidence storage |
+| `data/manifests/baseline_v1.0.0.jsonl` | Canonical 360-cell baseline manifest |
+| `docs/baseline_capture.md` | Web/CLI manual capture and retry procedure |
 | `config/providers.example.yaml` | Disabled placeholder configuration for future providers |
 | `docs/prompt_generation_protocol.md` | Methodological rationale for prompt generation |
 | `logs/.gitkeep` | Placeholder directory; no logging system is implemented |

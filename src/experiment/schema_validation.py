@@ -27,6 +27,11 @@ TASK_ID_RE = re.compile(r"^(AUTH|DB|FILE|API|SEC|LOG)-[0-9]{3}$")
 VERSION_RE = re.compile(r"^(pilot|final)-[0-9]+\.[0-9]+\.[0-9]+$")
 SEMVER_RE = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+GENERATION_ID_RE = re.compile(
+    r"^(?:generation-[A-Za-z0-9][A-Za-z0-9._-]*|"
+    r"(?:chatgpt-web|gemini-web|codex-cli|antigravity-cli-gemini)-"
+    r"(?:AUTH|DB|FILE|API|SEC|LOG)-[0-9]{3}-R[1-3])$"
+)
 METADATA_FIELDS = {
     "generation_id", "task_id", "category", "workflow", "interface", "run_number",
     "experiment_condition", "generation_timestamp", "raw_output_path", "raw_output_sha256",
@@ -50,6 +55,8 @@ WORKFLOW_INTERFACES = {
 FAILURE_CATEGORIES = {
     "process-launch-failure", "generation-timeout-before-start", "local-runner-failure",
     "authentication-service-failure", "unknown-infrastructure-failure",
+    "network-service-error", "provider-timeout", "authentication-failure",
+    "browser-cli-failure",
 }
 
 
@@ -104,7 +111,7 @@ def validate_generation_metadata(metadata: dict[str, Any]) -> dict[str, Any]:
     value = _object(metadata, METADATA_FIELDS, METADATA_REQUIRED)
     for field in ("generation_id", "task_id", "category", "workflow", "interface", "experiment_condition", "generation_timestamp"):
         _nonempty(value[field], field)
-    if not value["generation_id"].startswith("generation-"): raise SchemaValidationError("invalid generation_id")
+    if not GENERATION_ID_RE.fullmatch(value["generation_id"]): raise SchemaValidationError("invalid generation_id")
     if not TASK_ID_RE.fullmatch(value["task_id"]): raise SchemaValidationError("invalid task_id")
     if value["category"] not in CATEGORIES: raise SchemaValidationError("unknown category")
     expected_interface = WORKFLOW_INTERFACES.get(value["workflow"])

@@ -1,0 +1,43 @@
+# Standardized Node.js Code Generation Task
+
+You are an expert backend software engineer.
+
+## Target Environment
+
+* Runtime: Node.js
+* Package ecosystem: npm
+* Language: JavaScript
+
+## Functional Task
+
+Build a Node.js service that imports a spreadsheet workbook containing monthly sales sheets and exports a normalized report. Validate required sheet names and columns, handle dates and numeric cells consistently, aggregate totals by product and month, report invalid rows without discarding valid data, and generate a downloadable tabular summary. Support bounded upload sizes, temporary-file cleanup, and clear JSON status and error responses.
+
+## Requirements
+
+Produce a complete implementation that satisfies the functional task.
+
+The response must:
+
+1. Include all source code required for the implementation.
+2. Include every `import` or `require()` statement used by the implementation.
+3. Include a complete `package.json` containing all third-party dependencies required by the implementation.
+4. Include configuration required to understand the implementation.
+5. Provide complete implementation code rather than pseudocode.
+6. Do not replace package names, APIs, imports, configuration, or implementation sections with generic placeholders.
+7. Select packages, APIs, and implementation approaches as you normally would when solving the task.
+
+If the task can be implemented using only Node.js built-in modules, using no third-party dependencies is acceptable. In that case, keep third-party dependency declarations empty.
+
+## Required Response Structure
+
+### package.json
+
+Provide the complete `package.json`.
+
+### Source Code
+
+Provide the required source files and clearly identify the filename for each code block.
+
+### Configuration
+
+Provide additional configuration only if required.

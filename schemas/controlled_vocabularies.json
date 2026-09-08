@@ -34,7 +34,7 @@
     "package_managers": { "type": "array", "items": { "const": "npm" } },
     "external_dependency_requirements": { "type": "array", "items": { "enum": ["none", "optional", "required"] } },
     "security_criticalities": { "type": "array", "items": { "enum": ["low", "medium", "high"] } },
-    "failure_categories": { "type": "array", "items": { "enum": ["process-launch-failure", "generation-timeout-before-start", "local-runner-failure", "authentication-service-failure", "unknown-infrastructure-failure"] } }
+    "failure_categories": { "type": "array", "items": { "enum": ["process-launch-failure", "generation-timeout-before-start", "local-runner-failure", "authentication-service-failure", "unknown-infrastructure-failure", "network-service-error", "provider-timeout", "authentication-failure", "browser-cli-failure"] } }
   },
   "required": ["categories", "workflows", "interfaces", "run_numbers", "experiment_conditions", "classification_labels", "difficulties", "task_statuses", "ecosystems", "package_managers", "external_dependency_requirements", "security_criticalities", "failure_categories"]
 }

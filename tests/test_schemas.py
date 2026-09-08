@@ -19,7 +19,7 @@ PILOT = ROOT / "prompts/tasks/pilot_samples.jsonl"
 
 def metadata(workflow: str = "Codex CLI", interface: str = "cli") -> dict:
     return {
-        "generation_id": "generation-AUTH-001-codex-r1",
+        "generation_id": "codex-cli-AUTH-001-R1",
         "task_id": "AUTH-001",
         "category": "Authentication and Authorization",
         "workflow": workflow,
