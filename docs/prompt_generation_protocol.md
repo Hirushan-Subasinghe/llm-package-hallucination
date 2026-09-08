@@ -2,38 +2,72 @@
 
 ## Separation of responsibilities
 
-`prompts/templates/master_prompt_v0.1.0.md` contains the fixed experimental instructions. It has exactly one variable, `{{TASK_DESCRIPTION}}`.
+`prompts/templates/master_prompt_v1.0.0.md` contains the frozen full-study
+experimental instructions. It has exactly one variable,
+`{{TASK_DESCRIPTION}}`. The historical `v0.1.0` template and pilot artifacts are
+preserved unchanged.
 
-`prompts/tasks/pilot_samples.jsonl` contains the variable functional tasks and their task metadata. These records are demonstration and pilot candidates rather than observations.
+`prompts/tasks/final_1.0.0.jsonl` contains the 30 frozen functional tasks and
+their metadata. `prompts/tasks/pilot_samples.jsonl` contains six sample records
+and is not baseline research data.
 
-`src/experiment/prompt_renderer.py` validates both inputs and combines them deterministically. It replaces only the task-description variable, writes the exact UTF-8 canonical prompt bytes, and records their SHA-256 hashes.
+`src/experiment/prompt_renderer.py` validates both inputs and combines them
+deterministically. It replaces only the task-description variable, writes the
+exact UTF-8 canonical prompt bytes, and records their SHA-256 hashes. The
+descriptive `external_dependency_requirement` field is never rendered and must
+not control package selection.
 
-## Why this matters
+## Prompt control and neutrality
 
-Using one canonical master prompt reduces prompt-wording variation between AI tools. Each tool receives the same rendered instructions for a given task, so provider-specific prompt rewriting does not become an uncontrolled experimental variable.
+One canonical master prompt supplies the same substantive requirements to all
+four workflows. Provider- or workflow-specific rewriting is forbidden, including
+changes made after observing earlier results.
 
-Package validity and hallucination terminology are deliberately excluded from the experimental prompt to reduce measurement priming. The prompt asks the model to select packages, APIs, and implementation approaches as it normally would when solving the task, without disclosing that package validity is under study.
+Package validity and hallucination terminology are excluded to avoid measurement
+priming. The prompt does not force an external dependency: built-in-only
+solutions and empty third-party dependency declarations are valid when the task
+does not require an external package.
 
-Future registry, network, and tool restrictions are enforced by the provider execution environment rather than stated inside the experimental prompt. This keeps operational controls separate from the experimental instructions presented to the model.
+## Authoritative workflow flow
 
-## Provider flow
+Each canonical prompt is independently submitted to exactly these AI coding
+tools/workflows:
 
-The intended flow is:
+- ChatGPT Web
+- Gemini Web
+- Codex CLI
+- Antigravity CLI — Gemini
 
-Canonical Prompt → ChatGPT → Gemini → GitHub Copilot → Claude when provider access becomes available
+The list is not a chained conversation and does not describe four equivalent LLM
+architectures. Each task/workflow condition requires three successful independent
+baseline runs. The full baseline is:
 
-This shows the intended provider families, not a chained conversation: each provider invocation and repetition must remain independent. Provider availability does not alter the canonical prompt itself. Claude remains part of the planned infrastructure while its access is pending.
+```text
+30 tasks × 4 workflows × 3 successful runs = 360 successful outputs
+```
+
+Technical failure attempts and retries are recorded separately and do not count
+as successful repetitions. Web runs use new chats/sessions; CLI runs use clean
+workspaces without preceding generated artifacts. Provider-state limitations
+that cannot be disabled are recorded rather than hidden.
 
 ## SHA-256 integrity evidence
 
-The renderer computes SHA-256 from the exact bytes written for each prompt. The manifest hash therefore provides evidence that the input text presented later is the preserved canonical prompt, and detects any intervening byte-level change.
+The renderer computes SHA-256 from the exact bytes written for each prompt. A
+manifest hash detects any intervening byte-level change. The execution and raw
+capture stages must additionally associate this canonical prompt hash with the
+generation record.
 
 ## Versioning
 
-The template version identifies the fixed wording and structure of the master prompt. The task-set version identifies a particular collection of variable functional tasks. Either can evolve independently, and both are recorded in every manifest entry.
-
-`pilot-0.1.0` is a sample pilot task set. It is not the final frozen research dataset.
+Template version `1.0.0` identifies the frozen full-study wording and response
+structure. Task-set version `final-1.0.0` identifies the 30-task collection. Both
+are recorded in prompt manifests and generation metadata. Historical
+`pilot-0.1.0` artifacts remain preserved and are not baseline observations.
 
 ## Experimental safety
 
-Prompt rendering produces no generated response, executes no generated code, and performs no npm validation. It makes no provider or package-registry request. Later provider execution must preserve the repository's isolation, independence, raw-data, and credential-handling requirements.
+Prompt rendering produces no AI response, executes no generated code, performs
+no npm validation, and makes no provider or registry request. Later execution
+must preserve independence, isolation, unchanged raw output, append-only attempt
+evidence, and credential safety.

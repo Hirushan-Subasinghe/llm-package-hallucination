@@ -19,6 +19,15 @@
         "Logging and Caching"
       ]]
     },
+    "workflows": {
+      "const": ["ChatGPT Web", "Gemini Web", "Codex CLI", "Antigravity CLI — Gemini"]
+    },
+    "interfaces": { "const": ["web", "cli"] },
+    "run_numbers": { "const": [1, 2, 3] },
+    "experiment_conditions": { "const": ["baseline", "persistence"] },
+    "classification_labels": {
+      "const": ["VALID", "CONFIRMED_HALLUCINATION", "LEGACY_OR_REMOVED", "AMBIGUOUS", "BUILTIN_OR_LOCAL"]
+    },
     "difficulties": { "type": "array", "items": { "enum": ["easy", "medium", "hard"] } },
     "task_statuses": { "type": "array", "items": { "enum": ["sample", "draft", "final", "retired"] } },
     "ecosystems": { "type": "array", "items": { "const": "node.js" } },
@@ -27,5 +36,5 @@
     "security_criticalities": { "type": "array", "items": { "enum": ["low", "medium", "high"] } },
     "failure_categories": { "type": "array", "items": { "enum": ["process-launch-failure", "generation-timeout-before-start", "local-runner-failure", "authentication-service-failure", "unknown-infrastructure-failure"] } }
   },
-  "required": ["categories", "difficulties", "task_statuses", "ecosystems", "package_managers", "external_dependency_requirements", "security_criticalities", "failure_categories"]
+  "required": ["categories", "workflows", "interfaces", "run_numbers", "experiment_conditions", "classification_labels", "difficulties", "task_statuses", "ecosystems", "package_managers", "external_dependency_requirements", "security_criticalities", "failure_categories"]
 }

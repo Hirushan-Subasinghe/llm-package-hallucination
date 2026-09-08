@@ -18,8 +18,8 @@ conclusions, and the pilot tasks are not collected observations.
 
 | Capability | Status |
 | --- | --- |
-| Versioned master prompt | Implemented |
-| Versioned pilot task definitions | Implemented |
+| Versioned pilot and frozen full-study master prompts | Implemented |
+| Versioned pilot and 30-task final definitions | Implemented |
 | Input validation | Implemented (strict task schema and vocabularies) |
 | Deterministic prompt rendering | Implemented |
 | SHA-256 prompt manifest | Implemented |
@@ -77,10 +77,12 @@ Only the stages through canonical prompt generation are implemented.
 
 | Path | Responsibility |
 | --- | --- |
-| `prompts/templates/master_prompt_v0.1.0.md` | Fixed provider-neutral experimental instructions |
+| `prompts/templates/master_prompt_v1.0.0.md` | Frozen provider-neutral full-study instructions |
+| `prompts/templates/master_prompt_v0.1.0.md` | Historical pilot instructions |
+| `prompts/tasks/final_1.0.0.jsonl` | Thirty frozen final task definitions |
 | `prompts/tasks/pilot_samples.jsonl` | Six sample task definitions and task metadata |
 | `src/experiment/prompt_renderer.py` | Validation, rendering, hashing, and manifest generation |
-| `scripts/render_prompts.py` | Repository-specific entry point for the pilot task set |
+| `scripts/render_prompts.py` | Repository-specific entry point for pilot or frozen final rendering |
 | `prompts/rendered/pilot-0.1.0/` | Versioned canonical prompt artifacts and manifest |
 | `tests/test_prompt_renderer.py` | Unit and reproducibility tests |
 | `config/providers.example.yaml` | Disabled placeholder configuration for future providers |
@@ -106,8 +108,9 @@ repeated placeholder is rejected. Provider names and experiment-revealing terms
 are intentionally absent from the template to avoid provider-specific wording
 and measurement priming.
 
-The current template version is `0.1.0`. Changing its wording should result in
-a new template version and, by convention, a new versioned template file.
+The frozen full-study template version is `1.0.0`; `0.1.0` remains the historical
+pilot version. Changing frozen wording requires a new template version and a new
+versioned template file.
 
 ### 4.2 Task definitions
 
@@ -133,8 +136,7 @@ The renderer also enforces the following rules:
 - `task_id` values must be unique and safe as individual filenames; and
 - all records must declare exactly one common `task_set_version`.
 
-Unknown additional JSON fields are currently accepted but are not copied to the
-manifest.
+Unknown additional JSON fields are rejected by the strict task validator.
 
 The pilot set is `pilot-0.1.0` and contains six medium-difficulty samples:
 
@@ -227,6 +229,10 @@ The command writes six prompt files plus the manifest under
 `prompts/rendered/pilot-0.1.0/`. It performs no network requests, invokes no AI
 provider, executes no generated JavaScript, and installs no npm package.
 
+Render the frozen final prompt set with `python scripts/render_prompts.py
+--task-set final`. This uses template `1.0.0` with task set `final-1.0.0` and
+likewise performs no provider invocation or generated-code execution.
+
 ### Generic command-line interface
 
 The renderer module also exposes a parameterized CLI:
@@ -290,16 +296,16 @@ manifest. A mismatch means the artifact bytes or manifest have changed.
 
 ## 8. Provider configuration status
 
-`config/providers.example.yaml` describes planned entries for OpenAI Codex CLI,
-Anthropic Claude Code, Google Gemini CLI, and GitHub Copilot CLI. Every provider
-is disabled. Execution mode, executable path, exact model identifier, CLI
-version, and timeout are intentionally unset.
+`config/providers.example.yaml` describes the four frozen workflows: ChatGPT
+Web, Gemini Web, Codex CLI, and Antigravity CLI — Gemini. Every workflow is
+disabled. Web entries contain no invented executable command; CLI executable,
+version, and timeout values remain unset until verified.
 
 This file is a configuration skeleton, not an executor. No code currently reads
-it. The provider list does not imply that access has been verified, a model has
-been selected, or any model response has been collected. Exact model identifiers
-must be verified and frozen before final collection; CLI versions must be
-captured at execution time rather than guessed.
+it. The workflow list does not imply that access has been verified, a model has
+been selected, or any model response has been collected. Visible model/tool
+versions are captured only when the interface exposes them and must never be
+guessed.
 
 When provider support is implemented, providers must receive the same canonical
 prompt for a task. The documented provider flow is an ordering of provider

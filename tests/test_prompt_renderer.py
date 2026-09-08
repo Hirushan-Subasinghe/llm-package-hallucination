@@ -1,5 +1,6 @@
 import hashlib
 import json
+from collections import Counter
 from pathlib import Path
 import tempfile
 import unittest
@@ -15,9 +16,37 @@ from experiment.prompt_renderer import (
 ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / "prompts/templates/master_prompt_v0.1.0.md"
 TASKS = ROOT / "prompts/tasks/pilot_samples.jsonl"
+FINAL_TASKS = ROOT / "prompts/tasks/final_1.0.0.jsonl"
 
 
 class PromptRendererTests(unittest.TestCase):
+    def test_final_task_set_invariants(self) -> None:
+        tasks = read_tasks(FINAL_TASKS)
+        expected_ids = {
+            f"{prefix}-{number:03d}"
+            for prefix in ("AUTH", "DB", "FILE", "API", "SEC", "LOG")
+            for number in range(1, 6)
+        }
+        expected_categories = {
+            "Authentication and Authorization",
+            "Database Connectivity and Integration",
+            "File Handling and Processing",
+            "API Development and Endpoints",
+            "Security Features and Encryption",
+            "Logging and Caching",
+        }
+        ids = [task["task_id"] for task in tasks]
+        self.assertEqual(len(tasks), 30)
+        self.assertEqual(set(ids), expected_ids)
+        self.assertEqual(len(ids), len(set(ids)))
+        self.assertEqual(set(task["category"] for task in tasks), expected_categories)
+        self.assertEqual(set(Counter(task["category"] for task in tasks).values()), {5})
+        self.assertEqual({task["ecosystem"] for task in tasks}, {"node.js"})
+        self.assertEqual({task["package_manager"] for task in tasks}, {"npm"})
+        self.assertEqual({task["difficulty"] for task in tasks}, {"medium"})
+        self.assertEqual({task["task_set_version"] for task in tasks}, {"final-1.0.0"})
+        self.assertEqual({task["status"] for task in tasks}, {"final"})
+
     def test_valid_template_rendering_and_paths(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             output_root = Path(directory) / "rendered"

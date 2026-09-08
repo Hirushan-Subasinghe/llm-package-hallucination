@@ -1,44 +1,39 @@
-providers:
-  openai:
+# Workflow configuration contains no credentials. Exact visible model/tool
+# versions are recorded at generation time only when the interface exposes them.
+workflows:
+  chatgpt_web:
+    workflow: ChatGPT Web
     provider: OpenAI
-    tool_name: Codex CLI
+    interface: web
     enabled: false
-    execution_mode: null  # TODO: define during provider integration
-    executable: null      # TODO: configure explicitly
-    exact_model_id: null  # TODO: record an exact, verified identifier
-    cli_version: null     # Captured at execution time
-    timeout_seconds: null # TODO: define during provider integration
+    visible_model_version: null
 
-  claude:
-    provider: Anthropic
-    tool_name: Claude Code
-    enabled: false        # Provider access pending; retain for planned integration
-    execution_mode: null
-    executable: null
-    exact_model_id: null
-    cli_version: null
-    timeout_seconds: null
-
-  gemini:
+  gemini_web:
+    workflow: Gemini Web
     provider: Google
-    tool_name: Gemini CLI
+    interface: web
     enabled: false
-    execution_mode: null
+    visible_model_version: null
+
+  codex_cli:
+    workflow: Codex CLI
+    provider: OpenAI
+    interface: cli
+    enabled: false
     executable: null
-    exact_model_id: null
+    visible_model_version: null
     cli_version: null
     timeout_seconds: null
 
-  copilot:
-    provider: GitHub
-    tool_name: GitHub Copilot CLI
+  antigravity_cli_gemini:
+    workflow: Antigravity CLI — Gemini
+    provider: Google
+    interface: cli
     enabled: false
-    execution_mode: null
     executable: null
-    exact_model_id: null
+    visible_model_version: null
     cli_version: null
     timeout_seconds: null
 
-# Freeze exact_model_id before final data collection. Capture cli_version at
-# execution time. Do not assume that provider or model settings are equivalent
-# across tools.
+# Executable commands and timeouts must be configured and verified before CLI
+# execution. Do not place API keys, tokens, cookies, or passwords in this file.

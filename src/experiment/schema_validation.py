@@ -28,17 +28,25 @@ VERSION_RE = re.compile(r"^(pilot|final)-[0-9]+\.[0-9]+\.[0-9]+$")
 SEMVER_RE = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 METADATA_FIELDS = {
-    "experiment_run_id", "generation_id", "attempt_id", "task_id", "repetition", "task_set_version",
-    "template_version", "canonical_prompt_sha256", "tool_name", "provider_name", "model_name",
-    "model_selection_mode", "workflow_type", "interface", "cli_version", "runner_version",
-    "experiment_protocol_version", "timestamp_started", "timestamp_finished", "timezone",
-    "execution_duration_ms", "workspace_id", "workspace_provenance", "workspace_base_version",
-    "filesystem_access", "shell_access", "network_policy", "package_install_policy", "process_exit_code",
-    "timeout", "success", "failure_category", "raw_stdout_path", "raw_stderr_path", "raw_response_path",
-    "raw_response_sha256", "raw_response_bytes", "files_created", "files_modified", "files_deleted",
-    "commands_attempted", "package_install_attempted", "package_install_commands",
+    "generation_id", "task_id", "category", "workflow", "interface", "run_number",
+    "experiment_condition", "generation_timestamp", "raw_output_path", "raw_output_sha256",
+    "visible_model_version", "installation_command_generated", "attempt_id", "attempt_status",
+    "failure_category", "failure_summary_redacted", "process_exit_code", "timeout", "cli_version",
+    "runner_version", "canonical_prompt_sha256", "workspace_id", "workspace_provenance",
+    "filesystem_access", "shell_access", "network_policy", "package_install_policy",
+    "raw_stdout_path", "raw_stderr_path", "files_created", "files_modified", "files_deleted",
+    "commands_attempted", "package_install_commands",
 }
-METADATA_REQUIRED = METADATA_FIELDS - {"raw_response_path", "raw_response_sha256", "raw_response_bytes"}
+METADATA_REQUIRED = {
+    "generation_id", "task_id", "category", "workflow", "interface", "run_number",
+    "experiment_condition", "generation_timestamp", "raw_output_path", "raw_output_sha256",
+}
+WORKFLOW_INTERFACES = {
+    "ChatGPT Web": "web",
+    "Gemini Web": "web",
+    "Codex CLI": "cli",
+    "Antigravity CLI — Gemini": "cli",
+}
 FAILURE_CATEGORIES = {
     "process-launch-failure", "generation-timeout-before-start", "local-runner-failure",
     "authentication-service-failure", "unknown-infrastructure-failure",
@@ -94,45 +102,45 @@ def validate_task_records(tasks: Iterable[dict[str, Any]]) -> list[dict[str, Any
 
 def validate_generation_metadata(metadata: dict[str, Any]) -> dict[str, Any]:
     value = _object(metadata, METADATA_FIELDS, METADATA_REQUIRED)
-    for field in ("experiment_run_id", "generation_id", "attempt_id", "tool_name", "provider_name", "model_name", "timezone", "workspace_id", "workspace_base_version"):
+    for field in ("generation_id", "task_id", "category", "workflow", "interface", "experiment_condition", "generation_timestamp"):
         _nonempty(value[field], field)
-    for field, prefix in (("experiment_run_id", "run-"), ("generation_id", "generation-"), ("attempt_id", "attempt-")):
-        if not value[field].startswith(prefix): raise SchemaValidationError(f"invalid {field}")
+    if not value["generation_id"].startswith("generation-"): raise SchemaValidationError("invalid generation_id")
     if not TASK_ID_RE.fullmatch(value["task_id"]): raise SchemaValidationError("invalid task_id")
-    if not isinstance(value["repetition"], int) or isinstance(value["repetition"], bool) or value["repetition"] not in {1, 2}: raise SchemaValidationError("invalid repetition")
-    if not VERSION_RE.fullmatch(value["task_set_version"]): raise SchemaValidationError("invalid task_set_version")
-    for field in ("template_version", "runner_version", "experiment_protocol_version"):
-        if not isinstance(value[field], str) or not SEMVER_RE.fullmatch(value[field]): raise SchemaValidationError(f"invalid {field}")
-    if not isinstance(value["canonical_prompt_sha256"], str) or not SHA256_RE.fullmatch(value["canonical_prompt_sha256"]): raise SchemaValidationError("invalid canonical_prompt_sha256")
-    if value["model_selection_mode"] not in {"fixed", "provider-default", "unavailable"}: raise SchemaValidationError("invalid model_selection_mode")
-    if value["workflow_type"] != "agentic-coding" or value["interface"] != "cli": raise SchemaValidationError("invalid workflow/interface")
-    parsed_timestamps = []
-    for field in ("timestamp_started", "timestamp_finished"):
-        try:
-            parsed = _datetime.datetime.fromisoformat(value[field].replace("Z", "+00:00"))
-        except (AttributeError, TypeError, ValueError):
-            raise SchemaValidationError(f"invalid {field}")
-        if parsed.tzinfo is None or parsed.utcoffset() is None:
-            raise SchemaValidationError(f"{field} must include timezone information")
-        parsed_timestamps.append(parsed)
-    if parsed_timestamps[1] < parsed_timestamps[0]:
-        raise SchemaValidationError("timestamp_finished precedes timestamp_started")
-    if value["execution_duration_ms"] is not None and (not isinstance(value["execution_duration_ms"], int) or value["execution_duration_ms"] < 0): raise SchemaValidationError("invalid execution_duration_ms")
-    if value["workspace_provenance"] != "fresh-temporary" or value["filesystem_access"] != "isolated-workspace-only": raise SchemaValidationError("invalid workspace isolation")
-    if value["shell_access"] not in {"enabled", "disabled"} or value["network_policy"] not in {"disabled", "restricted"} or value["package_install_policy"] != "blocked-and-recorded": raise SchemaValidationError("invalid execution policy")
-    if not isinstance(value["timeout"], bool) or not isinstance(value["success"], bool) or not isinstance(value["package_install_attempted"], bool): raise SchemaValidationError("boolean metadata field is invalid")
-    if value["failure_category"] is not None and value["failure_category"] not in FAILURE_CATEGORIES: raise SchemaValidationError("invalid failure_category")
-    if value["success"] and value["timeout"]: raise SchemaValidationError("successful metadata cannot time out")
-    if value["success"] and value["failure_category"] is not None: raise SchemaValidationError("successful metadata cannot have failure_category")
-    if value["success"]:
-        if not isinstance(value["raw_response_path"], str) or not value["raw_response_path"].strip(): raise SchemaValidationError("successful metadata requires raw_response_path")
-        if not isinstance(value["raw_response_sha256"], str) or not SHA256_RE.fullmatch(value["raw_response_sha256"]): raise SchemaValidationError("successful metadata requires raw_response_sha256")
-        if not isinstance(value["raw_response_bytes"], int) or isinstance(value["raw_response_bytes"], bool) or value["raw_response_bytes"] < 0: raise SchemaValidationError("successful metadata requires raw_response_bytes")
-    if not value["success"] and not value["failure_category"]: raise SchemaValidationError("failed metadata requires failure_category")
-    raw_response_sha256 = value.get("raw_response_sha256")
-    if raw_response_sha256 is not None and (not isinstance(raw_response_sha256, str) or not SHA256_RE.fullmatch(raw_response_sha256)): raise SchemaValidationError("invalid raw_response_sha256")
+    if value["category"] not in CATEGORIES: raise SchemaValidationError("unknown category")
+    expected_interface = WORKFLOW_INTERFACES.get(value["workflow"])
+    if expected_interface is None or value["interface"] != expected_interface: raise SchemaValidationError("invalid workflow/interface")
+    if not isinstance(value["run_number"], int) or isinstance(value["run_number"], bool) or value["run_number"] not in {1, 2, 3}: raise SchemaValidationError("invalid run_number")
+    if value["experiment_condition"] not in {"baseline", "persistence"}: raise SchemaValidationError("invalid experiment_condition")
+    try:
+        timestamp = _datetime.datetime.fromisoformat(value["generation_timestamp"].replace("Z", "+00:00"))
+    except (AttributeError, TypeError, ValueError):
+        raise SchemaValidationError("invalid generation_timestamp")
+    if timestamp.tzinfo is None or timestamp.utcoffset() is None: raise SchemaValidationError("generation_timestamp must include timezone information")
+    visible_version = value.get("visible_model_version")
+    if visible_version is not None and (not isinstance(visible_version, str) or not visible_version.strip()): raise SchemaValidationError("invalid visible_model_version")
+    installation = value.get("installation_command_generated")
+    if installation is not None and not isinstance(installation, bool): raise SchemaValidationError("invalid installation_command_generated")
+    attempt_id = value.get("attempt_id")
+    if attempt_id is not None and (not isinstance(attempt_id, str) or not attempt_id.startswith("attempt-")): raise SchemaValidationError("invalid attempt_id")
+    if value.get("attempt_status") not in {None, "successful", "failed"}: raise SchemaValidationError("invalid attempt_status")
+    failure = value.get("failure_category")
+    if failure is not None and failure not in FAILURE_CATEGORIES: raise SchemaValidationError("invalid failure_category")
+    if value.get("attempt_status") == "failed":
+        if attempt_id is None or failure is None: raise SchemaValidationError("failed attempt requires attempt_id and failure_category")
+        if value["raw_output_path"] is not None or value["raw_output_sha256"] is not None: raise SchemaValidationError("failed attempt cannot claim successful raw output")
+    elif failure is not None:
+        raise SchemaValidationError("failure_category requires failed attempt_status")
+    else:
+        _nonempty(value["raw_output_path"], "raw_output_path")
+        if not isinstance(value["raw_output_sha256"], str) or not SHA256_RE.fullmatch(value["raw_output_sha256"]): raise SchemaValidationError("invalid raw_output_sha256")
+    for field in ("runner_version",):
+        field_value = value.get(field)
+        if field_value is not None and (not isinstance(field_value, str) or not SEMVER_RE.fullmatch(field_value)): raise SchemaValidationError(f"invalid {field}")
+    prompt_hash = value.get("canonical_prompt_sha256")
+    if prompt_hash is not None and (not isinstance(prompt_hash, str) or not SHA256_RE.fullmatch(prompt_hash)): raise SchemaValidationError("invalid canonical_prompt_sha256")
     for field in ("files_created", "files_modified", "files_deleted", "commands_attempted", "package_install_commands"):
-        if not isinstance(value[field], list) or not all(isinstance(item, str) for item in value[field]): raise SchemaValidationError(f"invalid {field}")
+        items = value.get(field)
+        if items is not None and (not isinstance(items, list) or not all(isinstance(item, str) for item in items)): raise SchemaValidationError(f"invalid {field}")
     return value
 
 
