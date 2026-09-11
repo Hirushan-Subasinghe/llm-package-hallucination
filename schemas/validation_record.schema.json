@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/validation_record.schema.json",
+  "title": "Validation Record",
+  "description": "Canonical record for npm registry validation of a dependency candidate.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "validation_id",
+    "dependency_record_id",
+    "registry",
+    "registry_query_url",
+    "http_status",
+    "registry_exists",
+    "namespace_available",
+    "validation_timestamp_utc",
+    "validation_status",
+    "classification",
+    "manual_review_required",
+    "manual_review_reason",
+    "evidence",
+    "validator_version"
+  ],
+  "properties": {
+    "validation_id": {
+      "type": "string",
+      "description": "Unique identifier for this validation event."
+    },
+    "dependency_record_id": {
+      "type": "string",
+      "description": "Reference to the extracted dependency record being validated."
+    },
+    "registry": {
+      "type": "string",
+      "description": "Registry name, such as npm or a compatible registry mirror."
+    },
+    "registry_query_url": {
+      "type": "string",
+      "format": "uri",
+      "description": "The exact registry query URL used when checking the dependency."
+    },
+    "http_status": {
+      "type": ["integer", "null"],
+      "description": "HTTP status code returned by the registry request, if available."
+    },
+    "registry_exists": {
+      "type": ["boolean", "null"],
+      "description": "Whether the package was found to exist in the registry at validation time."
+    },
+    "namespace_available": {
+      "type": ["boolean", "null"],
+      "description": "Whether the namespace or package scope is reported as currently available or not occupied, when relevant."
+    },
+    "validation_timestamp_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp for the validation event in ISO-8601 UTC format."
+    },
+    "validation_status": {
+      "type": "string",
+      "description": "Outcome of the validation attempt, such as success, not_found, network_error, excluded, or ambiguous."
+    },
+    "classification": {
+      "type": "string",
+      "enum": [
+        "VALID",
+        "HALLUCINATED",
+        "AMBIGUOUS",
+        "EXCLUDED",
+        "UNRESOLVED"
+      ],
+      "description": "Final classification assigned after applying the study's classification procedure."
+    },
+    "manual_review_required": {
+      "type": "boolean",
+      "description": "Whether the record requires human review before final classification is accepted."
+    },
+    "manual_review_reason": {
+      "type": ["string", "null"],
+      "description": "Reason a record was flagged for manual review, if applicable."
+    },
+    "evidence": {
+      "type": "array",
+      "description": "List of evidence entries supporting the validation outcome, such as registry response snippets or exclusion reasons.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "validator_version": {
+      "type": "string",
+      "description": "Version string of the validation logic or script used to check the dependency."
+    }
+  }
+}

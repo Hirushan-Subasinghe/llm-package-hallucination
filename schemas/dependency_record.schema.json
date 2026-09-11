@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/dependency_record.schema.json",
+  "title": "Dependency Record",
+  "description": "Canonical record for a dependency mention extracted from a generated response.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "dependency_record_id",
+    "run_id",
+    "dependency_name_raw",
+    "dependency_name_normalized",
+    "declared_version",
+    "source_type",
+    "source_file",
+    "source_location",
+    "is_node_builtin",
+    "is_local_import",
+    "extraction_timestamp_utc",
+    "extractor_version"
+  ],
+  "properties": {
+    "dependency_record_id": {
+      "type": "string",
+      "description": "Unique identifier for this extracted dependency record."
+    },
+    "run_id": {
+      "type": "string",
+      "description": "Reference to the generation run from which the dependency was extracted."
+    },
+    "dependency_name_raw": {
+      "type": "string",
+      "description": "Original dependency string exactly as observed in the generated output."
+    },
+    "dependency_name_normalized": {
+      "type": "string",
+      "description": "Canonicalized dependency name after normalization, with no surrounding whitespace or quoting artifacts."
+    },
+    "declared_version": {
+      "type": ["string", "null"],
+      "description": "Version string explicitly declared in the source artifact, if present."
+    },
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "package_json_dependency",
+        "package_json_devDependency",
+        "package_json_peerDependency",
+        "esm_import",
+        "commonjs_require",
+        "dynamic_import"
+      ],
+      "description": "Context in which the dependency was encountered."
+    },
+    "source_file": {
+      "type": "string",
+      "description": "Path or artifact identifier for the file containing the dependency reference."
+    },
+    "source_location": {
+      "type": "string",
+      "description": "Human-readable source location such as a line number, import statement, or package section."
+    },
+    "is_node_builtin": {
+      "type": "boolean",
+      "description": "Whether the dependency is a Node.js built-in module or standardized builtin path."
+    },
+    "is_local_import": {
+      "type": "boolean",
+      "description": "Whether the reference is relative, absolute local, or otherwise not an external package import."
+    },
+    "extraction_timestamp_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp for the extraction event in ISO-8601 UTC format."
+    },
+    "extractor_version": {
+      "type": "string",
+      "description": "Version string for the extraction logic or script handling this dependency record."
+    }
+  }
+}

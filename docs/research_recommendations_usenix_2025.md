@@ -1,0 +1,113 @@
+Yes. With the **September 25 report deadline and limited daily time**, I would deliberately **reduce**, not expand, your study. The USENIX paper already performs the huge-scale prevalence study with 576,000 code samples, multiple languages, model settings, persistence, and mitigation experiments, so you do not need to reproduce that scale.  Your current methodology also contains several components that would make the project unnecessarily large, including multiple ecosystems, extensive model validation, cross-temporal validation, and complex risk-model validation.
+
+Here is my **final consolidated recommendation list**, ordered from most important to least important:
+
+1. **Keep only Node.js/npm. Do not add Spring Boot.** Your final empirical scope should be one ecosystem: `Node.js → npm`. Remove Spring Boot/Maven from the executed methodology and describe it as future work. This is probably the biggest scope reduction you should make.
+
+2. **Keep your existing 30 final tasks. Do not create more prompts.** You already have 5 tasks across each of the 6 categories. That is enough for a bachelor's experimental study. Do not try to copy the USENIX paper's thousands of prompts.
+
+3. **Keep the same 6 functional categories.** Authentication & Authorization, Database Connectivity, File Handling, API Development, Security/Encryption, and Logging/Caching. Do not introduce new categories.
+
+4. **Use the 4 AI tools/workflows you already selected.** ChatGPT web, Gemini web, antigravity CLI, and Codex CLI. Do not add Claude, Cursor, Devin, OpenHands, extra open-source models, etc. Also describe these as **AI coding tools/workflows**, not four equivalent LLM architectures.
+
+5. **Use 3 independent generations per task/tool.** This gives `30 × 4 × 3 = 360` baseline outputs. I recommend stopping there. Five or ten runs per task would unnecessarily increase your workload.
+
+6. **Do not artificially force third-party packages in the prompts.** Let the models decide whether an external npm dependency is appropriate. Otherwise you could inflate the hallucination rate. Keep your standardized prompt neutral.
+
+7. **Freeze the prompt before full generation.** All tools should receive essentially the same task requirements. Don't improve the prompt separately for one model after seeing its results.
+
+8. **Record basic metadata for every generation.** You only need things such as `generation_id`, `task_id`, `category`, `tool`, `run_number`, date/time, output location, and tool/model version if visible. Don't create a huge metadata schema containing information you cannot reliably collect.
+
+9. **Save the raw AI outputs unchanged.** This is important for reproducibility. Keep the raw response/code first and process it separately later.
+
+10. **Automate dependency extraction.** For Node.js, extract external dependencies from `package.json`, `npm install/npm i` commands, `require()`, ES module `import`, and dynamic imports where practical. Your existing methodology already supports automated Node.js dependency extraction.
+
+11. **Exclude Node.js built-ins and local imports.** For example, `fs`, `path`, `crypto`, `node:fs`, `./utils`, and `../config` should not be treated as third-party npm dependencies.
+
+12. **Validate packages primarily using the official npm registry.** A package currently existing → registered. A clean npm `404` → candidate hallucination. Network/rate-limit failures → retry rather than immediately classifying as hallucination.
+
+13. **Use manual verification only for ambiguous cases.** Don't manually inspect every dependency. Automation should handle normal cases; manual review should be the exception.
+
+14. **Use a small, clear classification scheme.** I recommend `VALID`, `CONFIRMED_HALLUCINATION`, `LEGACY_OR_REMOVED`, `AMBIGUOUS`, and `BUILTIN_OR_LOCAL`. This is cleaner than forcing every non-200 result into "hallucination."
+
+15. **Distinguish package existence from package trustworthiness.** A package appearing in npm does not prove that it is legitimate or safe. The related USENIX paper specifically notes that an attacker could already have registered a previously hallucinated name.  Your experiment should therefore measure **hallucination/exploitability**, not attempt a complete malicious-package detection system.
+
+16. **Do not download or execute unknown hallucinated packages.** Do not register hallucinated names on npm either. Validate through registry queries and metadata only. This keeps the research ethically safe and saves a lot of unnecessary work.
+
+17. **Calculate a sample-level hallucination rate.**
+
+$$
+SHR=\frac{\text{generations containing at least one hallucination}}{\text{total generations}}
+$$
+
+This lets you say, for example, "X% of AI-generated solutions contained at least one hallucinated dependency."
+
+18. **Calculate a package-level hallucination rate.**
+
+$$
+PHR=\frac{\text{hallucinated external package recommendations}}{\text{all external package recommendations}}
+$$
+
+This is directly comparable conceptually with previous package-hallucination research.
+
+19. **Report the number of unique hallucinated package names.** Mentioning the same fake dependency ten times should be distinguishable from discovering ten different fake dependencies.
+
+20. **Compare results by tool and functional category.** Your major tables/graphs should answer simple questions: Which tool hallucinated most? Which category hallucinated most? Which tools generated the same hallucinations?
+
+21. **Add only a small persistence test—and only after hallucinations are found.** The related paper showed that hallucinations can repeatedly occur within the same model, while many exact names are model-specific.  You don't need a second large experiment. Take only confirmed hallucination cases and rerun a limited subset, e.g. 3 additional times. If there are many cases, cap the persistence sample. This is the only extra generation work I strongly recommend.
+
+22. **Do not repeat every one of the 360 outputs another 5–10 times.** That would increase the experiment unnecessarily. Persistence testing should be targeted.
+
+23. **Keep Cross-Tool Consistency, but don't treat it as the only measure of repeatability.** A fake package that appears repeatedly in one tool can still be useful to an attacker even if no other tool generates it. The USENIX study found persistence within models while 81% of distinct hallucinated package names appeared in only one model.
+
+24. **Reduce Naming Similarity from a major risk factor to a descriptive characteristic.** You can still calculate Levenshtein distance if the script is easy, but don't spend much time on it. Related research found many hallucinated names were not simple typos of legitimate packages.
+
+25. **Do not use “Registry Architecture” as a major comparative score anymore.** Since all your data now comes from npm, registry architecture is effectively constant. Your existing risk methodology was designed partly to compare flat registries like npm with Maven-style environments.  After narrowing to npm only, use **Namespace Availability/Claimability** instead.
+
+26. **Keep Functional Criticality in the risk model.** A fake dependency recommended for authentication/encryption should reasonably receive more impact weight than one recommended for simple logging. This dimension already fits your current methodology well.
+
+27. **Use a simple final risk model, not a complicated mathematical model.** My recommended four dimensions are: `Namespace Claimability`, `Within-Tool Persistence`, `Functional Criticality`, and `Cross-Tool Consistency`. Score each on a small scale such as `0–3`.
+
+28. **Do not add more risk variables unless your results clearly require them.** In particular, don't add registry reputation, malware scanning, transitive dependency analysis, maintainer history, package popularity, CVEs, autonomous execution depth, etc. Those could each become separate studies.
+
+29. **If agent actions are already naturally captured, store one simple optional field.** For example `installation_command_generated = yes/no`. But do **not** build an entire agent-behaviour experiment around it now. It is optional evidence for discussion, not another RQ.
+
+30. **Remove Developer Installation Probability from the quantitative model.** Your existing methodology discusses developer-expertise/installation assumptions, but without a real developer survey or user experiment you cannot legitimately assign percentages such as "novices have 80% installation probability." Discuss developer trust qualitatively instead.
+
+31. **Do not conduct a developer survey or user study now.** It would add ethics, recruitment, questionnaire design, statistical analysis, and time. Future work.
+
+32. **Remove the 70/30 training/testing split from risk-model validation.** Your current methodology describes a 70% training set and 30% test set for calibrating the risk model.  You are not training an ML classifier and you do not possess actual attack-success labels, so this adds complexity without giving meaningful validation.
+
+33. **Use simple risk-model validation instead.** Define the scoring rubric before seeing final results, manually double-check a subset, ask your supervisor/security reviewer whether the dimensions make sense if possible, and optionally test whether small weight changes affect the highest-risk ranking.
+
+34. **Do not implement RAG, Knowledge Graphs, fine-tuning, or multiple mitigation systems.** The related paper already experimentally tested RAG, self-refinement, fine-tuning, and ensembles.  For your dissertation, review those mitigations and recommend them based on literature. You do not need to implement them.
+
+35. **Do not test temperature, top-p, top-k, model training cutoffs, or decoding strategies.** USENIX already investigated these kinds of model-setting effects. Repeating them would increase scope without strengthening your distinct contribution.
+
+36. **Do not add Python or other languages for comparison.** The USENIX study already provides broad Python/JavaScript evidence. Your contribution can be a smaller, deeper contemporary npm study instead.
+
+37. **Do not try to prove package hallucination exists as your main novelty.** That is already strongly established. Position your research around **risk assessment of hallucinated npm dependencies across contemporary AI coding workflows**.
+
+38. **Adjust your final research contribution wording accordingly.** Something like: *“This study empirically evaluates hallucinated npm dependencies generated by contemporary AI coding workflows and proposes a lightweight risk-assessment model based on claimability, persistence, cross-tool recurrence, and functional criticality.”*
+
+39. **Simplify your RQs instead of adding new ones.** They should cover: prevalence, differences across tools/categories, repeatability/persistence, and risk assessment. You don't need separate RQs for mitigation implementation, developer behavior, registry architecture, RAG, or agent autonomy.
+
+40. **Use simple statistics.** Counts, percentages, hallucination rates, cross-tabulations, 95% confidence intervals where useful, and possibly Chi-square/Fisher's exact test. No PLS-SEM, structural equation modeling, machine-learning classifier, or complicated predictive statistics.
+
+41. **Start analysis while data generation is happening.** After each batch, update your master CSV/table and begin graphs. Don't wait for all 360 outputs before starting Chapter 4.
+
+42. **Write Chapter 4 from the actual data structure.** Keep it roughly: Experiment Summary → Hallucination Prevalence → Tool/Category Comparison → Persistence/Cross-Tool Results → Risk Assessment → Discussion.
+
+43. **Correct your existing dissertation where the methodology no longer matches the actual experiment.** If you only execute Node.js/npm, the final methodology must not claim that Spring Boot/Maven, hundreds of prompts, cross-temporal experiments, or extensive validation were performed. Your current Chapter 3 still contains many of these broader elements.
+
+44. **Correct the Maven interpretation from the related paper.** Its `Java/Maven = 0` result in the cross-language analysis should not be presented as evidence that LLMs generate zero Maven hallucinations. Their main generation study was Python and JavaScript.
+
+45. **Correct the Python/JavaScript direction wherever necessary.** In that study, JavaScript had a higher average package hallucination rate than Python. Don't accidentally state the reverse.
+
+46. **Keep mitigation as recommendations, not another experiment.** Your final recommendations can cover developers, AI-tool vendors, organizations, and npm/registry maintainers, but they can come from your findings + literature rather than new experiments.
+
+47. **Keep limitations explicit.** Say the study is limited to Node.js/npm, selected AI coding tools, 30 controlled tasks, a temporal snapshot of tool behaviour, and a relatively small experimental dataset. These are acceptable limitations, especially for a bachelor's dissertation.
+
+48. **Your immediate final workflow should therefore be only:** **freeze protocol → finish extractor/validator → small pilot → generate 360 outputs → validate dependencies → targeted persistence check → risk scoring → analysis/charts → write Chapters 4–5 → update Chapters 1–3 to match the real experiment.**
+
+The key idea is: **do less, but make every part reproducible and defensible.** I would not add another ecosystem, model, task category, mitigation implementation, user study, or sophisticated statistical technique from this point onward. Your 30 tasks + 4 tools + Node.js/npm + lightweight risk assessment are enough for the schedule you have.

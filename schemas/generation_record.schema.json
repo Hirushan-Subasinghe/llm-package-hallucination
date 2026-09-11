@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/generation_record.schema.json",
+  "title": "Generation Record",
+  "description": "Canonical record for one AI-generated output captured during the study.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "prompt_id",
+    "prompt_set_version",
+    "category",
+    "ecosystem",
+    "language",
+    "tool_name",
+    "provider",
+    "model_name",
+    "model_version",
+    "workflow_type",
+    "temperature",
+    "seed",
+    "max_output_tokens",
+    "generation_timestamp_utc",
+    "prompt_text",
+    "prompt_sha256",
+    "raw_response_path",
+    "raw_response_sha256",
+    "collection_method",
+    "notes"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "description": "Unique identifier for a single generation run."
+    },
+    "prompt_id": {
+      "type": "string",
+      "description": "Identifier for the exact prompt variant used in this run."
+    },
+    "prompt_set_version": {
+      "type": "string",
+      "description": "Version label for the prompt set or template used in the run."
+    },
+    "category": {
+      "type": "string",
+      "description": "The prompt/category grouping used in the study design."
+    },
+    "ecosystem": {
+      "type": "string",
+      "enum": ["npm"],
+      "description": "Primary package ecosystem under study. This protocol currently focuses on npm."
+    },
+    "language": {
+      "type": "string",
+      "description": "Programming language or language family targeted by the generated output, e.g. JavaScript or TypeScript."
+    },
+    "tool_name": {
+      "type": "string",
+      "description": "Name of the tool, interface, or platform used to generate the response."
+    },
+    "provider": {
+      "type": "string",
+      "description": "Model provider or vendor, e.g. OpenAI, Anthropic, Google, or local platform."
+    },
+    "model_name": {
+      "type": "string",
+      "description": "Model family or model identifier as observed."
+    },
+    "model_version": {
+      "type": ["string", "number"],
+      "description": "Model version or release identifier. If not exposed, use the literal string 'not_exposed'."
+    },
+    "workflow_type": {
+      "type": "string",
+      "description": "Workflow pattern used during generation, such as single-turn completion or agentic workflow."
+    },
+    "temperature": {
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string", "const": "not_exposed" }
+      ],
+      "description": "Sampling temperature used by the model, or the literal string 'not_exposed' if the value was not exposed."
+    },
+    "seed": {
+      "oneOf": [
+        { "type": "integer" },
+        { "type": "string", "const": "not_exposed" }
+      ],
+      "description": "Random seed used by the model, or the literal string 'not_exposed' if the value was not exposed."
+    },
+    "max_output_tokens": {
+      "type": ["integer", "null"],
+      "description": "Configured maximum output length in tokens, if known."
+    },
+    "generation_timestamp_utc": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp for the generation event in ISO-8601 UTC format, e.g. 2026-08-14T12:34:56Z."
+    },
+    "prompt_text": {
+      "type": "string",
+      "description": "Exact standardized prompt text used for the generation run."
+    },
+    "prompt_sha256": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$",
+      "description": "SHA-256 hash of the prompt text as stored and used for the run."
+    },
+    "raw_response_path": {
+      "type": "string",
+      "description": "Filesystem or repository path to the preserved raw response artifact."
+    },
+    "raw_response_sha256": {
+      "type": "string",
+      "pattern": "^[a-fA-F0-9]{64}$",
+      "description": "SHA-256 hash of the raw response artifact as preserved."
+    },
+    "collection_method": {
+      "type": "string",
+      "description": "Method used to capture the model output, such as direct API response, export, or manual recording."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Free-form notes about context, anomalies, or caveats observed during collection."
+    }
+  }
+}

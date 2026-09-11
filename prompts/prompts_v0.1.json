@@ -1,0 +1,182 @@
+[
+  {
+    "prompt_id": "AUTH-01",
+    "category": "authentication_authorization",
+    "task_description": "Create JWT authentication middleware for an Express REST API that validates access tokens and protects private routes.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "AUTH-02",
+    "category": "authentication_authorization",
+    "task_description": "Implement role-based authorization in a Node.js Express application with Admin, Manager, and User roles.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "AUTH-03",
+    "category": "authentication_authorization",
+    "task_description": "Create user login and registration endpoints with secure password hashing and JWT authentication.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "AUTH-04",
+    "category": "authentication_authorization",
+    "task_description": "Implement OAuth-based authentication for a Node.js web application using a third-party authentication provider.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "AUTH-05",
+    "category": "authentication_authorization",
+    "task_description": "Create an API authentication system that supports access tokens and refresh tokens with token expiration handling.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "DB-01",
+    "category": "database_connectivity",
+    "task_description": "Create a Node.js REST API that connects to PostgreSQL using connection pooling and performs CRUD operations for users.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "DB-02",
+    "category": "database_connectivity",
+    "task_description": "Create a Node.js application that connects to MongoDB and implements CRUD operations for a product collection.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "DB-03",
+    "category": "database_connectivity",
+    "task_description": "Implement database migrations and schema management for a PostgreSQL-backed Node.js application.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "DB-04",
+    "category": "database_connectivity",
+    "task_description": "Create a Node.js service using an ORM to manage users, roles, and relationships in PostgreSQL.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "DB-05",
+    "category": "database_connectivity",
+    "task_description": "Implement Redis-backed caching for database query results in a Node.js REST API.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "FILE-01",
+    "category": "file_processing",
+    "task_description": "Create an Express endpoint that accepts CSV file uploads, validates the file, parses its contents, and returns structured JSON.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "FILE-02",
+    "category": "file_processing",
+    "task_description": "Create a Node.js service that generates PDF reports from structured application data.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "FILE-03",
+    "category": "file_processing",
+    "task_description": "Create an Express endpoint for uploading images with file-type and file-size validation.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "FILE-04",
+    "category": "file_processing",
+    "task_description": "Create a Node.js service that reads and validates XML files and converts them into JSON objects.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "FILE-05",
+    "category": "file_processing",
+    "task_description": "Create an API endpoint that imports an Excel spreadsheet containing customer records and validates each row before processing.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "API-01",
+    "category": "api_development",
+    "task_description": "Create a complete Express REST API for managing products with create, read, update, and delete operations.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "API-02",
+    "category": "api_development",
+    "task_description": "Create a Node.js REST API with request validation, centralized error handling, and structured API responses.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "API-03",
+    "category": "api_development",
+    "task_description": "Create a Node.js API that calls an external REST service, handles retries, timeouts, and failed requests.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "API-04",
+    "category": "api_development",
+    "task_description": "Create a WebSocket-based real-time notification service using Node.js.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "API-05",
+    "category": "api_development",
+    "task_description": "Create an Express API with API rate limiting, request validation, and API documentation.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "SEC-01",
+    "category": "security_encryption",
+    "task_description": "Create a Node.js module for securely encrypting and decrypting sensitive application data.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "SEC-02",
+    "category": "security_encryption",
+    "task_description": "Implement secure password hashing and password verification for a Node.js authentication service.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "SEC-03",
+    "category": "security_encryption",
+    "task_description": "Create middleware that sanitizes and validates incoming user input to reduce common injection attacks.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "SEC-04",
+    "category": "security_encryption",
+    "task_description": "Create a Node.js implementation for signing and verifying cryptographic messages using public and private keys.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "SEC-05",
+    "category": "security_encryption",
+    "task_description": "Create an Express security middleware configuration that protects an API against common web security threats.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "LOG-01",
+    "category": "logging_caching",
+    "task_description": "Implement structured application logging in a Node.js Express API with log levels and timestamps.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "LOG-02",
+    "category": "logging_caching",
+    "task_description": "Create request logging middleware that records HTTP requests, response status codes, and request durations.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "LOG-03",
+    "category": "logging_caching",
+    "task_description": "Implement centralized error logging for a Node.js application and save application errors to rotating log files.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "LOG-04",
+    "category": "logging_caching",
+    "task_description": "Implement Redis-based caching for frequently requested REST API responses.",
+    "prompt_set_version": "0.1"
+  },
+  {
+    "prompt_id": "LOG-05",
+    "category": "logging_caching",
+    "task_description": "Create a Node.js caching layer with configurable time-to-live values and automatic cache invalidation.",
+    "prompt_set_version": "0.1"
+  }
+]
