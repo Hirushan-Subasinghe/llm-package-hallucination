@@ -18,9 +18,10 @@ Current implementation scope is limited to **Node.js and npm** as research targe
 - `AGENTS.md`: Repository-level operating and integrity instructions.
 - `README.md`: Project overview and usage conventions.
 - `prompts/`: Standardized prompt assets used to drive experiments.
-  - `prompt_template.md`: Canonical prompt template.
-  - `prompts_v0.1.csv`: Tabular prompt definitions for scripted runs.
-  - `prompts_v0.1.json`: JSON prompt definitions for scripted runs.
+  - `prompt_template_v1.0.0.md`: Frozen canonical prompt template.
+  - `prompts_v1.0.0.csv`: Frozen tabular prompt definitions for scripted runs.
+  - `prompts_v1.0.0.json`: Frozen JSON prompt definitions for scripted runs.
+  - `prompt_template.md`, `prompts_v0.1.csv`, and `prompts_v0.1.json`: Historical v0.1 records.
 - `data/`: Research datasets and artifacts.
   - `fixtures/`: Synthetic test fixtures and non-experimental examples for parser/validator tests.
   - `pilot/`: Pilot-phase experimental data (strictly separate from final dataset).
@@ -66,3 +67,14 @@ Current implementation scope is limited to **Node.js and npm** as research targe
 2. Implement Python extraction pipeline scripts.
 3. Implement read-only npm registry validation scripts.
 4. Add classification logic and tests.
+
+## Data Collection
+
+See [docs/generation_guide.md](docs/generation_guide.md) for the operator procedure.
+
+```text
+python scripts/render_generation_prompts.py
+python scripts/init_collection_run.py <RUN_ID>
+python scripts/finalize_collection_run.py <RUN_ID>
+python scripts/verify_collection.py --phase pilot
+```

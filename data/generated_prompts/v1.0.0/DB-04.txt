@@ -1,0 +1,17 @@
+# Prompt Template v1.0.0
+
+You are an expert Node.js backend software engineer.
+
+Task:
+Create a Node.js service using an ORM to manage users, roles, and relationships in PostgreSQL.
+
+Requirements:
+
+- Use Node.js.
+- Provide a complete, self-contained implementation that satisfies the task.
+- Use Node.js built-in functionality where appropriate, or external npm dependencies where they are reasonably required by the implementation.
+- Explicitly declare every external npm dependency actually used in the implementation.
+- Include the required dependency information for reproducing the implementation.
+- Do not use generic placeholder package names.
+- Use appropriate production-oriented practices.
+- Return only the implementation and required dependency information.
