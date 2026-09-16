@@ -14,9 +14,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TASKS_PATH = ROOT / "prompts" / "tasks" / "final_2.0.0.jsonl"
-TEMPLATE_PATH = ROOT / "prompts" / "prompt_template_v2.0.0.md"
-RENDERED_DIR = ROOT / "data" / "generated_prompts" / "v2.0.0"
+DEFAULT_TEMPLATE_PATH = ROOT / "prompts" / "prompt_template_v2.1.0.md"
+DEFAULT_RENDERED_DIR = ROOT / "data" / "generated_prompts" / "v2.1.0"
+TEMPLATE_PATH = DEFAULT_TEMPLATE_PATH
+RENDERED_DIR = DEFAULT_RENDERED_DIR
 EXPECTED_TASK_SHA256 = "ef0aff59f8a3934f65379d34036848652b7b5593f595ffa4b449a15af021546b"
+EXPECTED_V2_0_TEMPLATE_SHA256 = "32feac40d2269eef6c9eb47cf5ebd41b645ed1e022ca0c31e03d32b0e9af4245"
+EXPECTED_V2_1_TEMPLATE_SHA256 = "8d3971d6f9f86dfd98a4b5c49c0c13d734b7f650744da682225195f2ea49b528"
 CATEGORIES = {"AUTH-FED", "PKI-CRYPTO", "DOC-BINARY", "ENT-INT", "DATA-ADV", "DIST-OBS"}
 FORBIDDEN_TEMPLATE_PATTERNS = (
     r"hallucinat",
@@ -48,8 +52,8 @@ def load_tasks() -> list[dict[str, str]]:
     return tasks
 
 
-def load_template() -> str:
-    template = TEMPLATE_PATH.read_text(encoding="utf-8")
+def load_template(template_path: Path = TEMPLATE_PATH) -> str:
+    template = template_path.read_text(encoding="utf-8")
     if template.count("[TASK_DESCRIPTION]") != 1:
         raise ValueError("V2 template must contain [TASK_DESCRIPTION] exactly once")
     for pattern in FORBIDDEN_TEMPLATE_PATTERNS:
@@ -58,25 +62,30 @@ def load_template() -> str:
     return template
 
 
-def expected_rendered() -> dict[str, bytes]:
-    template = load_template()
+def expected_rendered(template_path: Path = TEMPLATE_PATH) -> dict[str, bytes]:
+    template = load_template(template_path)
     return {
         task["task_id"]: template.replace("[TASK_DESCRIPTION]", task["prompt"]).encode("utf-8")
         for task in load_tasks()
     }
 
 
-def write_or_verify(rendered: dict[str, bytes], *, check_only: bool) -> None:
-    if check_only and not RENDERED_DIR.is_dir():
-        raise ValueError("Rendered v2 prompt directory does not exist")
+def write_or_verify(
+    rendered: dict[str, bytes],
+    *,
+    check_only: bool,
+    rendered_dir: Path = RENDERED_DIR,
+) -> None:
+    if check_only and not rendered_dir.is_dir():
+        raise ValueError(f"Rendered prompt directory does not exist: {rendered_dir}")
     if not check_only:
-        RENDERED_DIR.mkdir(parents=True, exist_ok=True)
+        rendered_dir.mkdir(parents=True, exist_ok=True)
     expected_names = {f"{task_id}.txt" for task_id in rendered}
-    actual_names = {path.name for path in RENDERED_DIR.glob("*.txt")} if RENDERED_DIR.exists() else set()
+    actual_names = {path.name for path in rendered_dir.glob("*.txt")} if rendered_dir.exists() else set()
     if check_only and actual_names != expected_names:
-        raise ValueError("Rendered v2 prompt file set does not match the frozen task set")
+        raise ValueError(f"Rendered prompt file set in {rendered_dir} does not match the frozen task set")
     for task_id, content in rendered.items():
-        path = RENDERED_DIR / f"{task_id}.txt"
+        path = rendered_dir / f"{task_id}.txt"
         if path.exists():
             if path.read_bytes() != content:
                 raise ValueError(f"Refusing to overwrite changed frozen prompt: {path}")
@@ -88,16 +97,20 @@ def write_or_verify(rendered: dict[str, bytes], *, check_only: bool) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Render or verify frozen v2 API prompts")
+    parser.add_argument("--template", type=Path, default=DEFAULT_TEMPLATE_PATH, help="Template path")
+    parser.add_argument("--output-dir", type=Path, default=DEFAULT_RENDERED_DIR, help="Rendered prompts directory")
     parser.add_argument("--check", action="store_true", help="Verify existing files without writing")
     args = parser.parse_args()
+    template_path = args.template.resolve()
+    output_dir = args.output_dir.resolve()
     try:
-        rendered = expected_rendered()
-        write_or_verify(rendered, check_only=args.check)
+        rendered = expected_rendered(template_path)
+        write_or_verify(rendered, check_only=args.check, rendered_dir=output_dir)
     except (OSError, ValueError, json.JSONDecodeError) as error:
         print(f"FAIL: {error}", file=sys.stderr)
         return 1
     action = "Verified" if args.check else "Rendered"
-    print(f"{action} {len(rendered)} frozen prompts in {RENDERED_DIR.relative_to(ROOT)}")
+    print(f"{action} {len(rendered)} frozen prompts in {output_dir.relative_to(ROOT)}")
     return 0
 
 

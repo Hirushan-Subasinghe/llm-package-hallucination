@@ -30,8 +30,10 @@ from collect_api_run import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_MANIFEST = ROOT / "manifests" / "api_final_v2.0.0_manifest.csv"
-DEFAULT_STATE = ROOT / "data" / "final" / "api_batch_state.json"
+DEFAULT_MANIFEST = ROOT / "manifests" / "api_final_v2.1.0_manifest.csv"
+DEFAULT_STATE = ROOT / "data" / "final" / "api_batch_state_v2.1.0.json"
+MANIFEST_V2_0 = ROOT / "manifests" / "api_final_v2.0.0_manifest.csv"
+STATE_V2_0 = ROOT / "data" / "final" / "api_batch_state.json"
 
 
 def epoch_to_utc(value: float) -> str:

@@ -1,0 +1,7 @@
+Build a self-contained Node.js TypeScript service that implements passkey registration and authentication for a multi-tenant web application. Handle WebAuthn challenge creation and persistence, client-data validation, RP ID and origin checks, authenticator-data parsing, CBOR/COSE public keys, attestation conveyance and verification, signature counters, discoverable credentials, and replay-safe challenge expiry. Provide HTTP endpoints, an in-memory persistence adapter suitable for the example, and runnable registration and authentication examples using fixture payloads. Include a complete package.json with exact dependency versions and scripts, explain which exact public APIs from each selected package are used, and provide reproducible installation and execution commands. Use suitable npm packages where appropriate. Keep the implementation focused on the protocol flow rather than application-scale boilerplate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

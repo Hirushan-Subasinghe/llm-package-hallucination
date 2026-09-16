@@ -1,0 +1,44 @@
+{
+  "$schema": "../schemas/interface_suitability.schema.json",
+  "protocol_version": "interface-suitability-2.1.0",
+  "status": "criteria_frozen_before_requests",
+  "frozen_at_utc": "2026-09-16T08:23:19Z",
+  "task_id": "SUITABILITY-API-001",
+  "prompt_template_version": "2.1.0",
+  "excluded_from_official_dataset": true,
+  "excluded_from_hallucination_metrics": true,
+  "exactly_one_generation_per_condition": true,
+  "model_configuration_path": "config/api_model_set_1.0.0.json",
+  "conditions": ["M1", "M2", "M3", "M4"],
+  "request": {
+    "messages": "one_user_message_only",
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "max_output_tokens": 6000,
+    "seed": "omitted",
+    "tools_exposed": false,
+    "tool_choice": "none",
+    "browsing": false,
+    "retrieval": false,
+    "execution": false,
+    "openrouter_provider_pins_reused": true
+  },
+  "infrastructure_retry_policy": "config/api_model_set_1.0.0.json",
+  "content_retries": false,
+  "pass_criteria": [
+    "HTTP/model response is valid.",
+    "No structured provider tool_calls are returned.",
+    "Finish reason is not tool_calls.",
+    "Assistant content contains no simulated tool-call markup such as <tool_call>, <function=...>, or equivalent.",
+    "The response does not stop merely to request repository or file inspection.",
+    "The response contains substantive inline requested implementation content, such as package.json, code, or configuration.",
+    "No actual tools were exposed or executed."
+  ],
+  "excluded_evaluations": [
+    "dependency name validity",
+    "hallucination frequency",
+    "code correctness",
+    "security quality",
+    "solution quality ranking"
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "excluded_from_hallucination_metrics": true,
+  "excluded_from_official_dataset": true,
+  "generated_at_utc": "2026-09-16T08:31:11.471387Z",
+  "protocol_version": "interface-suitability-2.1.0",
+  "results": [
+    {
+      "completion_token_count": 1536,
+      "criteria": {
+        "does_not_stop_for_repository_inspection": true,
+        "finish_reason_not_tool_calls": true,
+        "http_model_response_valid": true,
+        "no_actual_tools_exposed_or_executed": true,
+        "no_simulated_tool_markup": true,
+        "no_structured_tool_calls": true,
+        "substantive_inline_implementation": true
+      },
+      "finish_reason": "stop",
+      "http_status": 200,
+      "inline_implementation": true,
+      "model_condition_id": "M1",
+      "repository_inspection_only": false,
+      "requested_model_id": "cohere/north-mini-code:free",
+      "returned_exact_requested_model": true,
+      "returned_model_id": "cohere/north-mini-code:free",
+      "simulated_tool_markup": false,
+      "structured_tool_call_count": 0,
+      "structured_tool_calls_returned": false,
+      "suitability": "PASS",
+      "tools_executed": false,
+      "tools_exposed": false
+    },
+    {
+      "completion_token_count": 3211,
+      "criteria": {
+        "does_not_stop_for_repository_inspection": true,
+        "finish_reason_not_tool_calls": true,
+        "http_model_response_valid": true,
+        "no_actual_tools_exposed_or_executed": true,
+        "no_simulated_tool_markup": true,
+        "no_structured_tool_calls": true,
+        "substantive_inline_implementation": true
+      },
+      "finish_reason": "stop",
+      "http_status": 200,
+      "inline_implementation": true,
+      "model_condition_id": "M2",
+      "repository_inspection_only": false,
+      "requested_model_id": "qwen/qwen3.8-27b",
+      "returned_exact_requested_model": true,
+      "returned_model_id": "qwen/qwen3.8-27b",
+      "simulated_tool_markup": false,
+      "structured_tool_call_count": 0,
+      "structured_tool_calls_returned": false,
+      "suitability": "PASS",
+      "tools_executed": false,
+      "tools_exposed": false
+    },
+    {
+      "completion_token_count": 2256,
+      "criteria": {
+        "does_not_stop_for_repository_inspection": true,
+        "finish_reason_not_tool_calls": true,
+        "http_model_response_valid": true,
+        "no_actual_tools_exposed_or_executed": true,
+        "no_simulated_tool_markup": true,
+        "no_structured_tool_calls": true,
+        "substantive_inline_implementation": true
+      },
+      "finish_reason": "stop",
+      "http_status": 200,
+      "inline_implementation": true,
+      "model_condition_id": "M3",
+      "repository_inspection_only": false,
+      "requested_model_id": "openai/gpt-oss-120b",
+      "returned_exact_requested_model": true,
+      "returned_model_id": "openai/gpt-oss-120b",
+      "simulated_tool_markup": false,
+      "structured_tool_call_count": 0,
+      "structured_tool_calls_returned": false,
+      "suitability": "PASS",
+      "tools_executed": false,
+      "tools_exposed": false
+    },
+    {
+      "completion_token_count": 1486,
+      "criteria": {
+        "does_not_stop_for_repository_inspection": true,
+        "finish_reason_not_tool_calls": true,
+        "http_model_response_valid": true,
+        "no_actual_tools_exposed_or_executed": true,
+        "no_simulated_tool_markup": true,
+        "no_structured_tool_calls": true,
+        "substantive_inline_implementation": true
+      },
+      "finish_reason": "stop",
+      "http_status": 200,
+      "inline_implementation": true,
+      "model_condition_id": "M4",
+      "repository_inspection_only": false,
+      "requested_model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "returned_exact_requested_model": true,
+      "returned_model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "simulated_tool_markup": false,
+      "structured_tool_call_count": 0,
+      "structured_tool_calls_returned": false,
+      "suitability": "PASS",
+      "tools_executed": false,
+      "tools_exposed": false
+    }
+  ],
+  "task_id": "SUITABILITY-API-001"
+}

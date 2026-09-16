@@ -1,0 +1,110 @@
+{
+  "api_provider": "OpenRouter",
+  "authorization_scheme": "Bearer (credential omitted)",
+  "collection_status": "completed",
+  "completion_token_count": 1536,
+  "excluded_from_hallucination_metrics": true,
+  "excluded_from_official_dataset": true,
+  "expected_underlying_provider": "Cohere",
+  "finish_reason": "stop",
+  "generation_ended_at_utc": "2026-09-16T08:30:13.820088Z",
+  "generation_started_at_utc": "2026-09-16T08:29:51.520679Z",
+  "http_client": {
+    "http_protocol": "HTTP/1.1",
+    "library": "requests",
+    "proxy_environment": "honored_if_set",
+    "redirects": "disabled",
+    "version": "2.33.1"
+  },
+  "http_status": 200,
+  "interface_assessment": {
+    "criteria": {
+      "does_not_stop_for_repository_inspection": true,
+      "finish_reason_not_tool_calls": true,
+      "http_model_response_valid": true,
+      "no_actual_tools_exposed_or_executed": true,
+      "no_simulated_tool_markup": true,
+      "no_structured_tool_calls": true,
+      "substantive_inline_implementation": true
+    },
+    "inline_implementation": true,
+    "repository_inspection_only": false,
+    "simulated_tool_markup": false,
+    "structured_tool_call_count": 0,
+    "structured_tool_calls_returned": false,
+    "suitability": "PASS"
+  },
+  "model_condition_id": "M1",
+  "phase": "interface_suitability_excluded",
+  "prompt_sha256": "79caba21a28cbbf215ca6656802d63d7a8860bd3229b30d6f3bfd2838ec8c32c",
+  "protocol_version": "interface-suitability-2.1.0",
+  "provider_response_id": "gen-1789547392-lqVTm1AlWxmcKwuW4tyU",
+  "provider_response_sha256": "2720b82a29fca4d3f94a0a4ecbc543a5dad50c5863ff160f0c86571e73dff75b",
+  "provider_response_size_bytes": 10646,
+  "request_message_count": 1,
+  "request_sha256": "015fb0d4f99a826697f532989e36c35a21c1a1226097d6ee0c10e8b6ce7b8a22",
+  "requested_model_id": "cohere/north-mini-code:free",
+  "resolved_underlying_provider": "Cohere",
+  "response_sha256": "41c91c3d37a10f481be6d07aaaaad396867bb4642b77a79a84d3a7832ef6e47e",
+  "response_size_bytes": 3127,
+  "response_token_metadata": {
+    "reasoning_tokens": 731,
+    "total_completion_tokens": 1536,
+    "visible_response_tokens": null
+  },
+  "retry_history": [
+    {
+      "attempt_number": 1,
+      "ended_at_utc": "2026-09-16T08:30:13.819206Z",
+      "http_status": 200,
+      "outcome": "http_response",
+      "response_sha256": "2720b82a29fca4d3f94a0a4ecbc543a5dad50c5863ff160f0c86571e73dff75b",
+      "started_at_utc": "2026-09-16T08:29:51.520862Z"
+    }
+  ],
+  "returned_exact_requested_model": true,
+  "returned_model_id": "cohere/north-mini-code:free",
+  "run_id": "SUITABILITY-API-001-M1",
+  "safe_response_headers": {
+    "content-type": "application/json",
+    "date": "Wed, 16 Sep 2026 08:29:52 GMT"
+  },
+  "sampling_parameters": {
+    "max_output_tokens": 6000,
+    "seed": "omitted",
+    "temperature": 0.6,
+    "top_p": 0.95
+  },
+  "stable_request_headers": {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "User-Agent": "ai-hallucination-study/1.0"
+  },
+  "task_id": "SUITABILITY-API-001",
+  "token_usage": {
+    "completion_tokens": 1536,
+    "completion_tokens_details": {
+      "audio_tokens": 0,
+      "image_tokens": 0,
+      "reasoning_tokens": 731
+    },
+    "cost": 0,
+    "cost_details": {
+      "upstream_inference_completions_cost": 0,
+      "upstream_inference_cost": 0,
+      "upstream_inference_prompt_cost": 0
+    },
+    "is_byok": false,
+    "prompt_tokens": 146,
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "video_tokens": 0
+    },
+    "total_tokens": 1682
+  },
+  "tool_choice": "none",
+  "tools_executed": false,
+  "tools_exposed": false
+}

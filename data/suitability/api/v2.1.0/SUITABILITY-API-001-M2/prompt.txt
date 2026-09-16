@@ -1,0 +1,7 @@
+Build a small self-contained Node.js TypeScript HTTP application with a GET /health endpoint that returns JSON and a POST /greet endpoint that accepts a JSON name and returns a greeting. Include a complete package.json with exact dependency versions, one or two source files, any necessary TypeScript configuration, and reproducible installation and run commands.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

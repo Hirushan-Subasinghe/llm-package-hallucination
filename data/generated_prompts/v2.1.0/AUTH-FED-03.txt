@@ -1,0 +1,7 @@
+Create a self-contained Node.js TypeScript resource server and demonstration client for OAuth 2.0 Demonstrating Proof of Possession. The client must create an asymmetric key, produce DPoP proof JWTs with htm, htu, iat, jti, and public JWK claims, handle a server nonce challenge, and bind an access token to the JWK thumbprint. The resource server must validate the access token, DPoP signature and thumbprint, URI and method binding, clock window, nonce, and replay protection. Include one successful and several rejected example requests. Include a complete package.json with exact dependency versions and scripts, name the exact selected-package APIs used, and provide reproducible installation and execution commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

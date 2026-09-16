@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "interface_suitability.schema.json",
+  "title": "Excluded API interface-suitability protocol",
+  "type": "object",
+  "required": [
+    "protocol_version",
+    "status",
+    "frozen_at_utc",
+    "task_id",
+    "excluded_from_official_dataset",
+    "conditions",
+    "request",
+    "pass_criteria",
+    "excluded_evaluations"
+  ],
+  "properties": {
+    "protocol_version": {"const": "interface-suitability-2.1.0"},
+    "status": {"const": "criteria_frozen_before_requests"},
+    "frozen_at_utc": {"type": "string", "format": "date-time"},
+    "task_id": {"const": "SUITABILITY-API-001"},
+    "excluded_from_official_dataset": {"const": true},
+    "excluded_from_hallucination_metrics": {"const": true},
+    "exactly_one_generation_per_condition": {"const": true},
+    "conditions": {
+      "const": ["M1", "M2", "M3", "M4"]
+    },
+    "request": {
+      "type": "object",
+      "required": ["temperature", "top_p", "max_output_tokens", "seed", "tools_exposed", "tool_choice"],
+      "properties": {
+        "temperature": {"const": 0.6},
+        "top_p": {"const": 0.95},
+        "max_output_tokens": {"const": 6000},
+        "seed": {"const": "omitted"},
+        "tools_exposed": {"const": false},
+        "tool_choice": {"const": "none"}
+      }
+    },
+    "pass_criteria": {"type": "array", "minItems": 7, "maxItems": 7},
+    "excluded_evaluations": {"type": "array", "minItems": 5, "maxItems": 5}
+  },
+  "additionalProperties": true
+}

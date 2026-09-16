@@ -1,0 +1,104 @@
+{
+  "api_provider": "Groq",
+  "authorization_scheme": "Bearer (credential omitted)",
+  "collection_status": "completed",
+  "completion_token_count": 3211,
+  "excluded_from_hallucination_metrics": true,
+  "excluded_from_official_dataset": true,
+  "expected_underlying_provider": null,
+  "finish_reason": "stop",
+  "generation_ended_at_utc": "2026-09-16T08:30:20.888864Z",
+  "generation_started_at_utc": "2026-09-16T08:30:13.821024Z",
+  "http_client": {
+    "http_protocol": "HTTP/1.1",
+    "library": "requests",
+    "proxy_environment": "honored_if_set",
+    "redirects": "disabled",
+    "version": "2.33.1"
+  },
+  "http_status": 200,
+  "interface_assessment": {
+    "criteria": {
+      "does_not_stop_for_repository_inspection": true,
+      "finish_reason_not_tool_calls": true,
+      "http_model_response_valid": true,
+      "no_actual_tools_exposed_or_executed": true,
+      "no_simulated_tool_markup": true,
+      "no_structured_tool_calls": true,
+      "substantive_inline_implementation": true
+    },
+    "inline_implementation": true,
+    "repository_inspection_only": false,
+    "simulated_tool_markup": false,
+    "structured_tool_call_count": 0,
+    "structured_tool_calls_returned": false,
+    "suitability": "PASS"
+  },
+  "model_condition_id": "M2",
+  "phase": "interface_suitability_excluded",
+  "prompt_sha256": "79caba21a28cbbf215ca6656802d63d7a8860bd3229b30d6f3bfd2838ec8c32c",
+  "protocol_version": "interface-suitability-2.1.0",
+  "provider_response_id": "chatcmpl-c1bb4dee-e790-4dbe-8d4c-45719ccad6a5",
+  "provider_response_sha256": "9aea034e35a07dff9702797970ee1d46534ad9a618604e75de3729516a22113b",
+  "provider_response_size_bytes": 12415,
+  "request_message_count": 1,
+  "request_sha256": "530f597bf02e7222ecbe7d54ba78f8d39bedfba80f1d16c1b51de18ead6c9f78",
+  "requested_model_id": "qwen/qwen3.8-27b",
+  "resolved_underlying_provider": "Groq",
+  "response_sha256": "88293bbcee931810bda257457ae95c902728da79542c701edefd5702d2f26dd2",
+  "response_size_bytes": 10953,
+  "response_token_metadata": {
+    "reasoning_tokens": null,
+    "total_completion_tokens": 3211,
+    "visible_response_tokens": null
+  },
+  "retry_history": [
+    {
+      "attempt_number": 1,
+      "ended_at_utc": "2026-09-16T08:30:20.887476Z",
+      "http_status": 200,
+      "outcome": "http_response",
+      "response_sha256": "9aea034e35a07dff9702797970ee1d46534ad9a618604e75de3729516a22113b",
+      "started_at_utc": "2026-09-16T08:30:13.821189Z"
+    }
+  ],
+  "returned_exact_requested_model": true,
+  "returned_model_id": "qwen/qwen3.8-27b",
+  "run_id": "SUITABILITY-API-001-M2",
+  "safe_response_headers": {
+    "content-type": "application/json",
+    "date": "Wed, 16 Sep 2026 08:30:20 GMT",
+    "x-groq-region": "bom",
+    "x-ratelimit-limit-requests": "1000",
+    "x-ratelimit-limit-tokens": "8000",
+    "x-ratelimit-remaining-requests": "999",
+    "x-ratelimit-remaining-tokens": "7531",
+    "x-ratelimit-reset-requests": "1m26.4s",
+    "x-ratelimit-reset-tokens": "3.517s",
+    "x-request-id": "req_01m2mnd0r5exxrzjng5rm6asba"
+  },
+  "sampling_parameters": {
+    "max_output_tokens": 6000,
+    "seed": "omitted",
+    "temperature": 0.6,
+    "top_p": 0.95
+  },
+  "stable_request_headers": {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "User-Agent": "ai-hallucination-study/1.0"
+  },
+  "task_id": "SUITABILITY-API-001",
+  "token_usage": {
+    "completion_time": 6.418794522,
+    "completion_tokens": 3211,
+    "prompt_time": 0.01152965,
+    "prompt_tokens": 160,
+    "queue_time": 0.05294585,
+    "total_time": 6.430324172,
+    "total_tokens": 3371
+  },
+  "tool_choice": "none",
+  "tools_executed": false,
+  "tools_exposed": false
+}

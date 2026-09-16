@@ -16,7 +16,14 @@ from render_api_prompts import EXPECTED_TASK_SHA256, RENDERED_DIR, TASKS_PATH, s
 
 
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST_PATH = ROOT / "manifests" / "api_final_v2.0.0_manifest.csv"
+DEFAULT_MANIFEST_PATH = ROOT / "manifests" / "api_final_v2.1.0_manifest.csv"
+DEFAULT_RENDERED_DIR = ROOT / "data" / "generated_prompts" / "v2.1.0"
+DEFAULT_RUN_PREFIX = "API-v2.1"
+MANIFEST_PATH_V2_0 = ROOT / "manifests" / "api_final_v2.0.0_manifest.csv"
+RENDERED_DIR_V2_0 = ROOT / "data" / "generated_prompts" / "v2.0.0"
+RUN_PREFIX_V2_0 = "API"
+
+MANIFEST_PATH = DEFAULT_MANIFEST_PATH
 FIELDS = (
     "collection_order",
     "run_id",
@@ -43,7 +50,12 @@ def load_frozen_tasks() -> list[dict[str, str]]:
     return [json.loads(line) for line in content.decode("utf-8").splitlines() if line.strip()]
 
 
-def make_rows(config: dict, tasks: list[dict[str, str]]) -> list[dict[str, str]]:
+def make_rows(
+    config: dict,
+    tasks: list[dict[str, str]],
+    rendered_dir: Path = DEFAULT_RENDERED_DIR,
+    run_prefix: str = DEFAULT_RUN_PREFIX,
+) -> list[dict[str, str]]:
     if config.get("status") != "frozen_for_collection":
         raise ValueError("Model set must be frozen before manifest creation")
     models = {model["condition_id"]: model for model in config["models"]}
@@ -55,7 +67,7 @@ def make_rows(config: dict, tasks: list[dict[str, str]]) -> list[dict[str, str]]
         for task_position, task in enumerate(tasks):
             rotation = (task_position + repetition_offset) % len(base_order)
             model_order = base_order[rotation:] + base_order[:rotation]
-            prompt_path = RENDERED_DIR / f"{task['task_id']}.txt"
+            prompt_path = rendered_dir / f"{task['task_id']}.txt"
             if not prompt_path.is_file():
                 raise ValueError(f"Rendered prompt is missing: {prompt_path}")
             prompt_hash = hashlib.sha256(prompt_path.read_bytes()).hexdigest()
@@ -65,7 +77,7 @@ def make_rows(config: dict, tasks: list[dict[str, str]]) -> list[dict[str, str]]
                 provider_pin = routing["underlying_provider_slug"] if routing else "not_applicable"
                 rows.append({
                     "collection_order": str(order),
-                    "run_id": f"API-{task['task_id']}-{condition_id}-R{repetition:02d}",
+                    "run_id": f"{run_prefix}-{task['task_id']}-{condition_id}-R{repetition:02d}",
                     "phase": "final",
                     "task_id": task["task_id"],
                     "category": task["category"],
@@ -76,7 +88,7 @@ def make_rows(config: dict, tasks: list[dict[str, str]]) -> list[dict[str, str]]
                     "api_provider": model["api_provider"],
                     "underlying_provider_pin": provider_pin,
                     "run_repetition": f"R{repetition:02d}",
-                    "rendered_prompt_path": str(prompt_path.relative_to(ROOT)),
+                    "rendered_prompt_path": str(prompt_path.resolve().relative_to(ROOT)),
                     "expected_prompt_sha256": prompt_hash,
                     "collection_status": "pending",
                 })
@@ -112,24 +124,34 @@ def csv_bytes(rows: list[dict[str, str]]) -> bytes:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Create or verify the frozen v2 API manifest")
+    parser.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST_PATH, help="Manifest path")
+    parser.add_argument("--rendered-dir", type=Path, default=DEFAULT_RENDERED_DIR, help="Rendered prompts dir")
+    parser.add_argument("--run-prefix", type=str, default=DEFAULT_RUN_PREFIX, help="Run ID prefix")
     parser.add_argument("--check", action="store_true", help="Verify without writing")
     args = parser.parse_args()
+    manifest_path = args.manifest.resolve()
+    rendered_dir = args.rendered_dir.resolve()
     try:
-        rows = make_rows(load_config(DEFAULT_CONFIG), load_frozen_tasks())
+        rows = make_rows(
+            load_config(DEFAULT_CONFIG),
+            load_frozen_tasks(),
+            rendered_dir=rendered_dir,
+            run_prefix=args.run_prefix,
+        )
         content = csv_bytes(rows)
-        if MANIFEST_PATH.exists():
-            if MANIFEST_PATH.read_bytes() != content:
-                raise ValueError("Existing official API manifest differs from deterministic output")
+        if manifest_path.exists():
+            if manifest_path.read_bytes() != content:
+                raise ValueError(f"Existing official API manifest {manifest_path} differs from deterministic output")
         elif args.check:
-            raise ValueError("Official API manifest does not exist")
+            raise ValueError(f"Official API manifest does not exist: {manifest_path}")
         else:
-            MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
-            MANIFEST_PATH.write_bytes(content)
+            manifest_path.parent.mkdir(parents=True, exist_ok=True)
+            manifest_path.write_bytes(content)
     except (OSError, ValueError, json.JSONDecodeError) as error:
         print(f"FAIL: {error}", file=sys.stderr)
         return 1
     action = "Verified" if args.check else "Created"
-    print(f"{action} 360-row manifest at {MANIFEST_PATH.relative_to(ROOT)}")
+    print(f"{action} 360-row manifest at {manifest_path.relative_to(ROOT)}")
     return 0
 
 

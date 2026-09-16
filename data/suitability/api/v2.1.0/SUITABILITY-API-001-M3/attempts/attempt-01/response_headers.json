@@ -1,0 +1,12 @@
+{
+  "content-type": "application/json",
+  "date": "Wed, 16 Sep 2026 08:30:26 GMT",
+  "x-groq-region": "bom",
+  "x-ratelimit-limit-requests": "1000",
+  "x-ratelimit-limit-tokens": "8000",
+  "x-ratelimit-remaining-requests": "999",
+  "x-ratelimit-remaining-tokens": "7456",
+  "x-ratelimit-reset-requests": "1m26.4s",
+  "x-ratelimit-reset-tokens": "4.08s",
+  "x-request-id": "req_01m2mnd7hpe0stcz0ek62dtwz3"
+}

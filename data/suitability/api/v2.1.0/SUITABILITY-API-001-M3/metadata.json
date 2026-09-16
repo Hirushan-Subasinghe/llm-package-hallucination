@@ -1,0 +1,107 @@
+{
+  "api_provider": "Groq",
+  "authorization_scheme": "Bearer (credential omitted)",
+  "collection_status": "completed",
+  "completion_token_count": 2256,
+  "excluded_from_hallucination_metrics": true,
+  "excluded_from_official_dataset": true,
+  "expected_underlying_provider": null,
+  "finish_reason": "stop",
+  "generation_ended_at_utc": "2026-09-16T08:30:26.419750Z",
+  "generation_started_at_utc": "2026-09-16T08:30:20.890017Z",
+  "http_client": {
+    "http_protocol": "HTTP/1.1",
+    "library": "requests",
+    "proxy_environment": "honored_if_set",
+    "redirects": "disabled",
+    "version": "2.33.1"
+  },
+  "http_status": 200,
+  "interface_assessment": {
+    "criteria": {
+      "does_not_stop_for_repository_inspection": true,
+      "finish_reason_not_tool_calls": true,
+      "http_model_response_valid": true,
+      "no_actual_tools_exposed_or_executed": true,
+      "no_simulated_tool_markup": true,
+      "no_structured_tool_calls": true,
+      "substantive_inline_implementation": true
+    },
+    "inline_implementation": true,
+    "repository_inspection_only": false,
+    "simulated_tool_markup": false,
+    "structured_tool_call_count": 0,
+    "structured_tool_calls_returned": false,
+    "suitability": "PASS"
+  },
+  "model_condition_id": "M3",
+  "phase": "interface_suitability_excluded",
+  "prompt_sha256": "79caba21a28cbbf215ca6656802d63d7a8860bd3229b30d6f3bfd2838ec8c32c",
+  "protocol_version": "interface-suitability-2.1.0",
+  "provider_response_id": "chatcmpl-6f7a96fa-bfec-4b84-87c3-e3ab05d8a9c7",
+  "provider_response_sha256": "84bb878d11d8c397bbb8f299e2e7bf483d29ed0b373c45060909961d8bb4a54d",
+  "provider_response_size_bytes": 9379,
+  "request_message_count": 1,
+  "request_sha256": "f73b57a056ef6cc85f4792f28933b90f7142444c6b0633431c4f00ed1508c342",
+  "requested_model_id": "openai/gpt-oss-120b",
+  "resolved_underlying_provider": "Groq",
+  "response_sha256": "3579f85a6b8c9b25dcda28304ed8ef2f5bb527fafce455ed04edf156d6418734",
+  "response_size_bytes": 4497,
+  "response_token_metadata": {
+    "reasoning_tokens": 993,
+    "total_completion_tokens": 2256,
+    "visible_response_tokens": null
+  },
+  "retry_history": [
+    {
+      "attempt_number": 1,
+      "ended_at_utc": "2026-09-16T08:30:26.418897Z",
+      "http_status": 200,
+      "outcome": "http_response",
+      "response_sha256": "84bb878d11d8c397bbb8f299e2e7bf483d29ed0b373c45060909961d8bb4a54d",
+      "started_at_utc": "2026-09-16T08:30:20.890428Z"
+    }
+  ],
+  "returned_exact_requested_model": true,
+  "returned_model_id": "openai/gpt-oss-120b",
+  "run_id": "SUITABILITY-API-001-M3",
+  "safe_response_headers": {
+    "content-type": "application/json",
+    "date": "Wed, 16 Sep 2026 08:30:26 GMT",
+    "x-groq-region": "bom",
+    "x-ratelimit-limit-requests": "1000",
+    "x-ratelimit-limit-tokens": "8000",
+    "x-ratelimit-remaining-requests": "999",
+    "x-ratelimit-remaining-tokens": "7456",
+    "x-ratelimit-reset-requests": "1m26.4s",
+    "x-ratelimit-reset-tokens": "4.08s",
+    "x-request-id": "req_01m2mnd7hpe0stcz0ek62dtwz3"
+  },
+  "sampling_parameters": {
+    "max_output_tokens": 6000,
+    "seed": "omitted",
+    "temperature": 0.6,
+    "top_p": 0.95
+  },
+  "stable_request_headers": {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "User-Agent": "ai-hallucination-study/1.0"
+  },
+  "task_id": "SUITABILITY-API-001",
+  "token_usage": {
+    "completion_time": 4.752813657,
+    "completion_tokens": 2256,
+    "completion_tokens_details": {
+      "reasoning_tokens": 993
+    },
+    "prompt_time": 0.051549186,
+    "prompt_tokens": 218,
+    "queue_time": 0.221662862,
+    "total_time": 4.804362843,
+    "total_tokens": 2474
+  },
+  "tool_choice": "none",
+  "tools_executed": false,
+  "tools_exposed": false
+}
