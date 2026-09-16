@@ -16,9 +16,12 @@ from render_api_prompts import EXPECTED_TASK_SHA256, RENDERED_DIR, TASKS_PATH, s
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_MANIFEST_PATH = ROOT / "manifests" / "api_final_v2.1.0_manifest.csv"
-DEFAULT_RENDERED_DIR = ROOT / "data" / "generated_prompts" / "v2.1.0"
-DEFAULT_RUN_PREFIX = "API-v2.1"
+DEFAULT_MANIFEST_PATH = ROOT / "manifests" / "api_final_v2.2.0_manifest.csv"
+DEFAULT_RENDERED_DIR = ROOT / "data" / "generated_prompts" / "v2.2.0"
+DEFAULT_RUN_PREFIX = "API-v2.2"
+MANIFEST_PATH_V2_1 = ROOT / "manifests" / "api_final_v2.1.0_manifest.csv"
+RENDERED_DIR_V2_1 = ROOT / "data" / "generated_prompts" / "v2.1.0"
+RUN_PREFIX_V2_1 = "API-v2.1"
 MANIFEST_PATH_V2_0 = ROOT / "manifests" / "api_final_v2.0.0_manifest.csv"
 RENDERED_DIR_V2_0 = ROOT / "data" / "generated_prompts" / "v2.0.0"
 RUN_PREFIX_V2_0 = "API"

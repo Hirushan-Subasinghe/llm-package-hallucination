@@ -1,5 +1,7 @@
 import copy
+import hashlib
 import json
+import os
 import sys
 import tempfile
 import unittest
@@ -10,7 +12,9 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
+import collect_api_batch
 import collect_api_run
+import create_api_manifest
 
 
 class APICollectionTests(unittest.TestCase):
@@ -21,22 +25,22 @@ class APICollectionTests(unittest.TestCase):
         self.config = copy.deepcopy(self.config)
         self.config["status"] = "frozen_for_collection"
         self.config["candidate_common_parameters"]["compatibility_status"] = "confirmed"
-        self.prompt_path = ROOT / "data" / "generated_prompts" / "v1.0.0" / "AUTH-01.txt"
+        self.prompt_path = ROOT / "data" / "generated_prompts" / "v2.2.0" / "AUTH-FED-01.txt"
 
     def tearDown(self):
         self.temporary.cleanup()
 
-    def row(self, condition_id="M3"):
+    def row(self, condition_id="M3", run_prefix="API-v2.2"):
         model = next(model for model in self.config["models"] if model["condition_id"] == condition_id)
         prompt = self.prompt_path.read_bytes()
         return {
             "collection_order": "1",
-            "run_id": f"V2-AUTH-FED-01-{condition_id}-R01",
+            "run_id": f"{run_prefix}-AUTH-FED-01-{condition_id}-R01",
             "phase": "final",
             "task_id": "AUTH-FED-01",
             "category": "AUTH-FED",
             "task_set_version": "final-2.0.0",
-            "model_set_version": "api-model-set-1.0.0",
+            "model_set_version": self.config["model_set_version"],
             "model_condition_id": condition_id,
             "model_id": model["model_id"],
             "api_provider": model["api_provider"],
@@ -45,7 +49,7 @@ class APICollectionTests(unittest.TestCase):
                 if model["api_provider"] == "OpenRouter"
                 else "not_applicable"
             ),
-            "run_repetition": "1",
+            "run_repetition": "R01",
             "rendered_prompt_path": str(self.prompt_path.relative_to(ROOT)),
             "expected_prompt_sha256": collect_api_run.sha256_bytes(prompt),
             "collection_status": "pending",
@@ -109,7 +113,7 @@ class APICollectionTests(unittest.TestCase):
         self.assertEqual(payload["messages"], [{"role": "user", "content": self.prompt_path.read_text()}])
         self.assertEqual(payload["temperature"], 0.6)
         self.assertEqual(payload["top_p"], 0.95)
-        self.assertEqual(payload["max_completion_tokens"], 6000)
+        self.assertEqual(payload["max_completion_tokens"], 12000)
         self.assertEqual(payload["tool_choice"], "none")
         self.assertNotIn("tools", payload)
         self.assertNotIn("seed", payload)
@@ -119,6 +123,7 @@ class APICollectionTests(unittest.TestCase):
         self.assertEqual(metadata["http_client"]["library"], "requests")
         self.assertEqual(metadata["stable_request_headers"], collect_api_run.STABLE_REQUEST_HEADERS)
         self.assertEqual(metadata["safe_response_headers"], {"x-request-id": "request-1"})
+        self.assertEqual(metadata["sampling_parameters"]["max_output_tokens"], 12000)
         for path in directory.rglob("*"):
             if path.is_file():
                 self.assertNotIn(b"test-only-secret", path.read_bytes())
@@ -154,9 +159,9 @@ class APICollectionTests(unittest.TestCase):
             "choices": [{"message": {"role": "assistant", "content": ""}, "finish_reason": "length"}],
             "usage": {
                 "prompt_tokens": 10,
-                "completion_tokens": 6000,
-                "total_tokens": 6010,
-                "completion_tokens_details": {"reasoning_tokens": 5999},
+                "completion_tokens": 12000,
+                "total_tokens": 12010,
+                "completion_tokens_details": {"reasoning_tokens": 11999},
             },
         }
 
@@ -179,8 +184,8 @@ class APICollectionTests(unittest.TestCase):
         self.assertEqual(metadata["response_completion_status"], "TRUNCATED")
         self.assertEqual(metadata["finish_reason"], "length")
         self.assertEqual(metadata["response_token_metadata"], {
-            "total_completion_tokens": 6000,
-            "reasoning_tokens": 5999,
+            "total_completion_tokens": 12000,
+            "reasoning_tokens": 11999,
             "visible_response_tokens": None,
         })
         self.assertEqual(len(metadata["retry_history"]), 1)
@@ -250,6 +255,7 @@ class APICollectionTests(unittest.TestCase):
         self.assertEqual(payload["provider"]["order"], ["reviewed-provider-slug"])
         self.assertFalse(payload["provider"]["allow_fallbacks"])
         self.assertTrue(payload["provider"]["require_parameters"])
+        self.assertEqual(payload["max_tokens"], 12000)
 
     def test_only_infrastructure_failures_retry_and_every_attempt_is_logged(self):
         row = self.row()
@@ -326,6 +332,138 @@ class APICollectionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "overwrite"):
             collect_api_run.collect_row(self.config, row, raw_root=self.raw_root)
         self.assertEqual((directory / "sentinel").read_text(), "keep")
+
+    def test_missing_api_key_does_not_advance_provider_pacing(self):
+        row = self.row("M2")  # Groq model
+        state_path = Path(self.temporary.name) / "test_state.json"
+        manifest_hash = "mock_hash"
+
+        # Ensure GROQ_API_KEY is not set
+        with patch.dict("os.environ", {}, clear=True):
+            with self.assertRaisesRegex(ValueError, "Required environment variable is not set: GROQ_API_KEY"):
+                collect_api_batch.run_batch(
+                    self.config,
+                    [row],
+                    manifest_hash=manifest_hash,
+                    state_path=state_path,
+                    raw_root=self.raw_root,
+                    now=lambda: 1000.0,
+                )
+
+        # Verify state was never mutated with a reservation
+        if state_path.exists():
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            self.assertNotIn("Groq", state.get("provider_next_allowed_at_epoch", {}))
+            events = state.get("events", [])
+            self.assertFalse(any(event.get("event") == "request_slot_reserved" for event in events))
+
+    def test_local_validation_failure_does_not_advance_provider_pacing(self):
+        row = self.row("M2")
+        row["expected_prompt_sha256"] = "0000000000000000000000000000000000000000000000000000000000000000"
+        state_path = Path(self.temporary.name) / "test_state.json"
+        manifest_hash = "mock_hash"
+
+        with patch.dict("os.environ", {"GROQ_API_KEY": "test-key"}, clear=False):
+            with self.assertRaisesRegex(ValueError, "Rendered prompt hash does not match manifest"):
+                collect_api_batch.run_batch(
+                    self.config,
+                    [row],
+                    manifest_hash=manifest_hash,
+                    state_path=state_path,
+                    raw_root=self.raw_root,
+                    now=lambda: 1000.0,
+                )
+
+        if state_path.exists():
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+            self.assertNotIn("Groq", state.get("provider_next_allowed_at_epoch", {}))
+            events = state.get("events", [])
+            self.assertFalse(any(event.get("event") == "request_slot_reserved" for event in events))
+
+    def test_actual_http_transmission_attempt_reserves_pacing(self):
+        row = self.row("M2")
+        state_path = Path(self.temporary.name) / "test_state.json"
+        manifest_hash = "mock_hash"
+        now_time = 1000.0
+        called = []
+
+        def mock_collector(cfg, r, raw_root):
+            called.append(r["run_id"])
+            out_dir = raw_root / r["run_id"]
+            out_dir.mkdir(parents=True)
+            return out_dir
+
+        with patch.dict("os.environ", {"GROQ_API_KEY": "test-key"}, clear=False):
+            result = collect_api_batch.run_batch(
+                self.config,
+                [row],
+                manifest_hash=manifest_hash,
+                state_path=state_path,
+                raw_root=self.raw_root,
+                now=lambda: now_time,
+                collector=mock_collector,
+            )
+
+        self.assertEqual(called, [row["run_id"]])
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        groq_interval = self.config["batch_pacing"]["minimum_seconds_between_groq_requests"]
+        self.assertEqual(state["provider_next_allowed_at_epoch"]["Groq"], now_time + groq_interval)
+        events = state["events"]
+        reservation_events = [e for e in events if e.get("event") == "request_slot_reserved"]
+        self.assertEqual(len(reservation_events), 1)
+        self.assertEqual(reservation_events[0]["run_id"], row["run_id"])
+        self.assertEqual(reservation_events[0]["api_provider"], "Groq")
+
+    def test_completed_and_truncated_preserved_runs_are_skipped(self):
+        row_completed = self.row("M1")
+        row_completed["run_id"] = "API-v2.2-AUTH-FED-01-M1-R01"
+        row_completed["collection_order"] = "1"
+        row_truncated = self.row("M2")
+        row_truncated["run_id"] = "API-v2.2-AUTH-FED-01-M2-R01"
+        row_truncated["collection_order"] = "2"
+
+        # Create preserved directories
+        dir1 = self.raw_root / row_completed["run_id"]
+        dir1.mkdir(parents=True)
+        (dir1 / "metadata.json").write_text(json.dumps({"collection_status": "completed"}), encoding="utf-8")
+
+        dir2 = self.raw_root / row_truncated["run_id"]
+        dir2.mkdir(parents=True)
+        (dir2 / "metadata.json").write_text(json.dumps({"collection_status": "truncated"}), encoding="utf-8")
+
+        state_path = Path(self.temporary.name) / "test_state.json"
+        manifest_hash = "mock_hash"
+        called = []
+
+        collect_api_batch.run_batch(
+            self.config,
+            [row_completed, row_truncated],
+            manifest_hash=manifest_hash,
+            state_path=state_path,
+            raw_root=self.raw_root,
+            limit=2,
+            collector=lambda *args, **kwargs: called.append(args),
+        )
+
+        self.assertEqual(called, [])
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        skipped = [e for e in state["events"] if e.get("event") == "skipped_preserved_observation"]
+        self.assertEqual(len(skipped), 2)
+        self.assertEqual(skipped[0]["status"], "completed")
+        self.assertEqual(skipped[1]["status"], "truncated")
+
+    def test_v2_1_observations_are_never_regenerated_by_v2_2(self):
+        # Verify that v2.2 manifest has no v2.1 run IDs
+        rows_v2_2 = create_api_manifest.make_rows(
+            self.config,
+            create_api_manifest.load_frozen_tasks(),
+            rendered_dir=create_api_manifest.DEFAULT_RENDERED_DIR,
+            run_prefix="API-v2.2",
+        )
+        for row in rows_v2_2:
+            self.assertTrue(row["run_id"].startswith("API-v2.2-"))
+            self.assertFalse(row["run_id"].startswith("API-v2.1-"))
+            self.assertFalse(row["run_id"].startswith("API-AUTH-"))
 
 
 if __name__ == "__main__":

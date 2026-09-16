@@ -1,0 +1,108 @@
+{
+  "$schema": "../schemas/api_model_set.schema.json",
+  "model_set_version": "api-model-set-1.1.0",
+  "status": "frozen_for_collection",
+  "frozen_at_utc": "2026-09-16T06:06:16Z",
+  "final_preflight_timestamp_utc": "2026-09-16T06:05:24.433082Z",
+  "task_set_sha256": "ef0aff59f8a3934f65379d34036848652b7b5593f595ffa4b449a15af021546b",
+  "comparison_unit": "frozen_model_api_condition",
+  "task_set_version": "final-2.0.0",
+  "interaction_protocol": {
+    "messages": "one_user_message_only",
+    "fresh_request_per_generation": true,
+    "previous_context": false,
+    "tools_exposed": false,
+    "browsing": false,
+    "retrieval_augmentation": false,
+    "code_execution": false,
+    "external_files": false
+  },
+  "candidate_common_parameters": {
+    "temperature": 0.6,
+    "top_p": 0.95,
+    "max_output_tokens": 12000,
+    "seed": "not_controlled",
+    "compatibility_status": "confirmed"
+  },
+  "retry_policy": {
+    "maximum_infrastructure_retries": 3,
+    "backoff_seconds": [2, 5, 10],
+    "retryable_http_statuses": [429],
+    "retry_server_errors": true,
+    "retry_transport_errors": true,
+    "content_retries": false
+  },
+  "batch_pacing": {
+    "sequential_requests_only": true,
+    "minimum_seconds_between_openrouter_requests": 1800,
+    "minimum_seconds_between_groq_requests": 2700,
+    "obey_retry_after": true,
+    "sampling_parameters_may_change_for_rate_limits": false
+  },
+  "models": [
+    {
+      "condition_id": "M1",
+      "api_provider": "OpenRouter",
+      "api_base_url": "https://openrouter.ai/api/v1",
+      "api_key_environment_variable": "OPENROUTER_API_KEY",
+      "model_id": "cohere/north-mini-code:free",
+      "model_family": "Cohere North Mini Code",
+      "provider_model_status_at_freeze": "free_endpoint",
+      "underlying_endpoint_id": "cohere/north-mini-code-20260617:free",
+      "output_token_parameter": "max_tokens",
+      "no_tools_request_mode": "explicit_tool_choice_none",
+      "openrouter_routing": {
+        "pinning_status": "pinned",
+        "underlying_provider_slug": "cohere",
+        "underlying_provider_name": "Cohere",
+        "allow_fallbacks": false,
+        "require_parameters": true,
+        "allow_unpinned_after_documented_decision": false
+      }
+    },
+    {
+      "condition_id": "M2",
+      "api_provider": "Groq",
+      "api_base_url": "https://api.groq.com/openai/v1",
+      "api_key_environment_variable": "GROQ_API_KEY",
+      "model_id": "qwen/qwen3.8-27b",
+      "model_family": "Qwen 3.8 27B",
+      "provider_model_status_at_freeze": "preview",
+      "provider_owner": "Alibaba Cloud",
+      "output_token_parameter": "max_completion_tokens",
+      "no_tools_request_mode": "explicit_tool_choice_none"
+    },
+    {
+      "condition_id": "M3",
+      "api_provider": "Groq",
+      "api_base_url": "https://api.groq.com/openai/v1",
+      "api_key_environment_variable": "GROQ_API_KEY",
+      "model_id": "openai/gpt-oss-120b",
+      "model_family": "GPT-OSS-120B",
+      "provider_model_status_at_freeze": "production",
+      "provider_owner": "OpenAI",
+      "output_token_parameter": "max_completion_tokens",
+      "no_tools_request_mode": "explicit_tool_choice_none"
+    },
+    {
+      "condition_id": "M4",
+      "api_provider": "OpenRouter",
+      "api_base_url": "https://openrouter.ai/api/v1",
+      "api_key_environment_variable": "OPENROUTER_API_KEY",
+      "model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "model_family": "NVIDIA Nemotron 3 Ultra 550B A55B",
+      "provider_model_status_at_freeze": "free_endpoint",
+      "underlying_endpoint_id": "nvidia/nemotron-3-ultra-550b-a55b-20260604:free",
+      "output_token_parameter": "max_tokens",
+      "no_tools_request_mode": "explicit_tool_choice_none",
+      "openrouter_routing": {
+        "pinning_status": "pinned",
+        "underlying_provider_slug": "nvidia",
+        "underlying_provider_name": "Nvidia",
+        "allow_fallbacks": false,
+        "require_parameters": true,
+        "allow_unpinned_after_documented_decision": false
+      }
+    }
+  ]
+}

@@ -54,7 +54,7 @@ class APIInterfaceSuitabilityTests(unittest.TestCase):
         self.assertTrue(simulated["simulated_tool_markup"])
 
     def test_one_request_uses_frozen_settings_and_preserves_first_valid_response(self):
-        config = copy.deepcopy(collect_api_run.load_config(collect_api_run.DEFAULT_CONFIG))
+        config = copy.deepcopy(collect_api_run.load_config(ROOT / "config" / "api_model_set_1.0.0.json"))
         model = config["models"][2]
         content = "package.json\n```json\n{}\n```\nsrc/index.ts\n```ts\nexport {}\n```"
         response = {

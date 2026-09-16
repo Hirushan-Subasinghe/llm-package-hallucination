@@ -25,7 +25,8 @@ import requests
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_CONFIG = ROOT / "config" / "api_model_set_1.0.0.json"
+DEFAULT_CONFIG = ROOT / "config" / "api_model_set_1.1.0.json"
+CONFIG_V2_0 = ROOT / "config" / "api_model_set_1.0.0.json"
 DEFAULT_RAW_ROOT = ROOT / "data" / "final" / "raw"
 REQUIRED_MANIFEST_FIELDS = {
     "run_id",
@@ -109,7 +110,7 @@ def write_json(path: Path, value: object, *, exclusive: bool = False) -> None:
 
 def load_config(path: Path) -> dict:
     config = json.loads(path.read_text(encoding="utf-8"))
-    if config.get("model_set_version") != "api-model-set-1.0.0":
+    if config.get("model_set_version") not in {"api-model-set-1.0.0", "api-model-set-1.1.0"}:
         raise ValueError("Unexpected model_set_version")
     models = config.get("models")
     if not isinstance(models, list) or len(models) != 4:
@@ -173,8 +174,8 @@ def validate_collection_ready(config: dict, row: dict[str, object], model: dict)
         raise ValueError("This collector scaffold accepts only the future official final phase")
     if row["task_set_version"] != "final-2.0.0":
         raise ValueError("Manifest must use task_set_version final-2.0.0")
-    if row["model_set_version"] != "api-model-set-1.0.0":
-        raise ValueError("Manifest must use model_set_version api-model-set-1.0.0")
+    if row["model_set_version"] not in {"api-model-set-1.0.0", "api-model-set-1.1.0"} or row["model_set_version"] != config["model_set_version"]:
+        raise ValueError("Manifest model_set_version does not match configured model set")
     repetition = parse_repetition(row["run_repetition"])
     if repetition not in (1, 2, 3):
         raise ValueError("Run repetition must be 1, 2, or 3")
@@ -334,6 +335,22 @@ def resolved_openrouter_provider(response: dict) -> str | None:
     return value if isinstance(value, str) else None
 
 
+def validate_local_preconditions(
+    config: dict,
+    row: dict[str, object],
+    *,
+    raw_root: Path = DEFAULT_RAW_ROOT,
+) -> tuple[dict, bytes, str, dict[str, str], bytes]:
+    model = model_for_row(config, row)
+    validate_collection_ready(config, row, model)
+    prompt = prompt_bytes_for_row(row)
+    run_directory = raw_root / str(row["run_id"])
+    if run_directory.exists():
+        raise ValueError("Refusing to overwrite an existing API run directory")
+    url, headers, request_body = build_request(config, model, prompt)
+    return model, prompt, url, headers, request_body
+
+
 def collect_row(
     config: dict,
     row: dict[str, object],
@@ -343,13 +360,8 @@ def collect_row(
     transport: Callable[[str, dict[str, str], bytes, float], HTTPResult] = request_once,
     sleeper: Callable[[float], None] = time.sleep,
 ) -> Path:
-    model = model_for_row(config, row)
-    validate_collection_ready(config, row, model)
-    prompt = prompt_bytes_for_row(row)
+    model, prompt, url, headers, request_body = validate_local_preconditions(config, row, raw_root=raw_root)
     run_directory = raw_root / str(row["run_id"])
-    if run_directory.exists():
-        raise ValueError("Refusing to overwrite an existing API run directory")
-    url, headers, request_body = build_request(config, model, prompt)
     try:
         run_directory.mkdir(parents=True, exist_ok=False)
     except FileExistsError as error:

@@ -26,12 +26,15 @@ from collect_api_run import (
     load_manifest,
     model_for_row,
     utc_now,
+    validate_local_preconditions,
 )
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_MANIFEST = ROOT / "manifests" / "api_final_v2.1.0_manifest.csv"
-DEFAULT_STATE = ROOT / "data" / "final" / "api_batch_state_v2.1.0.json"
+DEFAULT_MANIFEST = ROOT / "manifests" / "api_final_v2.2.0_manifest.csv"
+DEFAULT_STATE = ROOT / "data" / "final" / "api_batch_state_v2.2.0.json"
+MANIFEST_V2_1 = ROOT / "manifests" / "api_final_v2.1.0_manifest.csv"
+STATE_V2_1 = ROOT / "data" / "final" / "api_batch_state_v2.1.0.json"
 MANIFEST_V2_0 = ROOT / "manifests" / "api_final_v2.0.0_manifest.csv"
 STATE_V2_0 = ROOT / "data" / "final" / "api_batch_state.json"
 
@@ -141,6 +144,11 @@ def run_batch(
                 "api_provider": provider,
                 "wait_seconds": wait_seconds,
             }
+
+        # Complete all local pre-transmission validation BEFORE reserving provider pacing slot.
+        # This checks API key existence, model configuration, prompt path/hash, request body construction, and directory checks.
+        validate_local_preconditions(config, row, raw_root=raw_root)
+
         if wait_seconds:
             sleeper(wait_seconds)
             current = now()

@@ -14,13 +14,16 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 TASKS_PATH = ROOT / "prompts" / "tasks" / "final_2.0.0.jsonl"
-DEFAULT_TEMPLATE_PATH = ROOT / "prompts" / "prompt_template_v2.1.0.md"
-DEFAULT_RENDERED_DIR = ROOT / "data" / "generated_prompts" / "v2.1.0"
+DEFAULT_TEMPLATE_PATH = ROOT / "prompts" / "prompt_template_v2.2.0.md"
+DEFAULT_RENDERED_DIR = ROOT / "data" / "generated_prompts" / "v2.2.0"
+TEMPLATE_PATH_V2_1 = ROOT / "prompts" / "prompt_template_v2.1.0.md"
+RENDERED_DIR_V2_1 = ROOT / "data" / "generated_prompts" / "v2.1.0"
 TEMPLATE_PATH = DEFAULT_TEMPLATE_PATH
 RENDERED_DIR = DEFAULT_RENDERED_DIR
 EXPECTED_TASK_SHA256 = "ef0aff59f8a3934f65379d34036848652b7b5593f595ffa4b449a15af021546b"
 EXPECTED_V2_0_TEMPLATE_SHA256 = "32feac40d2269eef6c9eb47cf5ebd41b645ed1e022ca0c31e03d32b0e9af4245"
 EXPECTED_V2_1_TEMPLATE_SHA256 = "8d3971d6f9f86dfd98a4b5c49c0c13d734b7f650744da682225195f2ea49b528"
+EXPECTED_V2_2_TEMPLATE_SHA256 = "8d3971d6f9f86dfd98a4b5c49c0c13d734b7f650744da682225195f2ea49b528"
 CATEGORIES = {"AUTH-FED", "PKI-CRYPTO", "DOC-BINARY", "ENT-INT", "DATA-ADV", "DIST-OBS"}
 FORBIDDEN_TEMPLATE_PATTERNS = (
     r"hallucinat",

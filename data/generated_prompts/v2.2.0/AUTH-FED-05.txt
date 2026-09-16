@@ -1,0 +1,7 @@
+Implement a self-contained Node.js TypeScript federation gateway that accepts JWT access tokens from two independently configured OpenID Connect issuers. Perform discovery and JWKS retrieval, select keys by kid, validate issuer-specific audiences and algorithms, cache keys with bounded freshness, refresh safely on key rotation, and prevent an unknown issuer from controlling a fetch URL. Normalize accepted identities into a common principal while retaining issuer and subject. Include a deterministic local mock of both issuers that demonstrates overlapping key identifiers, rotation, cache expiry, and rejection cases. Include a complete package.json with exact dependency versions and scripts, state the exact library APIs used, and give reproducible installation and execution commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

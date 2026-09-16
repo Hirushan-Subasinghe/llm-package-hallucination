@@ -269,3 +269,196 @@ Each decision record contains the following standardized fields:
 - **impact_on_analysis:** Category comparisons are less likely to be dominated by obvious trivial or extreme task outliers.
 - **affected_research_questions:** RQ1, RQ2
 - **scope_effect:** No numerical difficulty model is introduced.
+
+---
+
+### D014 — Reproducible Codex CLI Pilot Automation
+
+- **decision_id:** D014
+- **date:** 2026-09-15
+- **status:** FINALIZED
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **original_design:** Manual CLI operation using an initialized repository artifact directory as the possible agent workspace, with the transcript treated as the required raw CLI capture.
+- **final_design:** Automate Codex pilot collection using one fresh `codex exec` process per manifest row, exact prompt bytes over stdin, a dedicated clean external `CODEX_HOME`, an external disposable read-only workspace, external output staging, explicit model/configuration pins, and verified feature disables. Preserve `response.md` as the canonical model response and JSONL `transcript.txt` plus `stderr.txt` as separate operational evidence.
+- **rationale:** Automation reduces operator variation and prevents user configuration, repository context, conversation history, and output-copying differences from silently changing the Codex condition.
+- **methodological_justification:** Fixed invocation arguments, prompt hashing, independent processes, append-only preservation, explicit failure states, and no automatic retry improve reproducibility without changing the frozen v1.0.0 prompts or selecting runs based on observed hallucinations.
+- **impact_on_data_collection:** Codex CLI `0.154.0` is pinned to provider `OpenAI`, model `gpt-5.6-sol`, reasoning effort `medium`, service tier `default`, disabled web search, an ephemeral session, read-only sandboxing, ignored user config/rules, and verified disabled optional integrations and execution features. Only pilot Codex rows are enabled initially. Failed evidence is retained but never finalized as successful.
+- **impact_on_analysis:** The canonical dependency-extraction input for Codex is `response.md`; transcripts and stderr remain audit evidence rather than being conflated with the model's final response. Pilot records remain excluded from all final baseline denominators.
+- **affected_research_questions:** RQ1, RQ2, RQ3, RQ4 (collection provenance and validity only; no change to measurement definitions).
+- **scope_effect:** Adds deterministic pilot collection mechanics while keeping manual Web collection, frozen prompts, immutable manifests, downstream npm-only analysis, and the 360-run baseline design unchanged.
+
+---
+
+### D015 — API Model and Dependency-Intensive Task-Set Redesign
+
+- **decision_id:** D015
+- **date:** 2026-09-16
+- **status:** FINALIZED (provider pinning and artifact freeze remain preflight gates)
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **timing:** Decided before official final data generation; no official API dataset existed at the time of redesign.
+- **superseded_design:** The official 360-generation comparison of ChatGPT Web, Gemini Web, Codex CLI, and Antigravity CLI using the v1 general functional task set and mixed manual/CLI collection mechanics.
+- **candidate_design:** Compare M1 OpenRouter `qwen/qwen3-coder:free`, M2 OpenRouter `deepseek/deepseek-r1-0528:free`, M3 Groq `openai/gpt-oss-120b`, and M4 OpenRouter `nvidia/nemotron-3-ultra-550b-a55b:free` under a common stateless API protocol. Use candidate task set `final-2.0.0`, containing 30 dependency-intensive Node.js/npm tasks across six specialized domains with three independent repetitions, for 360 official generations.
+- **rationale:** A common API protocol supports automated generation, reduces manual copy/paste error, preserves exact request and response bytes, improves reproducibility, fixes model identification, and captures consistent generation and routing metadata.
+- **provider_routing_control:** Inspect OpenRouter endpoints before freeze, select and pin one underlying provider per model where the free API permits it, disable fallbacks, and capture the resolved provider for every response. If pinning is unavailable, document and approve the limitation prospectively; never invent provider names or silently conceal changes.
+- **sampling_control:** Candidate temperature 0.6, top-p 0.95, and maximum output tokens 6000 are used only after consistent support is confirmed. Seed is not controlled. No tools, browsing, retrieval, execution, external files, prior context, or model-specific prompt changes are allowed.
+- **retry_control:** Retry only HTTP 429, network/transport failures, or 5xx without a valid response. Preserve every valid response regardless of quality or observed package behavior, and log all infrastructure attempts.
+- **preserved_methodology:** Node.js/npm-only scope; 30 × 4 × 3 sample size; pilot/final separation; immutable raw responses; direct-dependency unit; five primary package classifications; SHR and PHR; analytically separate package version/API/capability categories; and deterministic `risk-model-1.0.0` Impact × Detectability scoring.
+- **historical_preservation:** The repository has no `prompts/tasks/final_1.0.0.jsonl`, and none will be reconstructed. Existing v1 provenance is `prompts/prompts_v1.0.0.json`, `prompts/prompts_v1.0.0.csv`, `prompts/prompt_template_v1.0.0.md`, the 30 files under `data/generated_prompts/v1.0.0/`, and their hashes recorded in the historical manifests. Those artifacts, manifests, pilot data, raw responses, and CLI collection code remain unchanged. Old identifiers are not reused. V2 rendering and manifest generation are deferred until review.
+- **affected_research_questions:** Replaces RQ1–RQ4 with the open-weight model, secondary package-knowledge, specialized-domain comparison, and practical-risk questions stated in the controlling methodology update.
+- **scope_effect:** Changes the comparison conditions and task domains without increasing the official 360-generation total or adding ecosystems, developer studies, mitigation experiments, transitive-dependency analysis, or ML risk scoring.
+
+---
+
+### D016 — API Preflight and Explicit No-Tools Gate
+
+- **decision_id:** D016
+- **date:** 2026-09-16
+- **status:** RESOLVED_BY_D017_BEFORE_COLLECTION
+- **decision:** Official requests expose no tools. Groq `openai/gpt-oss-120b` sends `tool_choice: "none"` and no `tools`. Each OpenRouter condition must prospectively record either supported `tool_choice: "none"` or a documented omit-only mode if its endpoint rejects that explicit parameter; unresolved behavior blocks collection. OpenRouter fallbacks remain disabled, provider pinning is not selected automatically, and retries must honor `Retry-After` without changing sampling parameters.
+- **preflight_observation:** On 2026-09-16, M1 and M2 had no available OpenRouter endpoints, M3 was active on Groq, and M4 exposed one free NVIDIA endpoint. Therefore the four-condition set and common parameters cannot yet be frozen.
+- **scope_effect:** Adds operational safeguards and records a pre-collection blocker; it creates no generation, result, manifest row, or model substitution.
+
+---
+
+### D017 — Availability-Only Model Replacement and Response-Size Revision
+
+- **decision_id:** D017
+- **date:** 2026-09-16
+- **status:** CANDIDATE_PENDING_RESEARCHER_REVIEW
+- **timing:** Decided before official final generation; no experimental task had been submitted to any candidate API condition.
+- **model_replacement:** Replace unavailable candidate M1 OpenRouter `qwen/qwen3-coder:free` with M1 OpenRouter `cohere/north-mini-code:free`, and unavailable candidate M2 OpenRouter `deepseek/deepseek-r1-0528:free` with M2 Groq `qwen/qwen3.8-27b`. M3 Groq `openai/gpt-oss-120b` and M4 OpenRouter `nvidia/nemotron-3-ultra-550b-a55b:free` remain unchanged.
+- **replacement_rationale:** The rejected M1/M2 records had zero runnable endpoints during metadata-only preflight. Replacement used endpoint availability and reproducibility only. No generated task output, package behavior, hallucination observation, or performance comparison existed or influenced selection.
+- **replacement_preflight:** All four current conditions are active and support temperature `0.6`, top-p `0.95`, and a 6000-token output cap. No seed or model-specific reasoning parameter is sent. Groq and supported OpenRouter endpoints use `tool_choice: "none"` with no `tools`.
+- **provider_proposals:** Under the predeclared rule of complete parameter support, zero cost, active status, provider-native/reproducible metadata, and lexical tie-break only if required, propose M1 `Cohere` / `cohere` and M4 `Nvidia` / `nvidia`. Each is the sole suitable zero-cost endpoint. Proposals are not frozen pins until researcher approval.
+- **task_revision:** Minimally narrow 16 previously warned `final-2.0.0` prompts to core implementation files, representative fixtures, essential validation, and focused tests suitable for the 6000-token cap. Preserve all specialized standards, package/version/API/capability and interoperability requirements, all 30 task IDs, six balanced categories, task-set version, and neutral package selection. Review but do not alter `DATA-ADV-02`, whose residual warning reflects genuine ecosystem difficulty rather than response volume. The revised candidate SHA-256 is `ef0aff59f8a3934f65379d34036848652b7b5593f595ffa4b449a15af021546b`; it is not yet a frozen rendered-prompt hash.
+- **preserved_methodology:** Primary package-name hallucination remains separate from secondary version/API/capability findings, and `risk-model-1.0.0` remains deterministic and rule-based.
+- **scope_effect:** Resolves the availability blocker and reduces response-size confounding without producing data, selecting models from observed outcomes, freezing provider pins, rendering prompts, or creating a v2 manifest.
+
+---
+
+### D018 — Freeze API Model Set, Task Set, Prompt Rendering, and Official Manifest
+
+- **decision_id:** D018
+- **date:** 2026-09-16
+- **status:** FROZEN_BEFORE_OFFICIAL_COLLECTION
+- **researcher_approval:** Approves M1 OpenRouter `cohere/north-mini-code:free` pinned to `cohere`; M2 Groq preview `qwen/qwen3.8-27b`; M3 Groq `openai/gpt-oss-120b`; M4 OpenRouter `nvidia/nemotron-3-ultra-550b-a55b:free` pinned to `nvidia`; and the revised `final-2.0.0` task set including 13 intentional residual warnings.
+- **final_availability_gate:** Metadata-only recheck at `2026-09-16T06:05:24.433082Z` found all four exact models active. M1 and M4 retained their sole approved zero-cost provider endpoints with the required parameter surface. No completion request was made by the gate.
+- **frozen_protocol:** Temperature `0.6`, top-p `0.95`, maximum output `6000`, seed omitted, exactly one user message, no previous context, no tools, no browsing, no retrieval, no code execution, and no function calling. OpenRouter uses `max_tokens`; Groq uses `max_completion_tokens`; all conditions send `tool_choice: "none"` because the frozen endpoints support it. No reasoning-effort control is sent and model defaults remain intrinsic.
+- **task_and_prompt_freeze:** Freeze the 30-record task file at SHA-256 `ef0aff59f8a3934f65379d34036848652b7b5593f595ffa4b449a15af021546b`, use the neutral v2 template, and deterministically render 30 identical-across-condition prompts under `data/generated_prompts/v2.0.0/`.
+- **manifest_freeze:** Create `manifests/api_final_v2.0.0_manifest.csv` with 360 pending rows, unique API run IDs, exact prompt hashes, provider pins, and deterministic balanced collection order. No row is completed at freeze.
+- **unavailability_policy:** Before a model's first official observation, unavailability stops the study and any prospectively approved replacement requires regenerated frozen configuration and manifest. After observations begin, stop only that condition, preserve completed observations, never mix a replacement under the same condition, and restart any approved replacement as a new condition. Hallucination outcomes never influence replacement.
+- **smoke_boundary:** Write a versioned freeze record before four explicitly excluded smoke completions. Smoke outputs are infrastructure evidence only and never enter official metrics.
+- **scope_effect:** Authorizes frozen artifacts and excluded smoke testing but does not authorize starting the official 360-generation collection.
+
+---
+
+### D019 — Excluded Smoke-Test Infrastructure Result
+
+- **decision_id:** D019
+- **date:** 2026-09-16
+- **status:** OFFICIAL_COLLECTION_BLOCKED_PENDING_GROQ_TRANSPORT_RESOLUTION
+- **boundary:** Exactly four logical `SMOKE-API-001` generations were attempted after the freeze record, one per frozen condition. The smoke task and outputs are excluded from the official manifest and all metrics; content quality and package claims were not assessed.
+- **result:** M1 and M4 completed with exact requested model IDs, correct pinned providers, no tool calls, preserved metadata, and verified hashes. M2 and M3 each returned one HTTP 403 edge response with body `error code: 1010` before any model response.
+- **retry_decision:** No Groq repeat was sent because HTTP 403 is outside the frozen retry set. The collector was hardened with a fixed User-Agent for future transport compatibility, but another completion smoke requires prospective approval.
+- **impact:** The experimental configuration remains frozen, but official collection must not begin until Groq completion access is resolved and infrastructure readiness is re-approved. No model replacement is authorized or implied.
+
+---
+
+### D020 — Groq HTTP Transport Correction and Truncation Safeguard
+
+- **decision_id:** D020
+- **date:** 2026-09-16
+- **status:** IMPLEMENTED_BEFORE_OFFICIAL_COLLECTION
+- **evidence:** A manual conventional HTTP/1.1 Groq completion request returned HTTP 200 for exact model `openai/gpt-oss-120b`, including a Groq request ID and rate-limit headers, while the earlier Python `urllib.request` M2/M3 smokes returned Cloudflare HTTP 403 error 1010 before Groq. Account authorization, model access, and general network access therefore work; the strongest supported diagnosis is an incompatibility in the original collector HTTP transport/header profile.
+- **transport_correction:** Replace only the completion POST implementation with the already-installed `requests` 2.33.1 / `urllib3` 2.7.0 HTTP/1.1 client. Send stable `User-Agent: ai-hallucination-study/1.0`, `Accept: application/json`, and `Content-Type: application/json` headers, retain Bearer authorization without serialization, preserve exact request-body bytes, disable redirects, and retain conventional environment-proxy behavior. No proxy variables were set during the correction. No browser impersonation, rotating header, Cloudflare bypass, proxy rotation, fingerprint spoofing, or dependency installation is used.
+- **truncation_control:** A valid response with `finish_reason: "length"` is preserved once and marked operationally as `TRUNCATED`; it is never content-retried or regenerated. Preserve finish reason, full usage metadata, total completion tokens, exposed reasoning tokens, and exposed visible-response tokens. Report truncated observations separately in dataset-quality statistics.
+- **denominator_review_at_time:** Existing SHR language did not explicitly decide whether a truncated yet potentially analyzable response entered the primary denominator. D021 prospectively resolves this issue before official collection by excluding `TRUNCATED` observations from primary SHR/PHR while retaining them in the preserved dataset and separate quality reporting.
+- **frozen_semantics:** Model IDs, M1/M4 pins, task and prompt bytes/hashes, official manifest, temperature `0.6`, top-p `0.95`, 6000-token cap, seed policy, one-message/no-tools protocol, reasoning-effort policy, and collection order remain unchanged. Do not regenerate the freeze record.
+- **re_smoke_result:** The first local execution series (`SMOKE-API-002`) was preserved after the network sandbox prevented any HTTP exchange and the frozen transport retry sequence was exhausted. The separately preserved, actually transmitted `SMOKE-API-003` observations each succeeded on their first HTTP attempt: M2 returned exact `qwen/qwen3.8-27b`, M3 returned exact `openai/gpt-oss-120b`, both returned zero tool calls and `finish_reason: "stop"`, and both preserved raw response, assistant content, usage, safe headers, and hashes. M2 exposed 274 completion tokens and no reasoning-token count; M3 exposed 1,293 completion tokens including 663 reasoning tokens. Neither exposed a visible-response-token count.
+- **readiness:** Original M1/M4 successes remain unchanged, the replacement Groq re-smokes passed, and all four frozen conditions are infrastructure-ready. Official collection remains a separate deliberate action and has not begun.
+
+---
+
+### D021 — Freeze Primary-Metric Treatment of Truncated Responses
+
+- **decision_id:** D021
+- **date:** 2026-09-16
+- **status:** FROZEN_BEFORE_FIRST_OFFICIAL_API_GENERATION
+- **observation_rule:** A provider-valid response with `finish_reason: "length"` is an official experimental observation with operational status `TRUNCATED`. Preserve it under its original official run ID without regeneration, retaining the exact raw provider response, visible assistant content including empty content, exposed reasoning metadata, token usage, and finish reason.
+- **primary_shr_rule:** A truncated observation is not a completed generation for primary analysis. The primary SHR denominator is completed, non-truncated generations eligible for analysis.
+- **primary_phr_rule:** The primary PHR occurrence population is eligible external npm package recommendations extracted from completed, non-truncated generations. Truncated observations are excluded from both the primary PHR numerator and denominator.
+- **separate_reporting:** Report scheduled runs, completed runs, truncated runs, infrastructure failures, overall truncation rate, truncation rate by model, and truncation rate by task category. Truncated outputs remain part of the preserved research dataset and may be described qualitatively or used in a separately labelled sensitivity analysis, but those results must never be mixed with primary SHR/PHR estimates.
+- **timing:** This rule was frozen prospectively while all 360 official manifest rows remained pending and before the first official API generation.
+- **supersession:** The earlier D009 planning assumption of a fixed primary SHR denominator of 360 completed runs is superseded only on this point. The schedule remains fixed at 360 runs; the primary denominator is the completed, non-truncated eligible subset.
+- **scope_effect:** Resolves the denominator review raised in D020 without otherwise redesigning SHR, PHR, the hallucination taxonomy, the risk model, the frozen task/model sets, generation settings, provider pins, manifest, prompt bytes/hashes, or collection order.
+
+---
+
+### D022 — Stop v2.0 Collection and Freeze the v2.1 Interface-Suitability Gate
+
+- **decision_id:** D022
+- **date:** 2026-09-16
+- **status:** CRITERIA_FROZEN_BEFORE_SUITABILITY_REQUESTS
+- **timing:** Recorded after exactly two v2.0 official observations and before any v2.1 suitability request or official observation.
+- **v2.0_stop:** Official v2.0 collection stopped after exactly `API-AUTH-FED-01-M1-R01` and `API-AUTH-FED-01-M2-R01`. The standardized no-tools API condition did not reliably elicit standalone text/code output: M1 returned structured `tool_calls` with `finish_reason: tool_calls` despite `tool_choice: "none"` and no exposed tools; M2 returned assistant content primarily comprising simulated `<tool_call>` markup and repository-inspection requests despite no repository or tools.
+- **analysis_status:** v2.0 is stopped/aborted for final-analysis purposes. Its two observations remain immutable methodological evidence and must not enter the eventual v2.1 primary dataset. The historical freeze commit, v2.0 manifest, and existing raw run directories remain unchanged.
+- **decision_basis:** Output-interface validity only. Package correctness and observed hallucination rate were not evaluated and did not influence this decision.
+- **candidate_conditions_retained:** Retain M1 `cohere/north-mini-code:free`, M2 `qwen/qwen3.8-27b`, M3 `openai/gpt-oss-120b`, and M4 `nvidia/nemotron-3-ultra-550b-a55b:free`, including the existing M1/M4 provider pins. No model is replaced at this stage.
+- **v2.1_wrapper:** Preserve each `final-2.0.0` task text byte-for-byte and append the same neutral text-only interface instruction from `prompts/prompt_template_v2.1.0.md`. The wrapper contains no package-verification, anti-hallucination, registry-lookup, or model-specific wording. No official v2.1 manifest is authorized yet.
+- **excluded_suitability_task:** `SUITABILITY-API-001` is a small non-final Node.js/TypeScript task. Its prompt and all four responses are excluded from the official dataset and hallucination metrics.
+- **frozen_pass_gate:** A condition passes only when the HTTP/model response is valid; structured provider `tool_calls` are absent; finish reason is not `tool_calls`; simulated tool-call markup is absent; the response does not stop merely for repository/file inspection; substantive requested implementation is inline; and no actual tools were exposed or executed.
+- **explicit_non_evaluations:** Do not evaluate dependency validity, hallucination frequency, code correctness, security quality, or relative solution quality.
+- **request_protocol:** Exactly one suitability generation per retained condition; temperature `0.6`; top-p `0.95`; 6000-token maximum; seed omitted; one user message; no `tools`; `tool_choice: "none"`; no browsing, retrieval, or execution; existing M1/M4 pins; infrastructure retries only under the existing policy; no content retry.
+- **stop_rule:** If any model fails, stop and report without automatic replacement. If all pass, report suitability but do not freeze v2.1 or begin official collection.
+- **scope_effect:** Prospectively repairs and tests only the output interface. It does not change the 30 research task records, generate a v2.1 official manifest, authorize official collection, or assess package outcomes.
+
+---
+
+### D023 — v2.1 Excluded Interface-Suitability Result
+
+- **decision_id:** D023
+- **date:** 2026-09-16
+- **status:** ALL_FOUR_CONDITIONS_INTERFACE_SUITABLE; V2.1_NOT_YET_FROZEN
+- **timing:** Recorded after the four requests governed by the prospectively frozen D022 gate.
+- **request_count:** Exactly four logical suitability generations were sent, one each to M1, M2, M3, and M4. Every condition completed on its initial HTTP attempt; no infrastructure retry and no content retry occurred.
+- **result:** All four conditions returned HTTP 200, the exact requested model ID, `finish_reason: stop`, zero structured provider tool calls, no simulated tool-call markup, and substantive inline requested implementation. Completion-token counts were M1 1,536; M2 3,211; M3 2,256; and M4 1,486.
+- **tool_boundary:** Every request omitted `tools`, explicitly sent `tool_choice: "none"`, and exposed or executed no actual tool. There was no browsing, retrieval, repository access, code execution, or external execution environment.
+- **provider_pins:** OpenRouter resolved M1 to the existing `Cohere` pin and M4 to the existing `Nvidia` pin. M2 and M3 used Groq.
+- **evaluation_boundary:** The result assesses interface suitability only. Dependency validity, hallucination frequency, code correctness, security quality, and comparative solution quality were not evaluated.
+- **data_boundary:** Task `SUITABILITY-API-001` and all responses under `data/suitability/api/v2.1.0/` are excluded from the official research dataset and hallucination metrics.
+- **next_state:** All four retained models are suitable for the standardized text-only v2.1 condition. This result does not freeze v2.1, create an official v2.1 manifest, or authorize official collection.
+
+---
+
+### D024 — Freeze v2.1 Standardized Text-Only Experimental Condition
+
+- **decision_id:** D024
+- **date:** 2026-09-16
+- **status:** FINALIZED
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **original_design:** v2.0 unadorned task prompt interface without explicit text-only wrapper, which resulted in tool-call invocation (M1) or simulated tool markup (M2) in the first two observations.
+- **final_design:** v2.1 standardized stateless text-only interface appending `prompts/prompt_template_v2.1.0.md` to every task prompt. Four models retained unchanged (M1 `cohere/north-mini-code:free`, M2 `qwen/qwen3.8-27b`, M3 `openai/gpt-oss-120b`, M4 `nvidia/nemotron-3-ultra-550b-a55b:free`), existing M1/M4 provider pins preserved, sampling parameters unchanged (temperature `0.6`, top-p `0.95`, max completion tokens `6000`, seed omitted, 1 user message, no tools/retrieval/browsing/execution/reasoning-effort), 30 underlying tasks in `prompts/tasks/final_2.0.0.jsonl` unchanged, model set referenced as `api-model-set-1.0.0`, 360-row manifest `manifests/api_final_v2.1.0_manifest.csv` with unique versioned run IDs (`API-v2.1-...`), separate batch state `data/final/api_batch_state_v2.1.0.json`, and pre-generation freeze record `config/experiment_freeze_v2.1.0.json` / `docs/experiment_freeze_v2.1.0.md`.
+- **rationale:** Standardizes the prompt wrapper to prevent models from attempting interactive tool calls or workspace inspection while preserving identical task content and objective evaluation across all four model conditions.
+- **methodological_justification:** The neutral text-only wrapper contains no package-verification, anti-hallucination, registry-lookup, or model-specific hints. Agentic-capable models are evaluated under a standardized stateless text-only generation interface. The two aborted v2.0 observations remain immutable methodological evidence but are strictly excluded from the v2.1 final dataset.
+- **impact_on_data_collection:** Complete physical and logical separation of v2.1 data (manifest, rendered prompts, run IDs, batch state) from v2.0 aborted observations, smoke tests, suitability tests, and historical pilot data.
+- **impact_on_analysis:** 360 official planned observations (90/model, 120/rep, 60/cat); primary SHR/PHR evaluation applies strictly to completed non-truncated v2.1 generations.
+- **affected_research_questions:** RQ1, RQ2, RQ3, RQ4.
+- **scope_effect:** Freezes the v2.1 experimental condition with zero official observations generated; does not authorize starting collection.
+
+---
+
+### D025 — Increase Max Output Tokens to 12000 and Freeze v2.2 Experiment
+
+- **decision_id:** D025
+- **date:** 2026-09-16
+- **status:** FINALIZED
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **original_design:** v2.1 standardized stateless text-only interface with 6000 max output token limit (`max_output_tokens: 6000`).
+- **final_design:** v2.2 standardized stateless text-only interface with 12000 max output token limit (`max_output_tokens: 12000`) under versioned model-set `api-model-set-1.1.0` (`config/api_model_set_1.1.0.json`). All other experimental semantics unchanged: task set (30 tasks in `prompts/tasks/final_2.0.0.jsonl`), prompt wrapper text (`prompts/prompt_template_v2.2.0.md` byte-for-byte equivalent to v2.1), model set (M1 `cohere/north-mini-code:free`, M2 `qwen/qwen3.8-27b`, M3 `openai/gpt-oss-120b`, M4 `nvidia/nemotron-3-ultra-550b-a55b:free`), existing M1/M4 provider pins (`cohere`/`nvidia`), temperature `0.6`, top-p `0.95`, seed omitted (`not_controlled`), no tools exposed (`tool_choice: "none"`), 3 repetitions, Latin-square rotation, 360 manifest rows with `API-v2.2-` prefix in `manifests/api_final_v2.2.0_manifest.csv`, batch state `data/final/api_batch_state_v2.2.0.json`, freeze record `config/experiment_freeze_v2.2.0.json` / `docs/experiment_freeze_v2.2.0.md`. Historical `config/api_model_set_1.0.0.json` (6000 tokens) preserved byte-for-byte for v2.0/v2.1.
+- **rationale:** Official collection of the first four v2.1 observations (`API-v2.1-AUTH-FED-01-M1-R01` through `M4-R01`) validated that the text-only wrapper solved the interface-validity issue (all four models provided substantive inline code with zero tool calls). However, 3 of 4 models (M2 Qwen, M3 GPT-OSS, M4 Nemotron) were truncated at the 6000-token ceiling (`finish_reason: length`), and the fourth (M1 Cohere) stopped at 5893/6000 (only 107 tokens below ceiling). To avoid widespread artificial truncation while keeping the prompt and task interfaces identical, the token ceiling was doubled from 6000 to 12000 across all four model conditions.
+- **methodological_justification:** The four v2.1 observations are permanently preserved in `data/final/raw/` as methodological evidence and excluded from v2.2 analysis metrics. v2.1 collection was stopped before row 5.
+- **infrastructure_fix:** Fixed phantom pacing reservation bug in `scripts/collect_api_batch.py` by ensuring all local pre-transmission validation (API key existence, config checks, prompt path/hash, request body construction, directory collision) completes before reserving provider pacing slots.
+- **impact_on_data_collection:** Complete logical and physical isolation of v2.2 artifacts (run IDs `API-v2.2-...`, manifest, rendered prompts, batch state). Zero v2.2 observations collected prior to freeze.
+- **impact_on_analysis:** 360 planned observations for v2.2 (90/model, 120/rep, 60/cat). Primary SHR/PHR evaluation applies strictly to completed non-truncated v2.2 generations.
+- **affected_research_questions:** RQ1, RQ2, RQ3, RQ4.
+- **scope_effect:** Freezes the v2.2 experimental condition with zero official observations generated; does not authorize starting collection.
