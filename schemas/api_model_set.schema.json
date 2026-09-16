@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/api_model_set.schema.json",
+  "title": "API Model Set",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "model_set_version",
+    "status",
+    "frozen_at_utc",
+    "final_preflight_timestamp_utc",
+    "task_set_sha256",
+    "comparison_unit",
+    "task_set_version",
+    "interaction_protocol",
+    "candidate_common_parameters",
+    "retry_policy",
+    "batch_pacing",
+    "models"
+  ],
+  "properties": {
+    "$schema": {"type": "string"},
+    "model_set_version": {"const": "api-model-set-1.0.0"},
+    "status": {"enum": ["candidate_pending_preflight", "candidate_pending_researcher_review", "frozen_for_collection", "suspended"]},
+    "frozen_at_utc": {"type": "string", "format": "date-time"},
+    "final_preflight_timestamp_utc": {"type": "string", "format": "date-time"},
+    "task_set_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "comparison_unit": {"const": "frozen_model_api_condition"},
+    "task_set_version": {"const": "final-2.0.0"},
+    "interaction_protocol": {
+      "type": "object",
+      "required": ["messages", "fresh_request_per_generation", "previous_context", "tools_exposed", "browsing", "retrieval_augmentation", "code_execution", "external_files"]
+    },
+    "candidate_common_parameters": {
+      "type": "object",
+      "required": ["temperature", "top_p", "max_output_tokens", "seed", "compatibility_status"],
+      "properties": {
+        "temperature": {"const": 0.6},
+        "top_p": {"const": 0.95},
+        "max_output_tokens": {"const": 6000},
+        "seed": {"const": "not_controlled"},
+        "compatibility_status": {"enum": ["requires_preflight_confirmation", "confirmed", "incompatible"]}
+      }
+    },
+    "retry_policy": {"type": "object"},
+    "batch_pacing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sequential_requests_only", "minimum_seconds_between_openrouter_requests", "minimum_seconds_between_groq_requests", "obey_retry_after", "sampling_parameters_may_change_for_rate_limits"],
+      "properties": {
+        "sequential_requests_only": {"const": true},
+        "minimum_seconds_between_openrouter_requests": {"type": "integer", "minimum": 1},
+        "minimum_seconds_between_groq_requests": {"type": "integer", "minimum": 1},
+        "obey_retry_after": {"const": true},
+        "sampling_parameters_may_change_for_rate_limits": {"const": false}
+      }
+    },
+    "models": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "required": ["condition_id", "api_provider", "api_base_url", "api_key_environment_variable", "model_id", "model_family", "output_token_parameter", "no_tools_request_mode"],
+        "properties": {
+          "condition_id": {"enum": ["M1", "M2", "M3", "M4"]},
+          "api_provider": {"enum": ["OpenRouter", "Groq"]},
+          "api_base_url": {"type": "string", "format": "uri"},
+          "api_key_environment_variable": {"enum": ["OPENROUTER_API_KEY", "GROQ_API_KEY"]},
+          "model_id": {"type": "string", "minLength": 1},
+          "model_family": {"type": "string", "minLength": 1},
+          "output_token_parameter": {"enum": ["max_tokens", "max_completion_tokens"]},
+          "no_tools_request_mode": {"enum": ["pending_preflight", "explicit_tool_choice_none", "omit_tools_only"]},
+          "openrouter_routing": {
+            "type": "object",
+            "required": ["pinning_status", "underlying_provider_slug", "underlying_provider_name", "allow_fallbacks", "require_parameters", "allow_unpinned_after_documented_decision"],
+            "properties": {
+              "pinning_status": {"enum": ["pending_preflight", "proposed", "pinned", "unavailable"]},
+              "underlying_provider_slug": {"type": ["string", "null"]},
+              "underlying_provider_name": {"type": ["string", "null"]},
+              "allow_fallbacks": {"const": false},
+              "require_parameters": {"const": true},
+              "allow_unpinned_after_documented_decision": {"type": "boolean"}
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/task_record_v2.schema.json",
+  "title": "Candidate v2 Task Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "category", "category_name", "task_set_version", "ecosystem", "runtime", "prompt"],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^(AUTH-FED|PKI-CRYPTO|DOC-BINARY|ENT-INT|DATA-ADV|DIST-OBS)-0[1-5]$"
+    },
+    "category": {
+      "enum": ["AUTH-FED", "PKI-CRYPTO", "DOC-BINARY", "ENT-INT", "DATA-ADV", "DIST-OBS"]
+    },
+    "category_name": {"type": "string", "minLength": 1},
+    "task_set_version": {"const": "final-2.0.0"},
+    "ecosystem": {"const": "npm"},
+    "runtime": {"const": "Node.js"},
+    "prompt": {"type": "string", "minLength": 100}
+  }
+}

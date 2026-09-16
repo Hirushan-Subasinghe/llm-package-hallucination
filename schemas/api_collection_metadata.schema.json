@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/api_collection_metadata.schema.json",
+  "title": "API Collection Metadata",
+  "description": "Operational provenance for one immutable API generation observation.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "run_id",
+    "phase",
+    "task_id",
+    "task_set_version",
+    "model_set_version",
+    "model_condition_id",
+    "requested_model_id",
+    "api_provider",
+    "run_repetition",
+    "collection_status",
+    "prompt_sha256",
+    "request_sha256",
+    "generation_started_at_utc",
+    "retry_history"
+  ],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "phase": {"enum": ["pilot", "final"]},
+    "task_id": {"type": "string", "minLength": 1},
+    "category": {"enum": ["AUTH-FED", "PKI-CRYPTO", "DOC-BINARY", "ENT-INT", "DATA-ADV", "DIST-OBS"]},
+    "task_set_version": {"const": "final-2.0.0"},
+    "model_set_version": {"const": "api-model-set-1.0.0"},
+    "model_condition_id": {"enum": ["M1", "M2", "M3", "M4"]},
+    "requested_model_id": {"type": "string"},
+    "returned_model_id": {"type": ["string", "null"]},
+    "api_provider": {"enum": ["OpenRouter", "Groq"]},
+    "resolved_underlying_provider": {"type": ["string", "null"]},
+    "run_repetition": {"type": "integer", "minimum": 1, "maximum": 3},
+    "collection_status": {"enum": ["requesting", "completed", "truncated", "failed", "suspended"]},
+    "prompt_sha256": {"$ref": "#/$defs/sha256"},
+    "response_sha256": {"$ref": "#/$defs/sha256"},
+    "provider_response_sha256": {"$ref": "#/$defs/sha256"},
+    "request_sha256": {"$ref": "#/$defs/sha256"},
+    "generation_started_at_utc": {"type": "string", "format": "date-time"},
+    "generation_ended_at_utc": {"type": "string", "format": "date-time"},
+    "sampling_parameters": {"type": "object"},
+    "token_usage": {"type": ["object", "null"]},
+    "response_token_metadata": {
+      "type": "object",
+      "properties": {
+        "total_completion_tokens": {"type": ["integer", "null"]},
+        "reasoning_tokens": {"type": ["integer", "null"]},
+        "visible_response_tokens": {"type": ["integer", "null"]}
+      }
+    },
+    "response_completion_status": {"enum": ["COMPLETED", "TRUNCATED"]},
+    "finish_reason": {"type": ["string", "null"]},
+    "retry_history": {"type": "array", "items": {"type": "object"}},
+    "safe_response_headers": {"type": "object"},
+    "failure_reason": {"type": "string"}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+  }
+}
