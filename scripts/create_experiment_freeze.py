@@ -17,11 +17,11 @@ from render_api_prompts import EXPECTED_TASK_SHA256, TASKS_PATH
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_JSON_PATH = ROOT / "config" / "experiment_freeze_v2.2.0.json"
-DEFAULT_MARKDOWN_PATH = ROOT / "docs" / "experiment_freeze_v2.2.0.md"
-DEFAULT_MANIFEST_PATH = ROOT / "manifests" / "api_final_v2.2.0_manifest.csv"
-DEFAULT_TEMPLATE_PATH = ROOT / "prompts" / "prompt_template_v2.2.0.md"
-DEFAULT_RENDERED_DIR = ROOT / "data" / "generated_prompts" / "v2.2.0"
+DEFAULT_JSON_PATH = ROOT / "config" / "experiment_freeze_v2.3.0.json"
+DEFAULT_MARKDOWN_PATH = ROOT / "docs" / "experiment_freeze_v2.3.0.md"
+DEFAULT_MANIFEST_PATH = ROOT / "manifests" / "api_final_v2.3.0_manifest.csv"
+DEFAULT_TEMPLATE_PATH = ROOT / "prompts" / "prompt_template_v2.3.0.md"
+DEFAULT_RENDERED_DIR = ROOT / "data" / "generated_prompts" / "v2.3.0"
 
 JSON_PATH_V2_1 = ROOT / "config" / "experiment_freeze_v2.1.0.json"
 MARKDOWN_PATH_V2_1 = ROOT / "docs" / "experiment_freeze_v2.1.0.md"
@@ -35,6 +35,70 @@ SCHEMA_PATHS = (
     ROOT / "schemas" / "task_record_v2.schema.json",
     ROOT / "schemas" / "interface_suitability.schema.json",
 )
+
+
+def build_v2_3_record() -> dict:
+    config = load_config(DEFAULT_CONFIG)
+    if config.get("model_set_version") != "api-model-set-1.2.0" or config.get("status") != "frozen_for_collection":
+        raise ValueError("v2.3 model configuration is not frozen")
+    if digest(TASKS_PATH) != EXPECTED_TASK_SHA256:
+        raise ValueError("Task file hash changed before v2.3 freeze record creation")
+    prompts = sorted(DEFAULT_RENDERED_DIR.glob("*.txt"))
+    if len(prompts) != 30:
+        raise ValueError("Expected exactly 30 rendered v2.3 prompts")
+    with DEFAULT_MANIFEST_PATH.open(newline="", encoding="utf-8") as handle:
+        rows = list(csv.DictReader(handle))
+    if len(rows) != 360 or any(row["collection_status"] != "pending" for row in rows):
+        raise ValueError("Official v2.3 manifest is not a 360-row all-pending plan")
+    return {
+        "freeze_record_version": "experiment-freeze-v2.3.0", "freeze_record_created_at_utc": utc_now(), "official_v2_3_collection_started": False, "official_v2_3_observations_count": 0,
+        "historical_v2_2_context": {"status": "prospectively_stopped", "final_inventory": {"planned": 360, "completed": 6, "truncated": 4, "pending": 350, "total_collected_observations": 10}, "preservation_and_exclusion": "All 10 v2.2 observations remain immutable methodological evidence in data/final/raw/ and are excluded from the fresh v2.3 primary 360-observation dataset and metrics.", "stop_reason": "v2.2 was prospectively stopped because its fixed researcher-imposed provider spacing was unnecessarily conservative under the final collection window; no model, task, prompt, routing, sampling, retry, or truncation semantics are carried differently into v2.3."},
+        "task_set": {"version": "final-2.0.0", "path": str(TASKS_PATH.relative_to(ROOT)), "sha256": digest(TASKS_PATH), "record_count": 30, "categories": {"AUTH-FED": 5, "DATA-ADV": 5, "DIST-OBS": 5, "DOC-BINARY": 5, "ENT-INT": 5, "PKI-CRYPTO": 5}},
+        "model_set": {"version": config["model_set_version"], "path": str(DEFAULT_CONFIG.relative_to(ROOT)), "sha256": digest(DEFAULT_CONFIG), "frozen_at_utc": config["frozen_at_utc"], "final_preflight_timestamp_utc": config["final_preflight_timestamp_utc"], "models": [{"condition_id": model["condition_id"], "model_id": model["model_id"], "api_provider": model["api_provider"], "provider_pin": model["openrouter_routing"]["underlying_provider_slug"] if model["api_provider"] == "OpenRouter" else "not_applicable"} for model in config["models"]]},
+        "prompt_template": {"version": "2.3.0", "path": str(DEFAULT_TEMPLATE_PATH.relative_to(ROOT)), "sha256": digest(DEFAULT_TEMPLATE_PATH)},
+        "sampling_parameters": {"temperature": 0.6, "top_p": 0.95, "max_output_tokens": 12000, "seed": "omitted", "messages": "one_user_message_only", "previous_context": False, "tools_exposed": False, "tool_choice": "none", "browsing": False, "retrieval": False, "execution": False, "model_specific_reasoning_effort": "omitted"},
+        "retry_policy": config["retry_policy"], "batch_pacing": {"sequential_requests_only": True, "minimum_artificial_interval_seconds": 0, "provider_enforced_throttling": "HTTP 429 obeys Retry-After when supplied; otherwise the frozen infrastructure backoff applies. Non-retryable quota, credit, account-limit, or other provider failures stop the batch without skipping or substitution."},
+        "collection_ordering_rule": "Deterministic balanced Latin-square rotation per task and repetition: (task_index + repetition_offset) % 4 across 360 rows.", "truncation_rule": "Provider-valid response with finish_reason 'length' is preserved exactly once with status TRUNCATED under its original run ID without retry. Excluded from primary SHR denominator and primary PHR occurrence population; reported separately in quality metrics.",
+        "rendered_prompts": [{"path": str(path.relative_to(ROOT)), "sha256": digest(path)} for path in prompts],
+        "official_manifest": {"path": str(DEFAULT_MANIFEST_PATH.relative_to(ROOT)), "sha256": digest(DEFAULT_MANIFEST_PATH), "row_count": len(rows), "rows_per_model": dict(sorted(Counter(row["model_condition_id"] for row in rows).items())), "rows_per_repetition": dict(sorted(Counter(row["run_repetition"] for row in rows).items())), "rows_per_category": dict(sorted(Counter(row["category"] for row in rows).items())), "completed_rows": 0, "pending_rows": len(rows)},
+        "schemas": [{"path": str(path.relative_to(ROOT)), "sha256": digest(path)} for path in SCHEMA_PATHS],
+    }
+
+
+def markdown_v2_3(record: dict) -> str:
+    prompt_lines = "\n".join(f"| `{item['path']}` | `{item['sha256']}` |" for item in record["rendered_prompts"])
+    return f"""# Experiment Freeze Record — v2.3.0
+
+This record was generated at `{record['freeze_record_created_at_utc']}` **before any official v2.3 API generation request**. It defines a fresh 360-observation dataset; all rows are pending and no v2.3 raw observation directory exists.
+
+## v2.2 Stop and Dataset Separation
+
+v2.2 was prospectively stopped with its final inventory at 360 planned, 6 completed, 4 truncated, and 350 pending (10 total collected observations). Those 10 immutable v2.2 observations remain methodological evidence only and are excluded from all v2.3 primary metrics. v2.3 begins a new, separate 360-observation dataset.
+
+The sole intended methodological difference from v2.2 is removal of the unnecessarily conservative researcher-imposed fixed provider spacing under a tight final collection window. Model identities, provider pins, no-fallback rule, task set, prompt text, interaction constraints, sampling parameters, retry philosophy, and truncation handling are unchanged. Payment or account tier is infrastructure availability only; it is not an experimental condition if the frozen model ID, routing, prompt, and generation parameters remain identical.
+
+## Frozen Artifacts
+
+- Task set `{record['task_set']['version']}`: `{record['task_set']['sha256']}` (`{record['task_set']['path']}`)
+- Model set `{record['model_set']['version']}`: `{record['model_set']['sha256']}` (`{record['model_set']['path']}`)
+- Prompt template `{record['prompt_template']['version']}`: `{record['prompt_template']['sha256']}` (`{record['prompt_template']['path']}`)
+- Official v2.3 manifest: `{record['official_manifest']['sha256']}` (`{record['official_manifest']['path']}`)
+- Official manifest rows: {record['official_manifest']['row_count']} total; {record['official_manifest']['pending_rows']} pending; {record['official_manifest']['completed_rows']} completed
+
+## Collection and Failure Policy
+
+- Sequential collection only. The minimum artificial interval after a successful request is 0 seconds; the next manifest row is attempted immediately.
+- Provider-enforced throttling remains binding: HTTP 429 obeys `Retry-After` when supplied, otherwise the frozen infrastructure backoff applies. HTTP 5xx and transport failures use only the frozen infrastructure retry policy.
+- A quota, credit, account-limit, or other non-retryable provider failure is preserved as failed infrastructure evidence and stops the batch without skipping, substituting providers/models, or changing a `:free` route to a paid route.
+- `finish_reason: length` is an official TRUNCATED observation, preserved exactly once and never regenerated merely for truncation.
+- Exactly one user message; no prior context, tools, browsing, retrieval, filesystem, external files, or code execution. Temperature 0.6, top-p 0.95, maximum completion tokens 12000, seed omitted/not controlled.
+
+## Rendered Prompts
+
+| Path | SHA-256 |
+| --- | --- |
+{prompt_lines}
+"""
 
 
 def digest(path: Path) -> str:
@@ -250,19 +314,19 @@ def main() -> int:
                 path = ROOT / prompt["path"]
                 if digest(path) != prompt["sha256"]:
                     raise ValueError(f"Rendered prompt hash mismatch for {path}")
-            if markdown_path.read_text(encoding="utf-8") != markdown_v2_2(record):
+            if markdown_path.read_text(encoding="utf-8") != markdown_v2_3(record):
                 raise ValueError("Markdown freeze documentation does not match freeze record")
-            print(f"PASS: verified v2.2 freeze records at {json_path.relative_to(ROOT)} and {markdown_path.relative_to(ROOT)}")
+            print(f"PASS: verified v2.3 freeze records at {json_path.relative_to(ROOT)} and {markdown_path.relative_to(ROOT)}")
             return 0
         if json_path.exists() or markdown_path.exists():
             raise ValueError("Refusing to overwrite an existing freeze record")
-        record = build_v2_2_record()
+        record = build_v2_3_record()
         json_path.write_text(json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-        markdown_path.write_text(markdown_v2_2(record), encoding="utf-8")
+        markdown_path.write_text(markdown_v2_3(record), encoding="utf-8")
     except (OSError, ValueError, json.JSONDecodeError) as error:
         print(f"FAIL: {error}", file=sys.stderr)
         return 1
-    print(f"PASS: wrote v2.2 freeze records {json_path.relative_to(ROOT)} and {markdown_path.relative_to(ROOT)}")
+    print(f"PASS: wrote v2.3 freeze records {json_path.relative_to(ROOT)} and {markdown_path.relative_to(ROOT)}")
     return 0
 
 

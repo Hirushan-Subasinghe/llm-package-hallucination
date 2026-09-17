@@ -20,7 +20,7 @@
   ],
   "properties": {
     "$schema": {"type": "string"},
-    "model_set_version": {"enum": ["api-model-set-1.0.0", "api-model-set-1.1.0"]},
+    "model_set_version": {"enum": ["api-model-set-1.0.0", "api-model-set-1.1.0", "api-model-set-1.2.0"]},
     "status": {"enum": ["candidate_pending_preflight", "candidate_pending_researcher_review", "frozen_for_collection", "suspended"]},
     "frozen_at_utc": {"type": "string", "format": "date-time"},
     "final_preflight_timestamp_utc": {"type": "string", "format": "date-time"},
@@ -49,8 +49,8 @@
       "required": ["sequential_requests_only", "minimum_seconds_between_openrouter_requests", "minimum_seconds_between_groq_requests", "obey_retry_after", "sampling_parameters_may_change_for_rate_limits"],
       "properties": {
         "sequential_requests_only": {"const": true},
-        "minimum_seconds_between_openrouter_requests": {"type": "integer", "minimum": 1},
-        "minimum_seconds_between_groq_requests": {"type": "integer", "minimum": 1},
+        "minimum_seconds_between_openrouter_requests": {"type": "integer", "minimum": 0},
+        "minimum_seconds_between_groq_requests": {"type": "integer", "minimum": 0},
         "obey_retry_after": {"const": true},
         "sampling_parameters_may_change_for_rate_limits": {"const": false}
       }

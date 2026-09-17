@@ -25,8 +25,9 @@ import requests
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_CONFIG = ROOT / "config" / "api_model_set_1.1.0.json"
+DEFAULT_CONFIG = ROOT / "config" / "api_model_set_1.2.0.json"
 CONFIG_V2_0 = ROOT / "config" / "api_model_set_1.0.0.json"
+CONFIG_V2_2 = ROOT / "config" / "api_model_set_1.1.0.json"
 DEFAULT_RAW_ROOT = ROOT / "data" / "final" / "raw"
 REQUIRED_MANIFEST_FIELDS = {
     "run_id",
@@ -110,7 +111,7 @@ def write_json(path: Path, value: object, *, exclusive: bool = False) -> None:
 
 def load_config(path: Path) -> dict:
     config = json.loads(path.read_text(encoding="utf-8"))
-    if config.get("model_set_version") not in {"api-model-set-1.0.0", "api-model-set-1.1.0"}:
+    if config.get("model_set_version") not in {"api-model-set-1.0.0", "api-model-set-1.1.0", "api-model-set-1.2.0"}:
         raise ValueError("Unexpected model_set_version")
     models = config.get("models")
     if not isinstance(models, list) or len(models) != 4:
@@ -174,7 +175,7 @@ def validate_collection_ready(config: dict, row: dict[str, object], model: dict)
         raise ValueError("This collector scaffold accepts only the future official final phase")
     if row["task_set_version"] != "final-2.0.0":
         raise ValueError("Manifest must use task_set_version final-2.0.0")
-    if row["model_set_version"] not in {"api-model-set-1.0.0", "api-model-set-1.1.0"} or row["model_set_version"] != config["model_set_version"]:
+    if row["model_set_version"] not in {"api-model-set-1.0.0", "api-model-set-1.1.0", "api-model-set-1.2.0"} or row["model_set_version"] != config["model_set_version"]:
         raise ValueError("Manifest model_set_version does not match configured model set")
     repetition = parse_repetition(row["run_repetition"])
     if repetition not in (1, 2, 3):

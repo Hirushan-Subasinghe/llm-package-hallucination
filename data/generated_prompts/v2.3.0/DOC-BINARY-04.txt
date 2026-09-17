@@ -1,0 +1,7 @@
+Create a self-contained Node.js TypeScript core archive inspector for ZIP, TAR/TAR.GZ, and 7z inputs. Use small format adapters behind one interface, detect format from content, list entries before extraction, enforce entry-count, expanded-byte, compression-ratio, and nesting limits, and reject absolute paths, traversal, escaping links, encrypted entries, and duplicate normalized paths. Stream accepted entries to a quarantined output adapter and produce a common manifest. Include one safe fixture and representative traversal and limit failures rather than a full upload service. Include a complete package.json with exact dependency versions and scripts, explain the exact archive and stream APIs used, and provide reproducible installation and execution commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

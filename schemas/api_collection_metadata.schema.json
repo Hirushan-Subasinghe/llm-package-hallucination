@@ -27,7 +27,7 @@
     "task_id": {"type": "string", "minLength": 1},
     "category": {"enum": ["AUTH-FED", "PKI-CRYPTO", "DOC-BINARY", "ENT-INT", "DATA-ADV", "DIST-OBS"]},
     "task_set_version": {"const": "final-2.0.0"},
-    "model_set_version": {"enum": ["api-model-set-1.0.0", "api-model-set-1.1.0"]},
+    "model_set_version": {"enum": ["api-model-set-1.0.0", "api-model-set-1.1.0", "api-model-set-1.2.0"]},
     "model_condition_id": {"enum": ["M1", "M2", "M3", "M4"]},
     "requested_model_id": {"type": "string"},
     "returned_model_id": {"type": ["string", "null"]},

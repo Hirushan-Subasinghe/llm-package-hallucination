@@ -25,12 +25,12 @@ class APICollectionTests(unittest.TestCase):
         self.config = copy.deepcopy(self.config)
         self.config["status"] = "frozen_for_collection"
         self.config["candidate_common_parameters"]["compatibility_status"] = "confirmed"
-        self.prompt_path = ROOT / "data" / "generated_prompts" / "v2.2.0" / "AUTH-FED-01.txt"
+        self.prompt_path = ROOT / "data" / "generated_prompts" / "v2.3.0" / "AUTH-FED-01.txt"
 
     def tearDown(self):
         self.temporary.cleanup()
 
-    def row(self, condition_id="M3", run_prefix="API-v2.2"):
+    def row(self, condition_id="M3", run_prefix="API-v2.3"):
         model = next(model for model in self.config["models"] if model["condition_id"] == condition_id)
         prompt = self.prompt_path.read_bytes()
         return {
@@ -414,6 +414,36 @@ class APICollectionTests(unittest.TestCase):
         self.assertEqual(reservation_events[0]["run_id"], row["run_id"])
         self.assertEqual(reservation_events[0]["api_provider"], "Groq")
 
+    def test_v2_3_zero_pacing_is_accepted_and_historical_v2_2_pacing_is_unchanged(self):
+        self.assertEqual(collect_api_batch.minimum_interval(self.config, "Groq"), 0)
+        self.assertEqual(collect_api_batch.minimum_interval(self.config, "OpenRouter"), 0)
+        historical = collect_api_run.load_config(collect_api_run.CONFIG_V2_2)
+        self.assertEqual(collect_api_batch.minimum_interval(historical, "Groq"), 2700)
+        self.assertEqual(collect_api_batch.minimum_interval(historical, "OpenRouter"), 1800)
+
+    def test_nonretryable_quota_failure_stops_batch_with_recovery_evidence(self):
+        row = self.row("M2")
+        state_path = Path(self.temporary.name) / "test_state.json"
+
+        def quota_failure(_config, current_row, *, raw_root):
+            directory = raw_root / current_row["run_id"]
+            directory.mkdir(parents=True)
+            (directory / "metadata.json").write_text(json.dumps({
+                "collection_status": "failed", "failure_reason": "http_status_402"
+            }), encoding="utf-8")
+            raise ValueError("API collection failed with HTTP 402")
+
+        with patch.dict("os.environ", {"GROQ_API_KEY": "test-key"}, clear=False):
+            with self.assertRaisesRegex(ValueError, "HTTP 402"):
+                collect_api_batch.run_batch(
+                    self.config, [row], manifest_hash="mock_hash", state_path=state_path,
+                    raw_root=self.raw_root, collector=quota_failure,
+                )
+        events = json.loads(state_path.read_text(encoding="utf-8"))["events"]
+        self.assertEqual(events[-1]["event"], "batch_stopped_nonretryable_provider_failure")
+        self.assertEqual(events[-1]["failure_reason"], "http_status_402")
+        self.assertEqual(events[-1]["action"], "stopped_without_skipping_or_substitution")
+
     def test_completed_and_truncated_preserved_runs_are_skipped(self):
         row_completed = self.row("M1")
         row_completed["run_id"] = "API-v2.2-AUTH-FED-01-M1-R01"
@@ -452,16 +482,16 @@ class APICollectionTests(unittest.TestCase):
         self.assertEqual(skipped[0]["status"], "completed")
         self.assertEqual(skipped[1]["status"], "truncated")
 
-    def test_v2_1_observations_are_never_regenerated_by_v2_2(self):
-        # Verify that v2.2 manifest has no v2.1 run IDs
-        rows_v2_2 = create_api_manifest.make_rows(
+    def test_historical_observations_are_never_regenerated_by_v2_3(self):
+        rows_v2_3 = create_api_manifest.make_rows(
             self.config,
             create_api_manifest.load_frozen_tasks(),
             rendered_dir=create_api_manifest.DEFAULT_RENDERED_DIR,
-            run_prefix="API-v2.2",
+            run_prefix="API-v2.3",
         )
-        for row in rows_v2_2:
-            self.assertTrue(row["run_id"].startswith("API-v2.2-"))
+        for row in rows_v2_3:
+            self.assertTrue(row["run_id"].startswith("API-v2.3-"))
+            self.assertFalse(row["run_id"].startswith("API-v2.2-"))
             self.assertFalse(row["run_id"].startswith("API-v2.1-"))
             self.assertFalse(row["run_id"].startswith("API-AUTH-"))
 

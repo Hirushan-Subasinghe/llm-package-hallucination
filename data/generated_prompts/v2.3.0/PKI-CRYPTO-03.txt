@@ -1,0 +1,7 @@
+Implement a self-contained Node.js TypeScript S/MIME core utility that constructs and parses standards-compatible MIME messages and demonstrates CMS signing, signature verification, encryption for X.509 recipients, and decryption. Preserve essential MIME headers and canonical line endings, report signer certificate details, validate the chain against supplied trust anchors, and distinguish signature, certificate, and content errors. Use one representative sign-then-encrypt round trip plus a tampered-message fixture; provide the core functions rather than exhaustive mail-client workflows. Include a complete package.json with exact dependency versions and scripts, document the exact package APIs used, and provide reproducible installation and example commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

@@ -1,0 +1,7 @@
+Implement a self-contained Node.js TypeScript EPUB 3 builder and validator. Assemble chapters, CSS, a cover image, package metadata, navigation document, manifest, spine, and container metadata into a conforming archive with the uncompressed mimetype entry first. Parse the completed EPUB to verify ZIP ordering, required files, unique identifiers, media types, internal links, XML namespaces, and referenced resources, while rejecting traversal and remote active content. Include a small two-chapter example and validation failure fixtures. Include a complete package.json with exact dependency versions and scripts, identify the exact ZIP, XML, and HTML package APIs used, and provide reproducible installation and example commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

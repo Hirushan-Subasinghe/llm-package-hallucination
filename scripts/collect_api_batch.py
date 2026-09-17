@@ -31,8 +31,10 @@ from collect_api_run import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_MANIFEST = ROOT / "manifests" / "api_final_v2.2.0_manifest.csv"
-DEFAULT_STATE = ROOT / "data" / "final" / "api_batch_state_v2.2.0.json"
+DEFAULT_MANIFEST = ROOT / "manifests" / "api_final_v2.3.0_manifest.csv"
+DEFAULT_STATE = ROOT / "data" / "final" / "api_batch_state_v2.3.0.json"
+MANIFEST_V2_2 = ROOT / "manifests" / "api_final_v2.2.0_manifest.csv"
+STATE_V2_2 = ROOT / "data" / "final" / "api_batch_state_v2.2.0.json"
 MANIFEST_V2_1 = ROOT / "manifests" / "api_final_v2.1.0_manifest.csv"
 STATE_V2_1 = ROOT / "data" / "final" / "api_batch_state_v2.1.0.json"
 MANIFEST_V2_0 = ROOT / "manifests" / "api_final_v2.0.0_manifest.csv"
@@ -169,12 +171,28 @@ def run_batch(
         try:
             directory = collector(config, row, raw_root=raw_root)
         except Exception as error:
+            failure_reason = None
+            metadata_path = raw_root / str(row["run_id"]) / "metadata.json"
+            try:
+                failure_reason = json.loads(metadata_path.read_text(encoding="utf-8")).get("failure_reason")
+            except (OSError, json.JSONDecodeError):
+                pass
             state["events"].append({
                 "at_utc": utc_now(),
                 "event": "temporarily_blocked_or_failed",
                 "run_id": row["run_id"],
                 "error_type": type(error).__name__,
+                "failure_reason": failure_reason,
             })
+            if failure_reason and failure_reason.startswith("http_status_"):
+                state["events"].append({
+                    "at_utc": utc_now(),
+                    "event": "batch_stopped_nonretryable_provider_failure",
+                    "run_id": row["run_id"],
+                    "collection_order": int(row["collection_order"]),
+                    "failure_reason": failure_reason,
+                    "action": "stopped_without_skipping_or_substitution",
+                })
             state["updated_at_utc"] = utc_now()
             atomic_json(state_path, state)
             raise

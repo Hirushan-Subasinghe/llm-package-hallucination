@@ -462,3 +462,34 @@ Each decision record contains the following standardized fields:
 - **impact_on_analysis:** 360 planned observations for v2.2 (90/model, 120/rep, 60/cat). Primary SHR/PHR evaluation applies strictly to completed non-truncated v2.2 generations.
 - **affected_research_questions:** RQ1, RQ2, RQ3, RQ4.
 - **scope_effect:** Freezes the v2.2 experimental condition with zero official observations generated; does not authorize starting collection.
+
+---
+
+### D026 — Correct Response-Inventory Snapshot Provenance
+
+- **decision_id:** D026
+- **date:** 2026-09-17
+- **status:** PROVENANCE_CORRECTION_RECORDED
+- **issue:** `results/response_inventory_v2.2.0.*` are rolling derived outputs. The first documented PIPE-02 inventory summary (360 planned; 1 completed; 1 truncated; 358 pending) and its JSON/CSV hashes (`b6f44b72c2d7bfc66ec264ae67f368e0b589a33ad5bcf7ac2caa30cc8f34b697` / `34bad9dc91a9126d9fb5830ed03f8017d673022c8491a13a2ca9044747081311`) were terminal-recorded, but the original byte-for-byte files were not preserved before later rolling regeneration.
+- **correction:** Retain the first summary and hashes as historical provenance evidence only. Do not attribute them, or their older snapshot time, to regenerated rolling content.
+- **preserved_later_snapshot:** The later inventory was preserved at `results/snapshots/response_inventory_v2.2.0_preserved_at_20260917T082919Z.json` and `.csv`. It contains 360 planned runs: 2 completed, 2 truncated, and 356 pending. The JSON/CSV SHA-256 values are `ec4f95f3fc96c3ef305ca59801341b37ef9b1967a02ef79ec7695a77c89722fe` / `a0e05acce5a677b8d50469f6bdb0dacb8e9405482b79ce8b1f13fe8cc22bec04`.
+- **observations:** The preserved later inventory's non-pending records are collection orders 1--4: `API-v2.2-AUTH-FED-01-M1-R01` completed (11,347 completion tokens); `API-v2.2-AUTH-FED-01-M2-R01` truncated (12,000); `API-v2.2-AUTH-FED-01-M3-R01` completed (8,893); and `API-v2.2-AUTH-FED-01-M4-R01` truncated (12,000).
+- **handling_rule:** When a rolling inventory is cited as a research milestone, preserve a timestamped copy and record its hashes immediately. A preserved inventory is historical derived metadata and may be stale relative to active collection.
+- **data_boundary:** No frozen manifest, raw observation, collection state, prompt, model configuration, or pacing rule was modified.
+
+---
+
+### D027 — Prospectively Stop v2.2 and Freeze v2.3 Zero-Artificial-Pacing Collection
+
+- **decision_id:** D027
+- **date:** 2026-09-17
+- **status:** FINALIZED
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **original_design:** v2.2 used fixed researcher-imposed minimum intervals of 1,800 seconds for OpenRouter and 2,700 seconds for Groq.
+- **final_design:** v2.2 is prospectively stopped after 10 preserved observations (6 completed, 4 truncated, 350 pending of 360 planned). v2.3 is a new, separate 360-observation dataset with `api-model-set-1.2.0` and sequential requests with a zero-second artificial interval after successful requests. Provider-enforced 429/Retry-After and the frozen infrastructure retry/backoff policy remain mandatory.
+- **rationale:** The v2.2 fixed spacing was unnecessarily conservative under a tight final collection window.
+- **methodological_justification:** The task set, prompt wrapper, exact model IDs, provider pins, no-fallback rule, no-tools condition, sampling parameters, retry philosophy, and truncation handling remain unchanged. The version boundary isolates the operational pacing change and prevents mixing v2.2 observations into v2.3 metrics.
+- **impact_on_data_collection:** v2.3 uses fresh `API-v2.3-` IDs, manifest, batch state, prompt directory, and raw-observation namespace. A non-retryable quota/credit/account/provider failure is recorded and stops the batch without skipping, model/provider substitution, or automatic `:free`-to-paid route changes.
+- **impact_on_analysis:** The 10 v2.2 observations remain immutable methodological evidence and are excluded from v2.3 primary analysis. v2.3 primary metrics apply only to the fresh 360-observation v2.3 dataset.
+- **affected_research_questions:** RQ1, RQ2, RQ3, RQ4.
+- **scope_effect:** Payment/account tier is infrastructure availability only and is not an experimental condition when model ID, routing, prompt, and generation parameters remain identical. This decision does not authorize collection during freeze creation.
