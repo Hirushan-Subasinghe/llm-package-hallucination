@@ -326,3 +326,12 @@
 - The collector correctly skipped previously preserved completed and failed observations on subsequent invocation and continued to the next pending manifest row without retry or model/provider substitution.
 - These are infrastructure/provider-response failures, not hallucination outcomes or truncations, and they must be excluded from primary SHR/PHR denominators.
 - No frozen v2.5 collection setting or collector code was changed in response to these failures.
+
+### v2.5 continued collection confirms repeated M4 truncation
+
+- Continued official v2.5 collection successfully processed `API-v2.5-AUTH-FED-03-M2-R01` and `API-v2.5-AUTH-FED-04-M4-R01`.
+- `API-v2.5-AUTH-FED-03-M2-R01` completed normally with finish reason `stop` and 9,210 completion tokens under the frozen 16,000-token ceiling.
+- `API-v2.5-AUTH-FED-04-M4-R01` was preserved as `TRUNCATED` with finish reason `length` and exactly 16,000 completion tokens.
+- This is a second verified v2.5 M4 observation to hit the 16,000-token ceiling, following `API-v2.5-AUTH-FED-01-M4-R01`.
+- The observation confirms that the higher v2.5 ceiling provides additional headroom but does not eliminate truncation for all responses.
+- No truncated observation will be regenerated or included in primary SHR/PHR denominators.

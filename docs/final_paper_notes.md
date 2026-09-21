@@ -239,3 +239,13 @@ No final experimental results belong here yet. Add results only from verified, v
 - They must be reported as infrastructure/provider-response failures and excluded from primary SHR/PHR denominators.
 - Do not describe these cases as package hallucinations, truncations, or model-content failures.
 - Evidence: the corresponding per-run `metadata.json` files and `data/final/api_batch_state_v2.5.0.json`.
+
+### 2026-09-21 — repeated M4 truncation under the v2.5 ceiling
+
+- **Affected sections:** Data Collection, Dataset Completion, Limitations.
+- Continued official v2.5 collection produced another M4 observation, `API-v2.5-AUTH-FED-04-M4-R01`, that reached exactly 16,000 completion tokens and ended with finish reason `length`.
+- This is a second verified M4 v2.5 truncation at the 16,000-token ceiling, following `API-v2.5-AUTH-FED-01-M4-R01`.
+- The repeated ceiling hits confirm that the v2.5 increase from 12,000 to 16,000 tokens provided additional output headroom but did not eliminate truncation for all responses.
+- Truncated observations remain preserved once, are not regenerated, and are excluded from primary SHR/PHR denominators.
+- Do not state or imply in the dissertation that the 16,000-token amendment solved the truncation problem.
+- Evidence: `data/final/raw/API-v2.5-AUTH-FED-01-M4-R01/metadata.json`, `data/final/raw/API-v2.5-AUTH-FED-04-M4-R01/metadata.json`, and `data/final/api_batch_state_v2.5.0.json`.
