@@ -201,3 +201,19 @@ No final experimental results belong here yet. Add results only from verified, v
 - Its sole experimental difference from v2.4 is a 16,000-token maximum output ceiling instead of 12,000. Task and prompt bytes, four model/provider conditions, other generation settings, retry/backoff, failure continuation, truncation semantics, and pacing are unchanged.
 - The 30 rendered prompts and prompt template match v2.4 byte-for-byte. Freeze checks and tests passed, and the first-row dry run returned `API-v2.5-AUTH-FED-01-M1-R01`, OpenRouter, order 1, zero wait.
 - No v2.5 API request was sent; there are no v2.5 outcomes, SHR/PHR estimates, or claims that the higher ceiling resolves truncation. The freeze has been prepared for researcher review, with commit and tag still pending.
+
+### 2026-09-21 — v2.5 initial four-model live collection gate
+
+- **Affected sections:** Methodology / Data Collection, Dataset Completion, Limitations.
+- Official v2.5 collection began under the frozen 16,000-token output ceiling with one `AUTH-FED-01`, `R01` observation from each of the four frozen model conditions.
+- All four model/provider conditions accepted the configured `max_output_tokens: 16000` request and returned HTTP 200 on the first attempt without retry.
+- Verified response outcomes were:
+  - M1: `COMPLETED`, finish reason `stop`, 7,058 completion tokens.
+  - M2: `COMPLETED`, finish reason `stop`, 13,998 completion tokens.
+  - M3: `COMPLETED`, finish reason `stop`, 8,210 completion tokens.
+  - M4: `TRUNCATED`, finish reason `length`, exactly 16,000 completion tokens.
+- The M2 observation provides direct evidence that the revised ceiling allowed at least one response to complete above the prior 12,000-token ceiling. This should be described as an observed case, not generalized to all generations.
+- The M4 observation demonstrates that the 16,000-token ceiling did not eliminate truncation. Do not state or imply that v2.5 solved truncation completely.
+- The batch-state event label `completed` denotes successful row processing and is not the authoritative response-completion classification. The authoritative status for analysis is the per-run `metadata.json` `collection_status` / `response_completion_status`.
+- The initial gate outcome was therefore 3 completed and 1 truncated observation. These observations are collection-quality evidence only; no SHR, PHR, hallucination prevalence, or risk conclusion should be derived from this gate alone.
+- Evidence: `data/final/raw/API-v2.5-AUTH-FED-01-M1-R01/` through `API-v2.5-AUTH-FED-01-M4-R01/`, plus the frozen v2.5 configuration and batch state.

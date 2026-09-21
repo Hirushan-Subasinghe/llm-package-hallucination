@@ -280,3 +280,29 @@
 - Immediately before the freeze commit, `git diff --cached --check` passed, the complete repository test suite passed 113/113 tests, and `python3 scripts/create_experiment_freeze_v2_5.py --check` passed.
 - No official v2.5 API request had been sent at the time of commit/tag creation.
 - The next experimental step is the first official v2.5 observation, which will also serve as the live compatibility check for the 16,000-token ceiling.
+
+### First official v2.5 observation completed successfully
+
+- Collected and verified the first official v2.5 observation: `API-v2.5-AUTH-FED-01-M1-R01`.
+- Collection status: `completed`; response completion status: `COMPLETED`; finish reason: `stop`.
+- The OpenRouter M1 request used the frozen v2.5 `max_output_tokens: 16000` setting and was accepted successfully.
+- Token usage: 228 prompt tokens, 7,058 completion tokens, and 7,286 total tokens; completion-token details reported 294 reasoning tokens.
+- The request succeeded on attempt 1 with HTTP 200 and no retry.
+- Generation started at `2026-09-21T08:37:31.701588Z` and ended at `2026-09-21T08:43:04.812012Z`.
+- This confirms live compatibility of the 16,000-token ceiling for the M1/OpenRouter condition only; it does not yet establish compatibility for M2-M4 or demonstrate that v2.5 eliminates truncation.
+- No SHR, PHR, hallucination-prevalence, or risk result is inferred from this observation.
+
+### v2.5 four-model initial live gate completed
+
+- Completed the first official v2.5 observation for each frozen model condition using `AUTH-FED-01`, repetition `R01`.
+- All four conditions accepted the frozen `max_output_tokens: 16000` request and returned HTTP 200 on attempt 1 with no retry.
+- Verified outcomes from each run's authoritative `metadata.json`:
+  - M1 `API-v2.5-AUTH-FED-01-M1-R01`: `COMPLETED`, finish reason `stop`, 7,058 completion tokens.
+  - M2 `API-v2.5-AUTH-FED-01-M2-R01`: `COMPLETED`, finish reason `stop`, 13,998 completion tokens.
+  - M3 `API-v2.5-AUTH-FED-01-M3-R01`: `COMPLETED`, finish reason `stop`, 8,210 completion tokens.
+  - M4 `API-v2.5-AUTH-FED-01-M4-R01`: `TRUNCATED`, finish reason `length`, exactly 16,000 completion tokens.
+- M2 demonstrates that the 16,000-token ceiling provides useful headroom beyond v2.4's 12,000-token ceiling for at least one observed generation; this must not be generalized to all responses.
+- M4 demonstrates that the 16,000-token ceiling does not eliminate truncation.
+- The batch-state event label `completed` is a generic successful-row-processing event: `run_batch()` appends it after the underlying collector returns successfully for either a completed or truncated response. The authoritative response-completion classification remains `collection_status` / `response_completion_status` in each run's metadata. Existing-run handling separately recognizes and preserves both `completed` and `truncated` observations.
+- No collector code or frozen v2.5 experimental setting was changed after collection began.
+- Initial gate outcome: 3 completed and 1 truncated observation. No SHR, PHR, hallucination-prevalence, or risk result is inferred from this gate.
