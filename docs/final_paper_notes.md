@@ -249,3 +249,15 @@ No final experimental results belong here yet. Add results only from verified, v
 - Truncated observations remain preserved once, are not regenerated, and are excluded from primary SHR/PHR denominators.
 - Do not state or imply in the dissertation that the 16,000-token amendment solved the truncation problem.
 - Evidence: `data/final/raw/API-v2.5-AUTH-FED-01-M4-R01/metadata.json`, `data/final/raw/API-v2.5-AUTH-FED-04-M4-R01/metadata.json`, and `data/final/api_batch_state_v2.5.0.json`.
+
+### 2026-09-21 — verified AUTH-FED-04/05 collection outcomes
+
+- **Affected sections:** Data Collection, Dataset Completion, Limitations.
+- Verified per-run metadata for `AUTH-FED-04` and the first two `AUTH-FED-05` observations confirms a mixture of completed, truncated, and failed collection outcomes under the frozen v2.5 protocol.
+- `API-v2.5-AUTH-FED-04-M1-R01` was preserved as a provider-response failure after an HTTP 200 response contained no non-empty assistant content.
+- `API-v2.5-AUTH-FED-04-M2-R01` and `API-v2.5-AUTH-FED-04-M4-R01` were both truncated at exactly 16,000 completion tokens with finish reason `length`.
+- `API-v2.5-AUTH-FED-04-M3-R01` completed normally at 10,387 completion tokens.
+- `API-v2.5-AUTH-FED-05-M1-R01` and `API-v2.5-AUTH-FED-05-M2-R01` completed normally at 6,219 and 13,024 completion tokens respectively.
+- These observations reinforce that the 16,000-token ceiling provides additional response headroom but does not remove right-censoring, and that preserved provider-response failures remain a separate dataset-completion category.
+- Primary SHR/PHR analysis must exclude both truncated and failed observations according to the frozen protocol.
+- Evidence: the corresponding per-run `metadata.json` files and `data/final/api_batch_state_v2.5.0.json`.

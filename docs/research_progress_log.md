@@ -335,3 +335,16 @@
 - This is a second verified v2.5 M4 observation to hit the 16,000-token ceiling, following `API-v2.5-AUTH-FED-01-M4-R01`.
 - The observation confirms that the higher v2.5 ceiling provides additional headroom but does not eliminate truncation for all responses.
 - No truncated observation will be regenerated or included in primary SHR/PHR denominators.
+
+### v2.5 AUTH-FED-04/05 outcomes verified
+
+- Verified authoritative per-run metadata for the remaining `AUTH-FED-04` observations and the first two `AUTH-FED-05` observations.
+- `API-v2.5-AUTH-FED-04-M1-R01` was preserved as `failed` after HTTP 200 returned no non-empty assistant content; no response-completion status or finish reason exists.
+- `API-v2.5-AUTH-FED-04-M2-R01` was preserved as `TRUNCATED` with finish reason `length` at exactly 16,000 completion tokens.
+- `API-v2.5-AUTH-FED-04-M3-R01` completed normally with finish reason `stop` and 10,387 completion tokens.
+- `API-v2.5-AUTH-FED-04-M4-R01` was preserved as `TRUNCATED` with finish reason `length` at exactly 16,000 completion tokens.
+- `API-v2.5-AUTH-FED-05-M1-R01` completed normally with finish reason `stop` and 6,219 completion tokens.
+- `API-v2.5-AUTH-FED-05-M2-R01` completed normally with finish reason `stop` and 13,024 completion tokens.
+- All six requests used the frozen 16,000-token ceiling and all recorded attempts were first-attempt HTTP 200 responses.
+- These observations further confirm that v2.5 still contains three distinct collection outcomes: completed responses, right-censored truncated responses, and preserved provider-response failures.
+- Truncated and failed observations remain excluded from primary SHR/PHR denominators and are not regenerated or substituted.
