@@ -3,11 +3,11 @@
 **Last updated:** 2026-09-21 (v2.5 prospective implementation and validation)
 **Project:** LLM Package Hallucination Study
 
-## Current phase: v2.5 prepared for researcher review
+## Current phase: v2.5 frozen and ready for official collection
 
 v2.4 was prospectively stopped at the documented checkpoint of 30 finalized observations: 14 completed, 12 truncated, and 4 failed (40.0% preliminary truncation). Its frozen inputs and preserved observations remain methodological evidence only. No further v2.4 collection is planned.
 
-v2.5.0 is a fresh, independent 360-observation experiment beginning at observation 1. Its manifest has 360 pending rows, its state has no events or provider pacing history, and there are zero official v2.5 raw observations. No v2.5 API request was sent during implementation. The implementation and prospective freeze records are ready for review; no commit or tag has been created.
+v2.5.0 is a fresh, independent 360-observation experiment beginning at observation 1. Its manifest has 360 pending rows, its state has no events or provider pacing history, and there are zero official v2.5 raw observations. No v2.5 API request was sent during implementation. The implementation and prospective freeze records were reviewed and frozen at commit `87d3158`, tagged `v2.5.0-freeze`.
 
 ## Frozen v2.5 inputs
 
