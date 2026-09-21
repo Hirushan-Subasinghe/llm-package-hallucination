@@ -228,3 +228,14 @@ No final experimental results belong here yet. Add results only from verified, v
 - Under the frozen v2.5 continuation rule, preserved failed observations remain explicit infrastructure evidence and are excluded from primary SHR/PHR denominators while later manifest rows may continue.
 - Do not describe this case as a package hallucination, truncation, or model-content failure; it is a provider/response-format collection failure.
 - Evidence: `data/final/raw/API-v2.5-AUTH-FED-02-M4-R01/metadata.json` and `data/final/api_batch_state_v2.5.0.json`.
+
+### 2026-09-21 — repeated v2.5 provider-response failures
+
+- **Affected sections:** Data Collection, Dataset Completion, Limitations.
+- Continued official v2.5 collection produced additional preserved provider-response failures.
+- Two M4/OpenRouter observations, `API-v2.5-AUTH-FED-02-M4-R01` and `API-v2.5-AUTH-FED-03-M4-R01`, returned HTTP 200 but did not satisfy the collector's expected chat-completion structure.
+- A separate M1/OpenRouter observation, `API-v2.5-AUTH-FED-03-M1-R01`, returned HTTP 200 but contained no non-empty assistant content.
+- These observations were preserved as `failed`, were not retried, regenerated, or substituted, and have no valid response-completion classification.
+- They must be reported as infrastructure/provider-response failures and excluded from primary SHR/PHR denominators.
+- Do not describe these cases as package hallucinations, truncations, or model-content failures.
+- Evidence: the corresponding per-run `metadata.json` files and `data/final/api_batch_state_v2.5.0.json`.

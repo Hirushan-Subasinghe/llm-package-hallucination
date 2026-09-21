@@ -316,3 +316,13 @@
 - The immediately preceding run, `API-v2.5-AUTH-FED-02-M3-R01`, had completed successfully before the batch stopped.
 - Under the frozen v2.5 continuation rule, a subsequent invocation should preserve and skip this failed observation and continue to later manifest rows without retry or model/provider substitution.
 - This observation is infrastructure/provider-format evidence and must be excluded from primary SHR/PHR denominators.
+
+### v2.5 repeated provider-response failures during continued collection
+
+- Continued official v2.5 collection preserved additional provider-response failures without retry, regeneration, or substitution.
+- `API-v2.5-AUTH-FED-03-M4-R01` became the second M4/OpenRouter observation to fail with HTTP 200 and failure reason `HTTP 200 response is not a valid chat completion`, following the earlier `API-v2.5-AUTH-FED-02-M4-R01` failure of the same class.
+- `API-v2.5-AUTH-FED-03-M1-R01` failed on its first HTTP 200 response with the distinct failure reason `HTTP 200 response contains no non-empty assistant content`.
+- For the M1 empty-content failure, no valid assistant completion was available, so `response_completion_status` and `finish_reason` are absent.
+- The collector correctly skipped previously preserved completed and failed observations on subsequent invocation and continued to the next pending manifest row without retry or model/provider substitution.
+- These are infrastructure/provider-response failures, not hallucination outcomes or truncations, and they must be excluded from primary SHR/PHR denominators.
+- No frozen v2.5 collection setting or collector code was changed in response to these failures.
