@@ -306,3 +306,13 @@
 - The batch-state event label `completed` is a generic successful-row-processing event: `run_batch()` appends it after the underlying collector returns successfully for either a completed or truncated response. The authoritative response-completion classification remains `collection_status` / `response_completion_status` in each run's metadata. Existing-run handling separately recognizes and preserves both `completed` and `truncated` observations.
 - No collector code or frozen v2.5 experimental setting was changed after collection began.
 - Initial gate outcome: 3 completed and 1 truncated observation. No SHR, PHR, hallucination-prevalence, or risk result is inferred from this gate.
+
+### v2.5 preserved provider-format failure during continued collection
+
+- During continued official v2.5 collection, `API-v2.5-AUTH-FED-02-M4-R01` received HTTP 200 on its first attempt, but the response body did not satisfy the collector's valid chat-completion structure.
+- The run was preserved with `collection_status: failed` and failure reason `HTTP 200 response is not a valid chat completion`.
+- No `response_completion_status` or `finish_reason` exists because no valid assistant completion was parsed.
+- The failed run was not retried, regenerated, or substituted.
+- The immediately preceding run, `API-v2.5-AUTH-FED-02-M3-R01`, had completed successfully before the batch stopped.
+- Under the frozen v2.5 continuation rule, a subsequent invocation should preserve and skip this failed observation and continue to later manifest rows without retry or model/provider substitution.
+- This observation is infrastructure/provider-format evidence and must be excluded from primary SHR/PHR denominators.

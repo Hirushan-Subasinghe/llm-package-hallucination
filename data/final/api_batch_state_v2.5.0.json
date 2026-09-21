@@ -93,13 +93,80 @@
       "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.5-AUTH-FED-01-M4-R01",
       "event": "completed",
       "run_id": "API-v2.5-AUTH-FED-01-M4-R01"
+    },
+    {
+      "at_utc": "2026-09-21T12:06:14.767987Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-01-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-21T12:06:14.768803Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-01-M2-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-21T12:06:14.769360Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-01-M3-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-21T12:06:14.770302Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-01-M4-R01",
+      "status": "truncated"
+    },
+    {
+      "api_provider": "Groq",
+      "at_utc": "2026-09-21T12:06:14.771816Z",
+      "collection_order": 5,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-21T12:06:14.770986Z",
+      "run_id": "API-v2.5-AUTH-FED-02-M2-R01"
+    },
+    {
+      "at_utc": "2026-09-21T12:06:27.613139Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.5-AUTH-FED-02-M2-R01",
+      "event": "completed",
+      "run_id": "API-v2.5-AUTH-FED-02-M2-R01"
+    },
+    {
+      "api_provider": "Groq",
+      "at_utc": "2026-09-21T12:06:27.614726Z",
+      "collection_order": 6,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-21T12:06:27.614346Z",
+      "run_id": "API-v2.5-AUTH-FED-02-M3-R01"
+    },
+    {
+      "at_utc": "2026-09-21T12:06:41.949193Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.5-AUTH-FED-02-M3-R01",
+      "event": "completed",
+      "run_id": "API-v2.5-AUTH-FED-02-M3-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-21T12:06:41.950688Z",
+      "collection_order": 7,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-21T12:06:41.950072Z",
+      "run_id": "API-v2.5-AUTH-FED-02-M4-R01"
+    },
+    {
+      "at_utc": "2026-09-21T12:06:43.586309Z",
+      "error_type": "ValueError",
+      "event": "temporarily_blocked_or_failed",
+      "failure_reason": "HTTP 200 response is not a valid chat completion",
+      "run_id": "API-v2.5-AUTH-FED-02-M4-R01"
     }
   ],
   "manifest_sha256": "c7911420181f090a16df33ed041caa800d5859e8e9a30882655b4ca02e72c438",
   "provider_next_allowed_at_epoch": {
-    "Groq": 1789988002.866425,
-    "OpenRouter": 1789988191.1671264
+    "Groq": 1789992387.6143463,
+    "OpenRouter": 1789992401.9500718
   },
   "state_version": "api-batch-state-1.0.0",
-  "updated_at_utc": "2026-09-21T11:05:16.926753Z"
+  "updated_at_utc": "2026-09-21T12:06:43.586327Z"
 }

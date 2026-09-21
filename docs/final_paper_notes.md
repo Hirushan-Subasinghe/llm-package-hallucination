@@ -217,3 +217,14 @@ No final experimental results belong here yet. Add results only from verified, v
 - The batch-state event label `completed` denotes successful row processing and is not the authoritative response-completion classification. The authoritative status for analysis is the per-run `metadata.json` `collection_status` / `response_completion_status`.
 - The initial gate outcome was therefore 3 completed and 1 truncated observation. These observations are collection-quality evidence only; no SHR, PHR, hallucination prevalence, or risk conclusion should be derived from this gate alone.
 - Evidence: `data/final/raw/API-v2.5-AUTH-FED-01-M1-R01/` through `API-v2.5-AUTH-FED-01-M4-R01/`, plus the frozen v2.5 configuration and batch state.
+
+### 2026-09-21 — v2.5 preserved provider-format failure
+
+- **Affected sections:** Data Collection, Dataset Completion, Limitations.
+- During official v2.5 collection, `API-v2.5-AUTH-FED-02-M4-R01` returned HTTP 200 on its first attempt, but the response body did not satisfy the collector's expected chat-completion structure.
+- The observation was preserved with `collection_status: failed` and failure reason `HTTP 200 response is not a valid chat completion`.
+- No valid assistant completion was parsed, so no `response_completion_status` or `finish_reason` exists for this run.
+- The observation was not retried, regenerated, or replaced with another model/provider response.
+- Under the frozen v2.5 continuation rule, preserved failed observations remain explicit infrastructure evidence and are excluded from primary SHR/PHR denominators while later manifest rows may continue.
+- Do not describe this case as a package hallucination, truncation, or model-content failure; it is a provider/response-format collection failure.
+- Evidence: `data/final/raw/API-v2.5-AUTH-FED-02-M4-R01/metadata.json` and `data/final/api_batch_state_v2.5.0.json`.
