@@ -243,7 +243,9 @@ class APIFreezeTests(unittest.TestCase):
         self.assertTrue(state_path.exists())
         state = json.loads(state_path.read_text(encoding="utf-8"))
         self.assertEqual(state["collection_status"], "ready_for_prospective_collection")
-        self.assertEqual(state["events"], [])
+        # The initial state has since advanced through official v2.4 collection.
+        self.assertIsInstance(state["events"], list)
+        self.assertGreater(len(state["events"]), 0)
         self.assertEqual(state["manifest_sha256"], freeze["official_manifest"]["sha256"])
 
         # Verify markdown documentation

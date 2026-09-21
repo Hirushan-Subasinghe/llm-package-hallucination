@@ -250,3 +250,24 @@
 - Preserve validation evidence and timestamps.
 - Distinguish `exists`, `not_found`, and `unresolved`.
 - Do not calculate PHR/SHR until validation and research classification are complete.
+
+### v2.4 prospectively stopped; 16,000-token v2.5 amendment selected
+
+- Reviewed preliminary official v2.4 collection outcomes under the frozen 12,000-token maximum output ceiling.
+- At the decision point, v2.4 had reached 30 finalized observations: 14 completed, 12 truncated, and 4 failed.
+- The observed truncation rate was therefore 40.0% overall at this preliminary checkpoint.
+- Model-level evidence showed repeated ceiling hits particularly for M2 and M4, while completed-response token counts alone could not estimate the natural lengths of truncated outputs because those observations are right-censored at 12,000 tokens.
+- Because primary SHR/PHR analysis excludes truncated observations, continuing with the observed truncation burden risked materially reducing the usable primary-analysis sample.
+- Decision: prospectively stop v2.4 without altering, deleting, retrying, or regenerating any existing v2.4 observation.
+- A new fresh experiment version, v2.5, will be created from observation 1 with a 16,000-token maximum output ceiling.
+- The planned v2.5 amendment changes only the maximum output ceiling from 12,000 to 16,000 tokens. Tasks, prompt content, model conditions, provider routing, sampling parameters other than the ceiling, failure-continuation semantics, retry rules, no-tools constraints, and zero researcher-imposed pacing remain unchanged.
+- Existing v2.4 observations remain methodological evidence and will not be mixed into v2.5 primary SHR/PHR results.
+- No v2.5 API observations may be collected until the new version is implemented, validated, frozen, committed, and tagged.
+
+### v2.5 fresh experiment implemented and validated
+
+- Implemented a new independent `API-v2.5-` 360-row, all-pending manifest, fresh empty batch state, byte-identical prompt template and 30 rendered prompts, and `api-model-set-1.3.0`.
+- The sole experimental change from v2.4 is `max_output_tokens` from 12,000 to 16,000. Model identities, provider pins, remaining generation settings, retry/backoff, v2.4 failure continuation, truncation handling, and zero artificial pacing remain the same.
+- Created prospective freeze records and a versioned v2.5 batch wrapper. Freeze checks passed for v2.3, v2.4, and v2.5. Targeted API tests passed 37/37; the full repository suite passed 113/113.
+- SHA-256: task set `ef0aff59f8a3934f65379d34036848652b7b5593f595ffa4b449a15af021546b`; model set `554cd8d8d011639c46d9d2c0280f8b08c451ea475bc2b8e2ec4006c8ab75b1e4`; template `8d3971d6f9f86dfd98a4b5c49c0c13d734b7f650744da682225195f2ea49b528`; manifest `c7911420181f090a16df33ed041caa800d5859e8e9a30882655b4ca02e72c438`; initial state `9c2816a76618a9edbab32648e7b7529ffdd66e17587a786757a79f6cb9c3d825`; freeze JSON `0e5ce36bf94cecc137c94056e762a19c301c2ee0db8bc0791118d2894cedb197`; freeze Markdown `ba13bdf74a1d8ef399fe39a7a7d336c819493645d457e49fb408071795128f29`.
+- Dry run: `API-v2.5-AUTH-FED-01-M1-R01`, order 1, OpenRouter, `wait_seconds: 0.0`. Zero real v2.5 API requests were sent. No commit or tag was created; researcher review is next.

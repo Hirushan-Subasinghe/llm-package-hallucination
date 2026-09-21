@@ -1,0 +1,7 @@
+Create a self-contained Node.js TypeScript core document pipeline that fills a small AcroForm PDF from JSON, embeds a Unicode font, flattens one selected field, attaches the source JSON, and completes a detached signature placeholder with a locally supplied PKCS#12 certificate. Reopen the result to verify representative field values, attachment integrity, byte-range coverage, and signature metadata without rendering or executing embedded content. Include one small local fixture and a tamper demonstration, focusing on the PDF, signing, and verification functions rather than application scaffolding. Include a complete package.json with exact dependency versions and scripts, identify the exact APIs used for PDF editing, signing, and certificate handling, and provide reproducible installation and example commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

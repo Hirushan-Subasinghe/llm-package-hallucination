@@ -522,3 +522,16 @@ Each decision record contains the following standardized fields:
 - **normalization_and_exclusions:** Scoped package roots retain both scope and package segment; unscoped and scoped subpaths are reduced to their package roots; explicit install-specifier versions and dependency-object version strings are retained. Centralized Node built-ins, `node:` references, local/relative/absolute paths, `file:` references, and HTTP(S) URLs are excluded. No semantic inference is applied to prose.
 - **metric_boundary:** This stage does not query a registry, classify package existence or hallucinations, calculate PHR or SHR, score risk, or modify raw observations. Truncated records can be extracted and retain their truncation marker for later, separately governed filtering.
 - **data_boundary:** Inputs are read-only inventory and raw-response artifacts. Outputs are versioned derived files under `results/`; collection state, prompts, manifests, raw data, and historical inventory snapshots are not changed.
+
+---
+
+### D030 — Implement Fresh v2.5 Dataset with 16,000-Token Ceiling
+
+- **decision_id:** D030
+- **date:** 2026-09-21
+- **status:** IMPLEMENTED; commit and tag pending researcher review
+- **decision:** After the documented prospective v2.4 stop at 30 finalized observations (14 completed, 12 truncated, 4 failed), create an independent 360-observation v2.5 experiment beginning at observation 1.
+- **sole_experimental_change:** Increase `max_output_tokens` from 12,000 to 16,000.
+- **preserved_protocol:** Same 30 task IDs and wording, byte-identical prompt template and rendered prompts, four model/provider conditions and pins, no-fallback/no-tools stateless interface, temperature 0.6, top_p 0.95, omitted seed, retry/backoff, v2.4 failure continuation, truncation policy, and zero artificial pacing.
+- **data_boundary:** New `API-v2.5-` run namespace, all-pending manifest, and empty state. No v2.4 observation is reused. No v2.5 API request was sent during implementation or validation.
+- **analysis_effect:** v2.0–v2.4 remain methodological evidence outside v2.5 primary SHR/PHR denominators. Failed and truncated v2.5 observations, if later collected, remain excluded from those denominators under the preserved policy.

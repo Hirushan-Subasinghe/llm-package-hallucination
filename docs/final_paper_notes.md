@@ -171,3 +171,33 @@ No final experimental results belong here yet. Add results only from verified, v
 - It was created prospectively before further collection. The only methodological change from v2.3 is that preserved non-retryable failed observations no longer block later manifest rows.
 - Failed observations remain explicit infrastructure evidence, are never retried or regenerated for a successful answer, permit no model/provider substitution, and are excluded from primary SHR/PHR denominators.
 - All v2.3 observations and artifacts remain immutable and are excluded from v2.4 metrics. v2.4 uses byte-identical copied task/prompt content and the same four model/provider conditions and generation protocol.
+
+### 2026-09-21 — v2.4 initial collection gate
+
+- **Affected sections:** Methodology / Data Collection, Dataset Completion, Limitations.
+- Official v2.4 collection began only after the prospective freeze.
+- The first four model-condition observations for `AUTH-FED-01` produced one completed response, two truncated responses, and one transport-failure observation.
+- The M3 transport failure exhausted the frozen retry policy and was preserved as failed infrastructure evidence without manual regeneration or model/provider substitution.
+- The v2.4 continuation rule then allowed later manifest rows to proceed, demonstrating the intended distinction from v2.3.
+- Failed and truncated observations must be excluded from primary SHR/PHR denominators and reported separately in dataset-completion/data-quality tables.
+- Evidence: `data/final/raw/API-v2.4-AUTH-FED-01-M1-R01/` through `API-v2.4-AUTH-FED-01-M4-R01/`.
+
+
+### 2026-09-21 — output-token ceiling revision after v2.4
+
+- **Affected sections:** Methodology / Experimental Protocol, Data Collection, Limitations.
+- Frozen v2.4 used a 12,000-token maximum output ceiling.
+- At the prospective decision checkpoint after 30 finalized v2.4 observations, 14 were completed, 12 were truncated, and 4 failed; the preliminary truncation rate was 40.0%.
+- Truncated generations are right-censored at the configured ceiling, so their natural completion lengths cannot be inferred from completed-response token distributions.
+- Because truncated observations are excluded from primary SHR/PHR denominators, the observed truncation burden motivated a prospective new experiment version rather than an in-place protocol change.
+- v2.4 was therefore stopped without regenerating existing observations.
+- The planned v2.5 experiment increases the maximum output ceiling from 12,000 to 16,000 tokens while retaining all other experimental conditions.
+- v2.4 observations must remain separate methodological evidence and must not be pooled into v2.5 primary results.
+- Avoid wording implying that 16,000 tokens is proven to eliminate truncation; it is a prospective protocol adjustment intended to provide additional response headroom.
+
+### 2026-09-21 — v2.5 methodology implemented and prospectively frozen for review
+
+- The previously documented v2.4 truncation checkpoint remains the reason for the prospective version change. The v2.5 implementation now exists as an independent 360-observation all-pending dataset with zero collected observations.
+- Its sole experimental difference from v2.4 is a 16,000-token maximum output ceiling instead of 12,000. Task and prompt bytes, four model/provider conditions, other generation settings, retry/backoff, failure continuation, truncation semantics, and pacing are unchanged.
+- The 30 rendered prompts and prompt template match v2.4 byte-for-byte. Freeze checks and tests passed, and the first-row dry run returned `API-v2.5-AUTH-FED-01-M1-R01`, OpenRouter, order 1, zero wait.
+- No v2.5 API request was sent; there are no v2.5 outcomes, SHR/PHR estimates, or claims that the higher ceiling resolves truncation. The freeze has been prepared for researcher review, with commit and tag still pending.

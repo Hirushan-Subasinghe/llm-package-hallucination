@@ -1,45 +1,29 @@
 # Current Research Status
 
-**Last updated:** 2026-09-21 (v2.4 prospective freeze audit)
+**Last updated:** 2026-09-21 (v2.5 prospective implementation and validation)
 **Project:** LLM Package Hallucination Study
 
-## Current Phase: v2.4 Prospective Freeze
+## Current phase: v2.5 prepared for researcher review
 
-The active experimental version is **v2.4.0**, governed by:
-- Manifest: `manifests/api_final_v2.4.0_manifest.csv` (SHA-256: `19339dd0790405532b04fa0ed482ee80e3d9ea2860211e2984934c4f49f59abf`)
-- Model configuration: `config/api_model_set_1.2.0.json` (SHA-256: `e931bf60f1b07a19e975ccd0c71f9f32ecbbd80da4001b006494555801351af4`)
-- Prompt template: `prompts/prompt_template_v2.4.0.md` (SHA-256: `8d3971d6f9f86dfd98a4b5c49c0c13d734b7f650744da682225195f2ea49b528`)
-- Freeze specification: `config/experiment_freeze_v2.4.0.json` and `docs/experiment_freeze_v2.4.0.md`
-- Initial batch state: `data/final/api_batch_state_v2.4.0.json`
+v2.4 was prospectively stopped at the documented checkpoint of 30 finalized observations: 14 completed, 12 truncated, and 4 failed (40.0% preliminary truncation). Its frozen inputs and preserved observations remain methodological evidence only. No further v2.4 collection is planned.
 
-v2.4 is a fresh, separate 360-observation experiment. Zero official v2.4 API requests have been sent. All 360 manifest rows are pending.
+v2.5.0 is a fresh, independent 360-observation experiment beginning at observation 1. Its manifest has 360 pending rows, its state has no events or provider pacing history, and there are zero official v2.5 raw observations. No v2.5 API request was sent during implementation. The implementation and prospective freeze records are ready for review; no commit or tag has been created.
 
-## Dataset & Protocol Invariants
+## Frozen v2.5 inputs
 
-v2.4 preserves all scientific conditions from v2.3:
-- **Tasks:** 30 tasks across 6 categories (5 tasks/category) in `prompts/tasks/final_2.0.0.jsonl`.
-- **Rendered Prompts:** 30 rendered prompt files in `data/generated_prompts/v2.4.0/`, byte-identical to v2.3.
-- **Model Conditions:** 4 conditions (M1: `cohere/north-mini-code:free` via OpenRouter pinned to `cohere`; M2: `qwen/qwen3.8-27b` via Groq; M3: `openai/gpt-oss-120b` via Groq; M4: `nvidia/nemotron-3-ultra-550b-a55b:free` via OpenRouter pinned to `nvidia`).
-- **Generation Parameters:** Single user message, no prior context, stateless, no tools (`tool_choice: "none"`), temperature 0.6, top_p 0.95, max output tokens 12,000, seed omitted (`not_controlled`).
-- **Infrastructure Policy:** Zero researcher-imposed artificial pacing; HTTP 429 obeys `Retry-After` / exponential backoff; configured HTTP 5xx retry up to 3 times.
-- **Truncation Policy:** `finish_reason: length` is preserved exactly once as `TRUNCATED`, never retried, and excluded from primary SHR/PHR denominators.
+- Task set: `prompts/tasks/final_2.0.0.jsonl` (SHA-256 `ef0aff59f8a3934f65379d34036848652b7b5593f595ffa4b449a15af021546b`)
+- Model set: `config/api_model_set_1.3.0.json` (SHA-256 `554cd8d8d011639c46d9d2c0280f8b08c451ea475bc2b8e2ec4006c8ab75b1e4`)
+- Prompt template: `prompts/prompt_template_v2.5.0.md` (SHA-256 `8d3971d6f9f86dfd98a4b5c49c0c13d734b7f650744da682225195f2ea49b528`)
+- Manifest: `manifests/api_final_v2.5.0_manifest.csv` (SHA-256 `c7911420181f090a16df33ed041caa800d5859e8e9a30882655b4ca02e72c438`)
+- Initial state: `data/final/api_batch_state_v2.5.0.json` (SHA-256 `9c2816a76618a9edbab32648e7b7529ffdd66e17587a786757a79f6cb9c3d825`)
+- Freeze record: `config/experiment_freeze_v2.5.0.json` and `docs/experiment_freeze_v2.5.0.md`
 
-## The v2.4 Continuation Amendment
+## Protocol
 
-The single operational difference between v2.3 and v2.4 is failure continuation:
-- In v2.3, a non-retryable provider failure (such as HTTP 200 with empty assistant content) stopped the batch without skipping or substitution, blocking further collection.
-- In v2.4, a non-retryable provider failure is preserved exactly once with full failure evidence, is never automatically retried or substituted with another model/provider, is excluded from primary SHR/PHR denominators, and is skipped on subsequent batch runs so later manifest rows continue sequentially.
+The sole experimental change from v2.4 is `max_output_tokens: 12000 → 16000`. The 30 final-2.0.0 tasks, task wording, wrapper and rendered prompt bytes, four exact model IDs and API providers, provider pins, no-fallback and no-tools interface, single user message, no prior context, temperature 0.6, top_p 0.95, omitted seed, retry/backoff, failed-observation continuation, truncation handling, and zero artificial pacing remain unchanged. Failed and truncated observations are preserved and excluded from primary SHR/PHR denominators.
 
-## Historical Frozen Versions (Methodological Evidence Only)
+The 30 v2.5 rendered prompts are byte-identical to v2.4. The dry run selects `API-v2.5-AUTH-FED-01-M1-R01`, OpenRouter, collection order 1, with `wait_seconds: 0.0`.
 
-All historical observations remain immutable and strictly excluded from v2.4 primary metrics:
-- **v2.0:** Stopped after 2 observations due to tool calling / simulated tool markup.
-- **v2.1:** Stopped after 4 observations (3 truncated at 6,000 tokens) to increase ceiling to 12,000 tokens.
-- **v2.2:** Stopped after 10 observations (6 completed, 4 truncated) to remove unnecessarily conservative researcher-imposed artificial delays.
-- **v2.3:** Stopped after 8 observations (3 completed, 4 truncated, 1 failed: `API-v2.3-AUTH-FED-02-M1-R01` due to OpenRouter HTTP 200 with empty assistant content) in strict accordance with the frozen v2.3 stopping rule.
+## Historical versions
 
-## Dry-Run Verification
-
-- Command: `python3 scripts/collect_api_batch_v2_4.py --dry-run`
-- Result: `{"api_provider": "OpenRouter", "collection_order": 1, "next_run_id": "API-v2.4-AUTH-FED-01-M1-R01", "wait_seconds": 0.0}`
-- No external network or LLM API calls were made.
+v2.0–v2.4 remain separate methodological evidence and are excluded from v2.5 primary analysis. v2.3 stopped on its frozen non-retryable failure rule; v2.4 retained the continuation amendment and stopped prospectively because of the observed truncation burden. Their frozen inputs, raw responses, and collection behavior have not been altered for v2.5.
