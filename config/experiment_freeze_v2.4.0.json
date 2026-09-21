@@ -1,0 +1,260 @@
+{
+  "batch_pacing": {
+    "minimum_artificial_interval_seconds": 0,
+    "provider_enforced_throttling": "HTTP 429 Retry-After and configured HTTP 5xx/transport retries remain unchanged from v2.3.",
+    "sequential_requests_only": true
+  },
+  "dataset_strategy": "fresh_separate_360_observation_experiment",
+  "failure_policy": {
+    "continue_after_preserved_failure": true,
+    "exclude_from_primary_shr_phr_denominators": true,
+    "preserve_failed_observation_once": true,
+    "regenerate_for_success": false,
+    "retry_failed_observation": false,
+    "substitute_model_or_provider": false
+  },
+  "freeze_record_created_at_utc": "2026-09-18T09:00:00.694218Z",
+  "freeze_record_version": "experiment-freeze-v2.4.0",
+  "historical_v2_3_context": {
+    "preservation": "All v2.3 observations and artifacts remain immutable and excluded from the fresh v2.4 dataset.",
+    "status": "prospectively_stopped",
+    "stop_reason": "Frozen v2.3 required a non-retryable provider failure to stop the batch without skipping or substitution.",
+    "stop_run_id": "API-v2.3-AUTH-FED-02-M1-R01"
+  },
+  "model_set": {
+    "models": [
+      {
+        "api_provider": "OpenRouter",
+        "condition_id": "M1",
+        "model_id": "cohere/north-mini-code:free",
+        "provider_pin": "cohere"
+      },
+      {
+        "api_provider": "Groq",
+        "condition_id": "M2",
+        "model_id": "qwen/qwen3.8-27b",
+        "provider_pin": "not_applicable"
+      },
+      {
+        "api_provider": "Groq",
+        "condition_id": "M3",
+        "model_id": "openai/gpt-oss-120b",
+        "provider_pin": "not_applicable"
+      },
+      {
+        "api_provider": "OpenRouter",
+        "condition_id": "M4",
+        "model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+        "provider_pin": "nvidia"
+      }
+    ],
+    "path": "config/api_model_set_1.2.0.json",
+    "sha256": "e931bf60f1b07a19e975ccd0c71f9f32ecbbd80da4001b006494555801351af4",
+    "version": "api-model-set-1.2.0"
+  },
+  "official_manifest": {
+    "completed_rows": 0,
+    "path": "manifests/api_final_v2.4.0_manifest.csv",
+    "pending_rows": 360,
+    "row_count": 360,
+    "rows_per_category": {
+      "AUTH-FED": 60,
+      "DATA-ADV": 60,
+      "DIST-OBS": 60,
+      "DOC-BINARY": 60,
+      "ENT-INT": 60,
+      "PKI-CRYPTO": 60
+    },
+    "rows_per_model": {
+      "M1": 90,
+      "M2": 90,
+      "M3": 90,
+      "M4": 90
+    },
+    "rows_per_repetition": {
+      "R01": 120,
+      "R02": 120,
+      "R03": 120
+    },
+    "sha256": "19339dd0790405532b04fa0ed482ee80e3d9ea2860211e2984934c4f49f59abf"
+  },
+  "prompt_template": {
+    "path": "prompts/prompt_template_v2.4.0.md",
+    "sha256": "8d3971d6f9f86dfd98a4b5c49c0c13d734b7f650744da682225195f2ea49b528",
+    "version": "2.4.0"
+  },
+  "protocol_amendment": "Only preserved non-retryable failed observations may be skipped so later manifest rows continue; no retry, regeneration, substitution, or generation-parameter change.",
+  "rendered_prompts": [
+    {
+      "path": "data/generated_prompts/v2.4.0/AUTH-FED-01.txt",
+      "sha256": "9578dd98d4b32a7d526d6e8cb8fd1337472a6ed563e32de08994903a4642b64e"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/AUTH-FED-02.txt",
+      "sha256": "0a7587118e54282ebc15031533098e0dcf7c1b76149cbbd511eae1b339314fc2"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/AUTH-FED-03.txt",
+      "sha256": "940529e083cb5059287ec238fc2637aebd72b58e281dcd929ae81c4dae2ba889"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/AUTH-FED-04.txt",
+      "sha256": "98f5ea52de7d8df9413e82ce9c49bc4249929b09cbed959790141562a88a3422"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/AUTH-FED-05.txt",
+      "sha256": "29716f2eb9cb23e17132caf5a290ab72dea7f65faa9a1f77f980b820eb968e0c"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DATA-ADV-01.txt",
+      "sha256": "e32c759d896d42a27d4d4fc64472164455ac3edeaff87d018b740014d4dcb5b0"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DATA-ADV-02.txt",
+      "sha256": "1179c220931eae775e801f6e5c8954554e40bb988b346fe0729cce2c2ec1a865"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DATA-ADV-03.txt",
+      "sha256": "04e21ec3aa46a7465b13f1a8d3ab641e202097474720382abf14f0b180db5602"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DATA-ADV-04.txt",
+      "sha256": "81320c3da7e02c4481e23c83dd0b7ee27022d24626901ff73defa1da4a698782"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DATA-ADV-05.txt",
+      "sha256": "d97d4917892f249490765a6bb4490bbf2b1097d3131458a7a1d4f506fe8b8310"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DIST-OBS-01.txt",
+      "sha256": "93d4eab04e7b9cf3066bf7be00c92fd2b3740dc5d57ba36ca8d2804d36d14a95"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DIST-OBS-02.txt",
+      "sha256": "cfec0f17df0cef3adada4f287d8b11de8e692f4f394d1b4383eb50599104b36f"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DIST-OBS-03.txt",
+      "sha256": "eda2b937c0372df95a3b9e783550484ed00ca183aa199f481fc09e7dafde2af0"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DIST-OBS-04.txt",
+      "sha256": "6fa72b98610e51da69b3465c3d981d8b2f2bef0873c7acdb5607a0f724f66697"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DIST-OBS-05.txt",
+      "sha256": "867e590bb440b0f28099cc5c6e584cf2170f6250422ad75143f06191d5d12b72"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DOC-BINARY-01.txt",
+      "sha256": "767bc383aa87c71b76a17e551dc128950b38ad55c71d0cd35ae1aacf99c0f962"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DOC-BINARY-02.txt",
+      "sha256": "e31044746f5bbc907db563a974a29f56bcafd8a0b14e349f5f6ada1c6336e6f0"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DOC-BINARY-03.txt",
+      "sha256": "81b0a166bc2aff2ce939fd520f888a4f7d0e5314aa35c94ceb16fb82fbf8a073"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DOC-BINARY-04.txt",
+      "sha256": "28944b6ec4e91456629b9531199d07f19ed645e379188d073be6ab3c287ee6f4"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/DOC-BINARY-05.txt",
+      "sha256": "7c521b2f482a827c3280bf08f8141a4ca971b0c18d417faa3372abc91bbae0cc"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/ENT-INT-01.txt",
+      "sha256": "0c26eb4ae40bae09c47a03a0954ec00b3c4da0f89f6460d13021a1e83200aa0e"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/ENT-INT-02.txt",
+      "sha256": "bafa2d5a9cac4af23a2c771546e8f923d02ee792ee07ec6bed061c15b5f9b2d3"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/ENT-INT-03.txt",
+      "sha256": "666f44a118109ac44831cdb2076c4803e2312e242fd20f34ce933bd3f3ae5854"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/ENT-INT-04.txt",
+      "sha256": "6b85399381327aa2b62226dbd438cb95ab4aea0b2953d40cf703fe65555f43af"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/ENT-INT-05.txt",
+      "sha256": "caf93be10c7e32dcc3d565f45756a0b07122b4b6d8c80f09663c6fd3d2eb3fc1"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/PKI-CRYPTO-01.txt",
+      "sha256": "49b756d40016b603151cf5e28eb5b8371a748ab560fba83cfc6c7ef028f483e7"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/PKI-CRYPTO-02.txt",
+      "sha256": "a02f825ca658d9c5723e1ef6072e73edb58e5504ad2e4a6899287e977a39f123"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/PKI-CRYPTO-03.txt",
+      "sha256": "4af44cea218275da4ff02591088980eb855e426bbdbf71d61461231f7ee915e0"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/PKI-CRYPTO-04.txt",
+      "sha256": "3a978299b633edff0cb3a45e3c2293ce1b5ed314bc15b4d6e2f8334693831bbf"
+    },
+    {
+      "path": "data/generated_prompts/v2.4.0/PKI-CRYPTO-05.txt",
+      "sha256": "4094b932f8c5fc9265a01d3bf64db2a143efc56c8e376c071b55ab07f2b4153d"
+    }
+  ],
+  "retry_policy": {
+    "backoff_seconds": [
+      2,
+      5,
+      10
+    ],
+    "content_retries": false,
+    "maximum_infrastructure_retries": 3,
+    "retry_server_errors": true,
+    "retry_transport_errors": true,
+    "retryable_http_statuses": [
+      429
+    ]
+  },
+  "sampling_parameters": {
+    "browsing": false,
+    "compatibility_status": "confirmed",
+    "execution": false,
+    "max_output_tokens": 12000,
+    "messages": "one_user_message_only",
+    "previous_context": false,
+    "retrieval": false,
+    "seed": "not_controlled",
+    "temperature": 0.6,
+    "tools_exposed": false,
+    "top_p": 0.95
+  },
+  "schemas": [
+    {
+      "path": "schemas/api_model_set.schema.json",
+      "sha256": "07e1b4dee80544683fab4746a4e690eb07d6b8398dbc5ad9ddc1ad40575426bc"
+    },
+    {
+      "path": "schemas/api_manifest_row.schema.json",
+      "sha256": "7926049bbeaec5a82a2abf530accee8290e853d114061d2f26886cd3650d5594"
+    },
+    {
+      "path": "schemas/api_collection_metadata.schema.json",
+      "sha256": "c67b2cc06a775ccba4900ba71382c2d37d71d6eb79a133350c4486dd6a2391ae"
+    },
+    {
+      "path": "schemas/task_record_v2.schema.json",
+      "sha256": "b828207953d17493d90be9d781bb0e38f5c220b99fea2486b952a5482789b3f2"
+    }
+  ],
+  "task_set": {
+    "path": "prompts/tasks/final_2.0.0.jsonl",
+    "record_count": 30,
+    "sha256": "ef0aff59f8a3934f65379d34036848652b7b5593f595ffa4b449a15af021546b",
+    "version": "final-2.0.0"
+  }
+}

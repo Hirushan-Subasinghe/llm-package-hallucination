@@ -482,6 +482,129 @@ class APICollectionTests(unittest.TestCase):
         self.assertEqual(skipped[0]["status"], "completed")
         self.assertEqual(skipped[1]["status"], "truncated")
 
+    def test_v2_4_preserved_failed_run_is_skipped_and_next_row_continues(self):
+        failed = self.row("M1")
+        failed["run_id"] = "API-v2.4-AUTH-FED-02-M1-R01"
+        failed["collection_order"] = "1"
+        next_row = self.row("M2")
+        next_row["run_id"] = "API-v2.4-AUTH-FED-02-M2-R01"
+        next_row["collection_order"] = "2"
+        failed_dir = self.raw_root / failed["run_id"]
+        failed_dir.mkdir(parents=True)
+        (failed_dir / "metadata.json").write_text(json.dumps({
+            "collection_status": "failed",
+            "failure_reason": "HTTP 200 response contains no non-empty assistant content",
+        }), encoding="utf-8")
+        called = []
+
+        def collector(_config, row, *, raw_root):
+            called.append((row["run_id"], row["model_id"], row["api_provider"]))
+            directory = raw_root / row["run_id"]
+            directory.mkdir(parents=True)
+            (directory / "metadata.json").write_text(json.dumps({"collection_status": "completed"}), encoding="utf-8")
+            return directory
+
+        state_path = Path(self.temporary.name) / "v2_4_state.json"
+        with patch.dict("os.environ", {"GROQ_API_KEY": "test-key"}, clear=False):
+            collect_api_batch.run_batch(
+                self.config,
+                [failed, next_row],
+                manifest_hash="v2.4-test",
+                state_path=state_path,
+                raw_root=self.raw_root,
+                collector=collector,
+                continue_after_failed=True,
+            )
+        self.assertEqual(called, [(next_row["run_id"], next_row["model_id"], next_row["api_provider"])])
+        events = json.loads(state_path.read_text(encoding="utf-8"))["events"]
+        self.assertEqual(events[0]["event"], "skipped_preserved_failed_observation")
+        self.assertEqual(events[0]["action"], "continued_to_next_manifest_row_without_retry_or_substitution")
+
+    def test_v2_4_failed_run_is_never_retried_or_substituted(self):
+        failed = self.row("M1")
+        failed["run_id"] = "API-v2.4-AUTH-FED-02-M1-R01"
+        failed_dir = self.raw_root / failed["run_id"]
+        failed_dir.mkdir(parents=True)
+        (failed_dir / "metadata.json").write_text(json.dumps({
+            "collection_status": "failed",
+            "failure_reason": "http_status_402",
+        }), encoding="utf-8")
+        calls = []
+        state_path = Path(self.temporary.name) / "v2_4_state.json"
+        collect_api_batch.run_batch(
+            self.config,
+            [failed],
+            manifest_hash="v2.4-test",
+            state_path=state_path,
+            raw_root=self.raw_root,
+            collector=lambda *_args, **_kwargs: calls.append("called"),
+            continue_after_failed=True,
+        )
+        self.assertEqual(calls, [])
+        self.assertEqual(
+            json.loads(state_path.read_text(encoding="utf-8"))["events"][0]["status"],
+            "failed",
+        )
+
+    def test_v2_3_existing_failed_run_blocks_batch_continuation(self):
+        failed = self.row("M1")
+        failed["run_id"] = "API-v2.3-AUTH-FED-02-M1-R01"
+        failed_dir = self.raw_root / failed["run_id"]
+        failed_dir.mkdir(parents=True)
+        (failed_dir / "metadata.json").write_text(json.dumps({
+            "collection_status": "failed",
+            "failure_reason": "HTTP 200 response contains no non-empty assistant content",
+        }), encoding="utf-8")
+        calls = []
+        state_path = Path(self.temporary.name) / "v2_3_state.json"
+        result = collect_api_batch.run_batch(
+            self.config,
+            [failed],
+            manifest_hash="v2.3-test",
+            state_path=state_path,
+            raw_root=self.raw_root,
+            collector=lambda *_args, **_kwargs: calls.append("called"),
+            continue_after_failed=False,
+        )
+        self.assertEqual(result["blocked_run_id"], failed["run_id"])
+        self.assertEqual(result["existing_status"], "failed")
+        self.assertEqual(calls, [])
+        events = json.loads(state_path.read_text(encoding="utf-8"))["events"]
+        self.assertEqual(events[0]["event"], "temporarily_blocked_existing_run")
+        self.assertEqual(events[0]["status"], "failed")
+
+    def test_http_200_with_empty_assistant_content_is_failed_nonretryable_run(self):
+        row = self.row("M1")
+        calls = []
+
+        def transport(*_):
+            calls.append(1)
+            return collect_api_run.HTTPResult(
+                200,
+                {},
+                json.dumps({
+                    "model": row["model_id"],
+                    "choices": [{"message": {"content": None}, "finish_reason": "length"}],
+                    "usage": {},
+                }).encode(),
+            )
+
+        with patch.dict("os.environ", {"OPENROUTER_API_KEY": "test-key"}, clear=False):
+            with self.assertRaisesRegex(ValueError, "HTTP 200 response contains no non-empty assistant content"):
+                collect_api_run.collect_row(
+                    self.config,
+                    row,
+                    raw_root=self.raw_root,
+                    transport=transport,
+                    sleeper=lambda _: None,
+                )
+        self.assertEqual(len(calls), 1)  # Not retried
+        meta_path = self.raw_root / row["run_id"] / "metadata.json"
+        self.assertTrue(meta_path.exists())
+        metadata = json.loads(meta_path.read_text(encoding="utf-8"))
+        self.assertEqual(metadata["collection_status"], "failed")
+        self.assertEqual(metadata["failure_reason"], "HTTP 200 response contains no non-empty assistant content")
+
     def test_historical_observations_are_never_regenerated_by_v2_3(self):
         rows_v2_3 = create_api_manifest.make_rows(
             self.config,

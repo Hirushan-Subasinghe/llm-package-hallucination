@@ -179,16 +179,19 @@ class APIFreezeTests(unittest.TestCase):
         self.assertIn(f"- Model set `{freeze['model_set']['version']}`: `{freeze['model_set']['sha256']}` (`{freeze['model_set']['path']}`)", md_path.read_text(encoding="utf-8"))
         self.assertIn("api-model-set-1.2.0", md_path.read_text(encoding="utf-8"))
 
-        # Fresh v2.3 has no raw observation directory.
+        # v2.3 observations are now frozen historical evidence.
         raw_root = ROOT / "data" / "final" / "raw"
-        self.assertEqual(list(raw_root.glob("API-v2.3-*")), [])
+        self.assertEqual(len(list(raw_root.glob("API-v2.3-*"))), 8)
+        failed_v2_3 = raw_root / "API-v2.3-AUTH-FED-02-M1-R01"
+        self.assertEqual(
+            json.loads((failed_v2_3 / "metadata.json").read_text(encoding="utf-8"))["collection_status"],
+            "failed",
+        )
 
         # v2.2 was prospectively stopped after ten preserved observations.
         v2_2_runs = list(raw_root.glob("API-v2.2-*"))
         self.assertEqual(len(v2_2_runs), 10)
         self.assertEqual(freeze["historical_v2_2_context"]["final_inventory"], {"planned": 360, "completed": 6, "truncated": 4, "pending": 350, "total_collected_observations": 10})
-
-        # Check the four preserved v2.1 observations remain present
         v2_1_m1 = raw_root / "API-v2.1-AUTH-FED-01-M1-R01"
         v2_1_m2 = raw_root / "API-v2.1-AUTH-FED-01-M2-R01"
         v2_1_m3 = raw_root / "API-v2.1-AUTH-FED-01-M3-R01"
@@ -197,12 +200,56 @@ class APIFreezeTests(unittest.TestCase):
         self.assertTrue(v2_1_m2.is_dir())
         self.assertTrue(v2_1_m3.is_dir())
         self.assertTrue(v2_1_m4.is_dir())
+        self.assertTrue((raw_root / "API-AUTH-FED-01-M1-R01").is_dir())
+        self.assertTrue((raw_root / "API-AUTH-FED-01-M2-R01").is_dir())
 
-        # Check the two preserved v2.0 observations remain present
-        v2_0_m1 = raw_root / "API-AUTH-FED-01-M1-R01"
-        v2_0_m2 = raw_root / "API-AUTH-FED-01-M2-R01"
-        self.assertTrue(v2_0_m1.is_dir())
-        self.assertTrue(v2_0_m2.is_dir())
+    def test_v2_4_freeze_is_fresh_and_preserves_input_bytes(self):
+        import create_experiment_freeze_v2_4
+        freeze_path = ROOT / "config" / "experiment_freeze_v2.4.0.json"
+        freeze = json.loads(freeze_path.read_text(encoding="utf-8"))
+        self.assertEqual(freeze["dataset_strategy"], "fresh_separate_360_observation_experiment")
+        self.assertTrue(freeze["failure_policy"]["continue_after_preserved_failure"])
+        self.assertFalse(freeze["failure_policy"]["retry_failed_observation"])
+        self.assertFalse(freeze["failure_policy"]["substitute_model_or_provider"])
+        self.assertTrue(freeze["failure_policy"]["exclude_from_primary_shr_phr_denominators"])
+        self.assertEqual(freeze["official_manifest"]["row_count"], 360)
+        self.assertEqual(freeze["official_manifest"]["pending_rows"], 360)
+        self.assertEqual(freeze["official_manifest"]["rows_per_model"], {"M1": 90, "M2": 90, "M3": 90, "M4": 90})
+        self.assertEqual(freeze["official_manifest"]["rows_per_repetition"], {"R01": 120, "R02": 120, "R03": 120})
+        self.assertEqual(freeze["official_manifest"]["rows_per_category"], {
+            "AUTH-FED": 60, "DATA-ADV": 60, "DIST-OBS": 60, "DOC-BINARY": 60, "ENT-INT": 60, "PKI-CRYPTO": 60
+        })
+        manifest_path = ROOT / "manifests" / "api_final_v2.4.0_manifest.csv"
+        manifest_bytes = manifest_path.read_bytes()
+        self.assertEqual(hashlib.sha256(manifest_bytes).hexdigest(), freeze["official_manifest"]["sha256"])
+        with manifest_path.open(newline="", encoding="utf-8") as handle:
+            rows = list(csv.DictReader(handle))
+        self.assertEqual(len(rows), 360)
+        self.assertTrue(all(r["collection_status"] == "pending" for r in rows))
+        self.assertTrue(all(r["run_id"].startswith("API-v2.4-") for r in rows))
+
+        for item in freeze["rendered_prompts"]:
+            v24 = ROOT / item["path"]
+            v23 = ROOT / item["path"].replace("v2.4.0", "v2.3.0")
+            self.assertEqual(v24.read_bytes(), v23.read_bytes())
+            self.assertEqual(hashlib.sha256(v24.read_bytes()).hexdigest(), item["sha256"])
+        self.assertEqual(
+            (ROOT / "prompts" / "prompt_template_v2.4.0.md").read_bytes(),
+            (ROOT / "prompts" / "prompt_template_v2.3.0.md").read_bytes(),
+        )
+
+        # Verify initial batch state file for v2.4
+        state_path = ROOT / "data" / "final" / "api_batch_state_v2.4.0.json"
+        self.assertTrue(state_path.exists())
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        self.assertEqual(state["collection_status"], "ready_for_prospective_collection")
+        self.assertEqual(state["events"], [])
+        self.assertEqual(state["manifest_sha256"], freeze["official_manifest"]["sha256"])
+
+        # Verify markdown documentation
+        md_path = ROOT / "docs" / "experiment_freeze_v2.4.0.md"
+        self.assertTrue(md_path.exists())
+        self.assertEqual(md_path.read_text(encoding="utf-8"), create_experiment_freeze_v2_4.markdown(freeze))
 
     def test_freeze_record_v2_1_historical_context_and_preserved_observations(self):
         freeze_path = ROOT / "config" / "experiment_freeze_v2.1.0.json"

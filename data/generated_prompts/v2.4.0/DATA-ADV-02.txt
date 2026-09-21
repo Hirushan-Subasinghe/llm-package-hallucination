@@ -1,0 +1,7 @@
+Build a self-contained Node.js TypeScript columnar-data converter that streams newline-delimited JSON events into Apache Arrow record batches and Parquet files, preserving nullable fields, timestamps with time zones, decimals, nested lists, and dictionary-encoded categories. Read the Parquet output back in bounded memory, select columns, filter a time range, and emit Arrow IPC stream data plus a schema and row-count report. Include deterministic fixtures and round-trip assertions for nulls and precision. Include a complete package.json with exact dependency versions and scripts, explain the exact Arrow and Parquet APIs used and their interoperability, and provide reproducible installation and execution commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

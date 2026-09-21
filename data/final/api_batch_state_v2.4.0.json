@@ -1,0 +1,8 @@
+{
+  "collection_status": "ready_for_prospective_collection",
+  "created_at_utc": "2026-09-18T09:00:00Z",
+  "events": [],
+  "manifest_sha256": "19339dd0790405532b04fa0ed482ee80e3d9ea2860211e2984934c4f49f59abf",
+  "provider_next_allowed_at_epoch": {},
+  "state_version": "api-batch-state-1.0.0"
+}

@@ -493,3 +493,32 @@ Each decision record contains the following standardized fields:
 - **impact_on_analysis:** The 10 v2.2 observations remain immutable methodological evidence and are excluded from v2.3 primary analysis. v2.3 primary metrics apply only to the fresh 360-observation v2.3 dataset.
 - **affected_research_questions:** RQ1, RQ2, RQ3, RQ4.
 - **scope_effect:** Payment/account tier is infrastructure availability only and is not an experimental condition when model ID, routing, prompt, and generation parameters remain identical. This decision does not authorize collection during freeze creation.
+---
+
+### D028 — Prospectively Stop v2.3 and Freeze v2.4 Fresh Dataset with Failure Continuation
+
+- **decision_id:** D028
+- **date:** 2026-09-18
+- **status:** FINALIZED
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **original_design:** v2.3 collection protocol where any non-retryable provider failure (such as HTTP 200 with empty assistant content or HTTP 402) stops the batch without skipping or substitution, blocking subsequent manifest rows.
+- **final_design:** v2.3 was prospectively stopped at observation 8 (`API-v2.3-AUTH-FED-02-M1-R01`) after preserving failure evidence. v2.4 is defined prospectively as a fresh, separate 360-observation experiment (`manifests/api_final_v2.4.0_manifest.csv`) where preserved non-retryable failed observations are recorded once with failure evidence, excluded from primary SHR/PHR denominators, and skipped on later invocations so subsequent manifest rows continue sequentially.
+- **rationale:** Reusing v2.3 observations inside an amended sample would combine two distinct collection protocols and create denominator/provenance ambiguity. Creating a clean v2.4 dataset isolates the single operational change.
+- **methodological_justification:** No generation parameters, models, provider routing pins, task wording, prompt template content, sampling settings (temp 0.6, top-p 0.95, 12000 max tokens), zero artificial pacing, or retry rules are altered. Failed observations are never retried, regenerated for success, or substituted with alternative models/providers.
+- **impact_on_data_collection:** Clean `API-v2.4-` run ID prefix, independent batch state (`data/final/api_batch_state_v2.4.0.json`), and versioned prompt copies matching v2.3 byte-for-byte.
+- **impact_on_analysis:** All historical observations (v2.0, v2.1, v2.2, v2.3) remain immutable methodological evidence and are excluded from v2.4 primary metrics. Failed observations are counted and reported separately in quality metrics.
+- **affected_research_questions:** RQ1, RQ2, RQ3, RQ4.
+- **scope_effect:** Zero API calls are executed during freeze and validation.
+
+---
+
+### D029 — PIPE-03 Explicit Package-Reference Extraction Contract
+
+- **decision_id:** D029
+- **date:** 2026-09-21
+- **status:** IMPLEMENTED
+- **decision:** PIPE-03 creates separate, deterministic occurrence-level and unique-normalized-package derived outputs from a response inventory and immutable response artifacts. The occurrence view retains every explicit reference; the unique view deduplicates only by `(run_id, normalized_package)` and retains occurrence count and source types.
+- **supported_syntax:** Literal ESM imports, literal CommonJS `require`, literal dynamic `import`, explicit `npm install` / `npm i` operands, and string-valued entries in structurally valid `dependencies`, `devDependencies`, `peerDependencies`, and `optionalDependencies` objects.
+- **normalization_and_exclusions:** Scoped package roots retain both scope and package segment; unscoped and scoped subpaths are reduced to their package roots; explicit install-specifier versions and dependency-object version strings are retained. Centralized Node built-ins, `node:` references, local/relative/absolute paths, `file:` references, and HTTP(S) URLs are excluded. No semantic inference is applied to prose.
+- **metric_boundary:** This stage does not query a registry, classify package existence or hallucinations, calculate PHR or SHR, score risk, or modify raw observations. Truncated records can be extracted and retain their truncation marker for later, separately governed filtering.
+- **data_boundary:** Inputs are read-only inventory and raw-response artifacts. Outputs are versioned derived files under `results/`; collection state, prompts, manifests, raw data, and historical inventory snapshots are not changed.

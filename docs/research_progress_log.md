@@ -168,3 +168,85 @@
 - v2.3 retains the v2.2 task set, prompt content, four exact model/provider conditions and pins, no-fallback/no-tools interface, sampling parameters, retry philosophy, and truncation policy.
 - The sole planned change is sequential zero artificial provider spacing to remove the conservative researcher-imposed delay under the final collection window. HTTP 429 Retry-After and infrastructure retry/backoff remain binding; non-retryable quota/credit/account failures stop the batch without skipping or substitution.
 - No API request was sent while creating or validating v2.3.
+
+
+### 2026-09-18 — v2.3 initial four-model collection gate completed
+
+- Completed the initial protocol/infrastructure gate for the frozen v2.3 API experiment.
+- Frozen experiment commit/tag:
+  - commit: `0ec24d4`
+  - tag: `v2.3.0-freeze`
+- Verified v2.3 dry-run began at `API-v2.3-AUTH-FED-01-M1-R01` with `wait_seconds: 0.0`.
+- Collected the first four official v2.3 observations for task `AUTH-FED-01`, one for each model condition:
+  - `API-v2.3-AUTH-FED-01-M1-R01`
+  - `API-v2.3-AUTH-FED-01-M2-R01`
+  - `API-v2.3-AUTH-FED-01-M3-R01`
+  - `API-v2.3-AUTH-FED-01-M4-R01`
+- All four observations used the expected model/provider routing, exposed no tools, and recorded no protocol deviations.
+- All four observations ended with `finish_reason=length` and were preserved once as `TRUNCATED` according to the frozen protocol; none will be regenerated merely because of truncation.
+- M1/OpenRouter raw provider metadata reported `completion_tokens=11998` and `reasoning_tokens=12087`; inspection of `provider_response.json` confirmed the collector preserved these upstream values unchanged. Treat this as a provider token-accounting anomaly rather than a collection/protocol failure.
+- The initial gate therefore confirms the v2.3 collection path and zero-artificial-pacing behavior, while also identifying a high early truncation rate that must be monitored and reported separately from primary SHR/PHR analysis.
+- Next: continue the remaining v2.3 manifest sequentially under the frozen zero-artificial-pacing protocol and stop only on the defined provider/quota/non-retryable failure conditions.
+
+### 2026-09-18 — v2.3 stopped on non-retryable empty-content provider response
+
+- During frozen v2.3 sequential collection, the batch advanced through collection order 7 and then attempted `API-v2.3-AUTH-FED-02-M1-R01` at collection order 8.
+- OpenRouter returned HTTP 200, but the response contained no non-empty assistant content.
+- The collector preserved `prompt.txt`, `request.json`, and `metadata.json`; no usable `response.md` or `provider_response.json` was retained.
+- The run was recorded with `collection_status: failed` and failure reason `HTTP 200 response contains no non-empty assistant content`.
+- Inspection of `scripts/collect_api_run.py` confirmed automatic retries are limited to HTTP 429 and configured HTTP 5xx failures. HTTP 200 with empty assistant content is therefore non-retryable.
+- Inspection of `scripts/collect_api_batch.py` confirmed existing `failed` runs block later collection rather than being skipped.
+- The frozen v2.3 record explicitly states that non-retryable provider failures stop the batch without skipping or substitution.
+- Therefore collection was stopped without retrying, deleting, skipping, substituting models/providers, or modifying frozen v2.3 inputs.
+- Next: create a prospectively versioned operational amendment/new collection version that preserves non-retryable failed observations once but permits subsequent manifest rows to continue, while leaving generation semantics unchanged.
+
+### 2026-09-18 — v2.4 prospective continuation version frozen
+
+- Recommended and implemented **option A: a fresh separate 360-observation v2.4.0 experiment**, rather than reusing v2.3 observations under an amended denominator. This avoids mixing v2.3's frozen stop rule with v2.4's continuation rule.
+- v2.3 remains stopped prospectively at `API-v2.3-AUTH-FED-02-M1-R01` because its frozen rule required a non-retryable provider failure to stop the batch.
+- v2.4 was created prospectively before further collection. Its only methodological change is failure continuation: a non-retryable provider failure is preserved exactly once with explicit evidence, excluded from primary SHR/PHR denominators, and skipped on future invocations so later manifest rows continue sequentially.
+- v2.4 does not retry, regenerate, or substitute a model/provider after failure. The 30 tasks, wording, prompt bytes, four conditions, provider pins, no-fallback/no-tools rules, sampling/request structure, truncation semantics, infrastructure retry/backoff, and zero artificial pacing are unchanged.
+- New immutable inputs are the v2.4 manifest, freeze record, fresh state, versioned prompt copies, and prompt template copy. Their prompt hashes match v2.3 byte-for-byte.
+- No API request was sent while creating or validating v2.4.
+
+## 2026-09-21
+
+### PIPE-03 — npm package-reference extraction completed
+
+- Implemented the deterministic read-only package-reference extractor:
+  `scripts/extract_package_references.py`.
+- Added occurrence schema:
+  `schemas/package_reference_occurrence.schema.json`.
+- Added unique-package schema:
+  `schemas/package_reference_unique.schema.json`.
+- Added automated tests:
+  `tests/test_extract_package_references.py`.
+- Added decision-log entry D029 defining the extraction contract.
+- Extraction supports explicit ES module imports, CommonJS `require()` references,
+  dynamic `import()`, `npm install` / `npm i` operands, and package.json dependency
+  objects.
+- Normalization preserves scoped npm package roots, removes import subpaths, and
+  separates explicit version specifiers.
+- Node.js built-ins, `node:` references, relative/local/absolute paths, `file:`
+  references, and HTTP(S) URLs are excluded.
+- Occurrence-level references are preserved for provenance. A separate deterministic
+  unique view is deduplicated only by `(run_id, normalized_package)`.
+- PIPE-03 deliberately does not calculate PHR, SHR, hallucination classifications,
+  registry status, or risk scores.
+- Current extraction over the 10 collected v2.2 observations produced 167
+  package-reference occurrences and 97 unique normalized package-per-response
+  records. Source types were 104 `package_json`, 58 `es_import`, and 5
+  `dynamic_import`. These are intermediate extraction counts, not hallucination
+  results.
+- Test result: `python3 -m unittest tests/test_extract_package_references.py` and
+  the verified broader test suite: 70 tests passed.
+- No npm/registry/network/model request or generated-code execution occurred. No
+  frozen manifest, state, raw observation, prompt, generation configuration, pacing
+  rule, or historical snapshot was modified.
+
+### Next
+
+- Implement PIPE-04 read-only npm registry validation.
+- Preserve validation evidence and timestamps.
+- Distinguish `exists`, `not_found`, and `unresolved`.
+- Do not calculate PHR/SHR until validation and research classification are complete.

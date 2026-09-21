@@ -105,6 +105,7 @@ def run_batch(
     now: Callable[[], float] = time.time,
     sleeper: Callable[[float], None] = time.sleep,
     collector: Callable[..., Path] = collect_row,
+    continue_after_failed: bool = False,
 ) -> dict:
     if config.get("status") != "frozen_for_collection":
         raise ValueError("Batch collection requires the frozen model set")
@@ -119,6 +120,18 @@ def run_batch(
             if status in {"completed", "truncated"}:
                 if not dry_run:
                     state["events"].append({"at_utc": utc_now(), "event": "skipped_preserved_observation", "run_id": row["run_id"], "status": status})
+                    state["updated_at_utc"] = utc_now()
+                    atomic_json(state_path, state)
+                continue
+            if status == "failed" and continue_after_failed:
+                if not dry_run:
+                    state["events"].append({
+                        "at_utc": utc_now(),
+                        "event": "skipped_preserved_failed_observation",
+                        "run_id": row["run_id"],
+                        "status": status,
+                        "action": "continued_to_next_manifest_row_without_retry_or_substitution",
+                    })
                     state["updated_at_utc"] = utc_now()
                     atomic_json(state_path, state)
                 continue

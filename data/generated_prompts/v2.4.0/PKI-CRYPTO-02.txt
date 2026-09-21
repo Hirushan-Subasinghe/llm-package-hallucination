@@ -1,0 +1,7 @@
+Build a self-contained Node.js TypeScript mTLS client credential loader for PKCS#12/PFX bundles. Accept a password-protected PFX, identify the leaf certificate and matching private key, order intermediate certificates, validate the chain and client-auth extended key usage, reject weak or expired credentials, and create an HTTPS agent for a test request to a local mTLS server. Add a rotation mechanism that atomically swaps to a newly validated bundle while in-flight requests continue using the prior agent. Include local fixture-generation steps and success and failure examples. Include a complete package.json with exact dependency versions and scripts, identify the exact package APIs used, and provide reproducible installation and execution commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

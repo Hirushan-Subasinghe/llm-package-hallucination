@@ -37,6 +37,31 @@ Use these notes to draft the final dissertation from frozen artifacts and verifi
 - A metadata-less run is not treated as failed merely because it has an ordinary attempt directory. Failed status requires explicit `failed_attempts/attempt-*` evidence or an explicit `temporarily_blocked_or_failed` state event; metadata remains authoritative when present.
 - Inventory provenance includes run/order, provider/model/condition, task/category/repetition, prompt hash/path, raw response path, collection and completion status, truncation, token count, and interface-pass field. The schema and tests enforce the structural contract and live 360-row/order invariants.
 
+### PIPE-03 dependency extraction and normalization (implemented)
+
+**Affected final-paper sections:** Chapter 3 / Dependency Extraction and
+Normalization; dataset construction and provenance.
+
+- The implemented Node.js/npm extractor (`scripts/extract_package_references.py`)
+  reads response-inventory records and immutable raw response text. It deterministically
+  extracts explicit dependency syntax, retains occurrence-level provenance, normalizes
+  package roots, and produces a separate unique normalized package-per-response view.
+- Extraction is separate from registry validation and hallucination classification.
+  It excludes Node.js built-ins, `node:` references, local/relative/absolute paths,
+  `file:` references, and HTTP(S) URLs; unsupported or ambiguous syntax is not guessed.
+- Truncated observations can be extracted, but retain their truncation marker for later
+  exclusion from primary PHR/SHR under the frozen v2.2 rule.
+- The current 167 occurrence records and 97 unique records are intermediate processing
+  counts, not hallucination findings. Do not report them as hallucination prevalence.
+
+**Draft reconciliation:** Old university-draft Section 3.5.1.2 describes Node.js
+extraction using package.json parsing, AST parsing, and require/import scanning while
+also including Spring Boot/Maven extraction elsewhere. The final dissertation must
+remove Spring Boot/Maven extraction from performed methodology unless supported by
+final experiment evidence; describe only the grammar actually implemented; not claim
+AST parsing; document occurrence provenance and deterministic normalization; and
+describe the unique-package view separately from occurrence extraction.
+
 ## Draft reconciliation backlog
 
 | Draft section/topic | Old draft assumption | Current evidence | Action |
@@ -50,7 +75,7 @@ Use these notes to draft the final dissertation from frozen artifacts and verifi
 | Comparison variables | Autocomplete/agentic workflow, programming environment, and developer expertise are experimental variables | v2.2 compares four fixed model/API conditions under one stateless text-only API protocol; no expertise variable or environment comparison. | UPDATE |
 | Tools/models | GPT-3.5/GPT-4, Copilot, Gemini, Claude, or generic workflow claims | Use only the v2.2 manifest and freeze record's exact M1–M4 model/API conditions and pins. Do not map them to historical tools. | UPDATE |
 | Sample size/power | Planned 200–300 prompts and projected dependency counts/power claims | Frozen design has 360 planned runs; collection is incomplete and no final outcome counts exist. | UPDATE; REMOVE unsupported power claims |
-| Dependency extraction | Maven/Spring parsing and finalized AST/extraction mechanisms | Node.js/npm direct-dependency extraction is the only scope; the final extractor is not yet finalized. | PENDING IMPLEMENTATION |
+| Dependency extraction | Maven/Spring parsing and finalized AST/extraction mechanisms | Node.js/npm direct-dependency extraction is the only scope. PIPE-03 implements deterministic explicit-syntax extraction, occurrence provenance, normalization, and a separate unique-per-response view; it does not perform AST parsing. | UPDATE / IMPLEMENTED |
 | Registry validation | Absence inferred broadly from registry lookup | Read-only, timestamped npm validation must separate `exists`, `not_found`, and `unresolved`; 404 requires conservative classification checks. | UPDATE |
 | Hallucination measure | Absolute count of nonexistent dependencies | Primary PHR/SHR, normalized-package handling, occurrence provenance, unresolved handling, and separate truncation are required. | UPDATE |
 | Risk assessment | Large composite model, naming distance, installation probability, workflow privilege, or predictive scoring | Only the specified rule-based Impact × Detectability protocol is in scope; no fitted/predictive model or risk result exists yet. | UPDATE; do not claim evaluation completed |
@@ -118,3 +143,31 @@ No final experimental results belong here yet. Add results only from verified, v
 - The first four official responses showed no tool exposure, protocol deviations, or simulated tool-call markup, supporting the validity of the stateless text-only generation interface.
 - Final results must report truncation counts/rates separately from primary package-hallucination metrics.
 - Evidence files: `data/final/raw/API-v2.2-AUTH-FED-01-M{1,2,3,4}-R01/metadata.json` and corresponding `response.md` files.
+
+### 2026-09-18 — v2.3 initial collection gate
+
+- **Affected sections:** Methodology / Data Collection, Results / Dataset Completion, Limitations.
+- The final study uses the frozen v2.3 API protocol with zero researcher-imposed post-success delay; provider rate limits and retry behavior remain governed by the frozen collection rules.
+- The first four official v2.3 observations, covering M1–M4 on `AUTH-FED-01`, were protocol-clean but all four reached the 12,000-token output ceiling and were recorded as truncated.
+- Truncated observations are preserved exactly once and excluded from primary SHR/PHR denominators according to the frozen analysis protocol; truncation counts and rates must be reported separately.
+- OpenRouter M1 returned internally inconsistent token-detail metadata (`completion_tokens=11998`, `reasoning_tokens=12087`). The raw provider response contains the same values, so provider token-detail subfields should not be treated as independently validated measurements.
+- **Potential table/figure:** final completion-status/truncation counts by model condition.
+- **Limitation to mention:** substantial truncation, if it persists across the completed dataset, reduces the number of analyzable non-truncated observations and may affect precision/comparability of model-level estimates.
+- Evidence: `data/final/raw/API-v2.3-AUTH-FED-01-M1-R01/` through `API-v2.3-AUTH-FED-01-M4-R01/`.
+
+### 2026-09-18 — non-retryable provider failure during v2.3 collection
+
+- **Affected sections:** Methodology / Data Collection, Dataset Completion, Limitations / Threats to Validity.
+- `API-v2.3-AUTH-FED-02-M1-R01` received HTTP 200 from OpenRouter but no non-empty assistant content and was recorded as a failed infrastructure observation.
+- The frozen v2.3 retry policy permits retries for HTTP 429 and configured HTTP 5xx infrastructure failures only; this HTTP 200 empty-content case was therefore not retried.
+- The frozen v2.3 batch rule stops on non-retryable provider failure without skipping or provider/model substitution, so collection stopped at this observation.
+- The failed observation must not be interpreted as a package-hallucination result and must not enter SHR/PHR denominators.
+- Any later continuation rule must be documented prospectively as a versioned operational amendment rather than silently modifying the frozen v2.3 protocol.
+- Evidence: `data/final/raw/API-v2.3-AUTH-FED-02-M1-R01/`, `scripts/collect_api_run.py`, `scripts/collect_api_batch.py`, `docs/experiment_freeze_v2.3.0.md`, and `config/experiment_freeze_v2.3.0.json`.
+
+### 2026-09-18 — v2.4 fresh prospective continuation version
+
+- v2.4.0 is a fresh, separate 360-observation experiment, not a silent continuation or reuse of v2.3 observations.
+- It was created prospectively before further collection. The only methodological change from v2.3 is that preserved non-retryable failed observations no longer block later manifest rows.
+- Failed observations remain explicit infrastructure evidence, are never retried or regenerated for a successful answer, permit no model/provider substitution, and are excluded from primary SHR/PHR denominators.
+- All v2.3 observations and artifacts remain immutable and are excluded from v2.4 metrics. v2.4 uses byte-identical copied task/prompt content and the same four model/provider conditions and generation protocol.
