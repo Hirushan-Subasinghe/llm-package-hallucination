@@ -44,3 +44,4 @@ data/manual_review/*
 !data/manual_review/.gitkeep
 # Optional local notebooks/checkpoints
 .ipynb_checkpoints/
+node_modules/
