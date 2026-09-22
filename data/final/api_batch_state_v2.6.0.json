@@ -674,13 +674,139 @@
       "event": "request_slot_reserved",
       "next_provider_request_not_before_utc": "2026-09-22T04:20:11.097121Z",
       "run_id": "API-v2.6-PKI-CRYPTO-01-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-22T04:23:30.637758Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-01-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-01-M1-R01"
+    },
+    {
+      "api_provider": "Groq",
+      "at_utc": "2026-09-22T04:23:30.639895Z",
+      "collection_order": 25,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-22T04:23:30.639387Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-02-M3-R01"
+    },
+    {
+      "at_utc": "2026-09-22T04:23:46.648850Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-02-M3-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-02-M3-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-22T04:23:46.650342Z",
+      "collection_order": 26,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-22T04:23:46.650051Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-02-M4-R01"
+    },
+    {
+      "at_utc": "2026-09-22T04:29:54.162332Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-02-M4-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-02-M4-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-22T04:29:54.164240Z",
+      "collection_order": 27,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-22T04:29:54.163970Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-02-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-22T04:39:15.109148Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-02-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-02-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-22T04:39:15.110702Z",
+      "collection_order": 29,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-22T04:39:15.110362Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-03-M4-R01"
+    },
+    {
+      "at_utc": "2026-09-22T04:45:27.805529Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-03-M4-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-03-M4-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-22T04:45:27.806647Z",
+      "collection_order": 30,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-22T04:45:27.806356Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-03-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-22T04:49:42.741853Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-03-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-03-M1-R01"
+    },
+    {
+      "api_provider": "Groq",
+      "at_utc": "2026-09-22T04:49:42.743260Z",
+      "collection_order": 32,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-22T04:49:42.742902Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-03-M3-R01"
+    },
+    {
+      "at_utc": "2026-09-22T04:50:03.757944Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-03-M3-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-03-M3-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-22T04:50:03.759343Z",
+      "collection_order": 33,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-22T04:50:03.759032Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-04-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-22T04:53:03.409303Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-04-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-04-M1-R01"
+    },
+    {
+      "api_provider": "Groq",
+      "at_utc": "2026-09-22T04:53:03.410962Z",
+      "collection_order": 35,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-22T04:53:03.410659Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-04-M3-R01"
+    },
+    {
+      "at_utc": "2026-09-22T04:54:12.129590Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-04-M3-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-04-M3-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-22T04:54:12.130823Z",
+      "collection_order": 36,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-22T04:54:12.130452Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-04-M4-R01"
     }
   ],
   "manifest_sha256": "b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f",
   "provider_next_allowed_at_epoch": {
-    "Groq": 1790050565.701043,
-    "OpenRouter": 1790050811.0971205
+    "Groq": 1790052783.4106588,
+    "OpenRouter": 1790052852.1304524
   },
   "state_version": "api-batch-state-1.0.0",
-  "updated_at_utc": "2026-09-22T04:20:11.097728Z"
+  "updated_at_utc": "2026-09-22T04:54:12.130844Z"
 }
