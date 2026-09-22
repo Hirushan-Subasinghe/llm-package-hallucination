@@ -513,3 +513,22 @@
 - Validation after the scheduling change: v2.6 tests 5/5 PASS, exclusion-filter tests 12/12 PASS, v2.5 tests 4/4 PASS, shared freeze tests 9/9 PASS, full repository suite 130/130 PASS, and both v2.5 and v2.6 freeze verification PASS.
 - Existing v2.6 raw observations and the v2.6 manifest were verified unchanged during implementation/testing.
 - No live API request was sent while implementing or validating the scheduling option.
+
+### 2026-09-22 — v2.6 non-M2 verification batch: first 64k truncation and Nvidia overload failure
+
+- Continued official v2.6 collection with M2 temporarily excluded using the post-freeze operational scheduling filter.
+- The M2 exclusion behaved correctly: pending M2 rows were not attempted and the three previously preserved M2 HTTP 402 failures remained unchanged.
+- `API-v2.6-AUTH-FED-04-M1-R01` was preserved as truncated with finish reason `length` under the frozen M1 64,000-token output ceiling.
+- This confirms that increasing the v2.6 output ceiling substantially reduces avoidable censoring but cannot guarantee elimination of truncation.
+- `API-v2.6-AUTH-FED-05-M4-R01` was preserved as failed after OpenRouter returned HTTP 200 containing an upstream Nvidia error payload: code 503, `provider_overloaded`, message `Service temporarily overloaded`.
+- The M4 failure was therefore an upstream provider/infrastructure failure rather than a generated-response or prompt-format failure.
+- Neither the truncated M1 observation nor the failed M4 observation was retried, regenerated, deleted, or substituted.
+- No frozen experimental input or model condition was changed.
+
+### 2026-09-22 — recurring v2.6 M4 Nvidia provider-overload failures confirmed
+
+- A second official M4 observation, `API-v2.6-PKI-CRYPTO-01-M4-R01`, was preserved as failed because OpenRouter returned an upstream Nvidia error payload with code 503, error type `provider_overloaded`, and message `Service temporarily overloaded`.
+- This matches the previously preserved M4 failure `API-v2.6-AUTH-FED-05-M4-R01`.
+- These failures are therefore treated as recurring provider/infrastructure availability failures rather than model-output, prompt-format, hallucination, or truncation events.
+- Failed M4 observations are preserved once and are not retried, regenerated, deleted, or substituted.
+- Pending M2 observations remain temporarily excluded from collection; no new M2 observation was attempted during this non-M2 batch.

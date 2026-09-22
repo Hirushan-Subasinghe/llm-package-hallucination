@@ -442,13 +442,245 @@
       "event": "temporarily_blocked_or_failed",
       "failure_reason": "HTTP 200 response is not a valid chat completion",
       "run_id": "API-v2.6-AUTH-FED-05-M4-R01"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:05.687827Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-01-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:05.689079Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-01-M3-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:05.690042Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-01-M4-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:05.690937Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-02-M3-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:05.691752Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-02-M4-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:05.692444Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-02-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:05.693099Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-03-M3-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:05.693988Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-03-M4-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:05.695062Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-03-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:05.695901Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-04-M4-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:05.696670Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-04-M1-R01",
+      "status": "truncated"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:05.697448Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-04-M3-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:05.698456Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-05-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:05.699526Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-05-M3-R01",
+      "status": "completed"
+    },
+    {
+      "action": "continued_to_next_manifest_row_without_retry_or_substitution",
+      "at_utc": "2026-09-22T04:16:05.700403Z",
+      "event": "skipped_preserved_failed_observation",
+      "run_id": "API-v2.6-AUTH-FED-05-M4-R01",
+      "status": "failed"
+    },
+    {
+      "api_provider": "Groq",
+      "at_utc": "2026-09-22T04:16:05.701597Z",
+      "collection_order": 22,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-22T04:16:05.701043Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-01-M3-R01"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:22.596478Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-01-M3-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-01-M3-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-22T04:16:22.597733Z",
+      "collection_order": 23,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-22T04:16:22.597422Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-01-M4-R01"
+    },
+    {
+      "at_utc": "2026-09-22T04:16:24.662235Z",
+      "error_type": "ValueError",
+      "event": "temporarily_blocked_or_failed",
+      "failure_reason": "HTTP 200 response is not a valid chat completion",
+      "run_id": "API-v2.6-PKI-CRYPTO-01-M4-R01"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.077949Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-01-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.079682Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-01-M3-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.081178Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-01-M4-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.082606Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-02-M3-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.083989Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-02-M4-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.085201Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-02-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.086269Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-03-M3-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.087515Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-03-M4-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.088760Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-03-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.089981Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-04-M4-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.091107Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-04-M1-R01",
+      "status": "truncated"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.092042Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-04-M3-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.092814Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-05-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.093719Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-AUTH-FED-05-M3-R01",
+      "status": "completed"
+    },
+    {
+      "action": "continued_to_next_manifest_row_without_retry_or_substitution",
+      "at_utc": "2026-09-22T04:20:11.094511Z",
+      "event": "skipped_preserved_failed_observation",
+      "run_id": "API-v2.6-AUTH-FED-05-M4-R01",
+      "status": "failed"
+    },
+    {
+      "at_utc": "2026-09-22T04:20:11.095390Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.6-PKI-CRYPTO-01-M3-R01",
+      "status": "completed"
+    },
+    {
+      "action": "continued_to_next_manifest_row_without_retry_or_substitution",
+      "at_utc": "2026-09-22T04:20:11.096306Z",
+      "event": "skipped_preserved_failed_observation",
+      "run_id": "API-v2.6-PKI-CRYPTO-01-M4-R01",
+      "status": "failed"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-22T04:20:11.097705Z",
+      "collection_order": 24,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-22T04:20:11.097121Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-01-M1-R01"
     }
   ],
   "manifest_sha256": "b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f",
   "provider_next_allowed_at_epoch": {
-    "Groq": 1790050174.1674993,
-    "OpenRouter": 1790050192.2922223
+    "Groq": 1790050565.701043,
+    "OpenRouter": 1790050811.0971205
   },
   "state_version": "api-batch-state-1.0.0",
-  "updated_at_utc": "2026-09-22T04:09:54.112835Z"
+  "updated_at_utc": "2026-09-22T04:20:11.097728Z"
 }

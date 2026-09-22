@@ -384,3 +384,19 @@ No final experimental results belong here yet. Add results only from verified, v
 - The operational scheduling support was committed separately as `4bf0240` after the prospective experiment freeze. The experimental freeze remains `5247c2bccb58ecd6c86b9b7e92d800ade0378282` / `v2.6.0-freeze`.
 - Actual execution timestamps should be used to describe collection chronology, while manifest `collection_order` remains the predefined planned ordering.
 - The three already-failed M2 observations remain preserved failures and must not be regenerated. Remaining pending M2 observations will be collected later under the same frozen M2 configuration once paid access is available.
+
+### 2026-09-22 — residual truncation and provider-overload evidence in v2.6
+
+- **Affected sections:** Data Collection, Results / Dataset Completion, Limitations.
+- During official v2.6 collection, an M1 observation reached the frozen 64,000-token output ceiling with finish reason `length` and was preserved as truncated.
+- Therefore, the larger model-specific v2.6 ceilings reduced ceiling-induced truncation but did not guarantee complete elimination of right-censoring.
+- A separate M4 observation failed before a valid chat completion was produced because the upstream Nvidia provider reported temporary overload (`503 provider_overloaded`) inside the OpenRouter response.
+- The M4 overload event should be reported as a provider/infrastructure failure, not as a hallucination, truncation, or malformed generated-code result.
+- Both observations remain preserved once under the predefined collection policy and are excluded from primary SHR/PHR where required by that policy.
+
+### 2026-09-22 — recurring M4 upstream availability failures
+
+- **Affected sections:** Data Collection, Dataset Completion, Limitations.
+- Multiple v2.6 M4 observations failed because the upstream Nvidia provider reported temporary overload (`503 provider_overloaded`) through OpenRouter.
+- These events should be classified as provider/infrastructure failures and excluded from hallucination and truncation interpretations.
+- The predefined preservation policy was maintained: each failed observation was retained once without regeneration or substitution.
