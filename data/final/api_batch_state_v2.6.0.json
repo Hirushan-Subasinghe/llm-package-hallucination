@@ -1,0 +1,9 @@
+{
+  "collection_status": "ready_for_prospective_collection",
+  "created_at_utc": "2026-09-22T01:57:13.469711Z",
+  "events": [],
+  "manifest_sha256": "b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f",
+  "provider_next_allowed_at_epoch": {},
+  "state_version": "api-batch-state-1.0.0",
+  "updated_at_utc": "2026-09-22T01:57:13.469711Z"
+}

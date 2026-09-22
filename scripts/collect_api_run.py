@@ -111,7 +111,7 @@ def write_json(path: Path, value: object, *, exclusive: bool = False) -> None:
 
 def load_config(path: Path) -> dict:
     config = json.loads(path.read_text(encoding="utf-8"))
-    if config.get("model_set_version") not in {"api-model-set-1.0.0", "api-model-set-1.1.0", "api-model-set-1.2.0", "api-model-set-1.3.0"}:
+    if config.get("model_set_version") not in {"api-model-set-1.0.0", "api-model-set-1.1.0", "api-model-set-1.2.0", "api-model-set-1.3.0", "api-model-set-1.4.0"}:
         raise ValueError("Unexpected model_set_version")
     models = config.get("models")
     if not isinstance(models, list) or len(models) != 4:
@@ -121,7 +121,21 @@ def load_config(path: Path) -> dict:
         raise ValueError("Model conditions must be ordered M1 through M4")
     if len({model.get("model_id") for model in models}) != 4:
         raise ValueError("Configured model IDs must be unique")
+    if config["model_set_version"] == "api-model-set-1.4.0":
+        expected_ceilings = {"M1": 64000, "M2": 32768, "M3": 65536, "M4": 65536}
+        for model in models:
+            ceiling = model.get("max_output_tokens")
+            if isinstance(ceiling, bool) or not isinstance(ceiling, int) or ceiling != expected_ceilings[model["condition_id"]]:
+                raise ValueError("v2.6 model condition output ceiling differs from the frozen protocol")
+        if "max_output_tokens" in config["candidate_common_parameters"]:
+            raise ValueError("v2.6 must not define an experiment-wide output ceiling")
     return config
+
+
+def output_token_ceiling(config: dict, model: dict) -> int:
+    if config["model_set_version"] == "api-model-set-1.4.0":
+        return model["max_output_tokens"]
+    return config["candidate_common_parameters"]["max_output_tokens"]
 
 
 def load_manifest(path: Path) -> list[dict[str, object]]:
@@ -175,7 +189,7 @@ def validate_collection_ready(config: dict, row: dict[str, object], model: dict)
         raise ValueError("This collector scaffold accepts only the future official final phase")
     if row["task_set_version"] != "final-2.0.0":
         raise ValueError("Manifest must use task_set_version final-2.0.0")
-    if row["model_set_version"] not in {"api-model-set-1.0.0", "api-model-set-1.1.0", "api-model-set-1.2.0", "api-model-set-1.3.0"} or row["model_set_version"] != config["model_set_version"]:
+    if row["model_set_version"] not in {"api-model-set-1.0.0", "api-model-set-1.1.0", "api-model-set-1.2.0", "api-model-set-1.3.0", "api-model-set-1.4.0"} or row["model_set_version"] != config["model_set_version"]:
         raise ValueError("Manifest model_set_version does not match configured model set")
     repetition = parse_repetition(row["run_repetition"])
     if repetition not in (1, 2, 3):
@@ -198,6 +212,9 @@ def validate_collection_ready(config: dict, row: dict[str, object], model: dict)
             raise ValueError("Unpinned OpenRouter collection lacks a documented approval flag")
         if status not in {"pinned", "unavailable"}:
             raise ValueError("OpenRouter provider preflight is incomplete")
+        if config["model_set_version"] == "api-model-set-1.4.0" and model["condition_id"] == "M2":
+            if routing.get("underlying_provider_slug") != "darkbloom" or routing.get("underlying_provider_name") != "Darkbloom" or routing.get("only_pinned_provider") is not True or routing.get("allow_fallbacks") is not False or routing.get("require_parameters") is not True:
+                raise ValueError("v2.6 M2 requires exclusive Darkbloom routing")
     elif row.get("underlying_provider_pin") != "not_applicable":
         raise ValueError("Groq manifest rows must use underlying_provider_pin not_applicable")
 
@@ -223,7 +240,7 @@ def build_request(config: dict, model: dict, prompt_bytes: bytes) -> tuple[str, 
         "messages": [{"role": "user", "content": prompt_bytes.decode("utf-8")}],
         "temperature": parameters["temperature"],
         "top_p": parameters["top_p"],
-        model["output_token_parameter"]: parameters["max_output_tokens"],
+        model["output_token_parameter"]: output_token_ceiling(config, model),
         "stream": False,
     }
     no_tools_mode = model.get("no_tools_request_mode")
@@ -241,6 +258,8 @@ def build_request(config: dict, model: dict, prompt_bytes: bytes) -> tuple[str, 
         }
         if routing["pinning_status"] == "pinned":
             provider["order"] = [routing["underlying_provider_slug"]]
+            if routing.get("only_pinned_provider") is True:
+                provider["only"] = [routing["underlying_provider_slug"]]
         payload["provider"] = provider
     api_key_name = model["api_key_environment_variable"]
     api_key = os.environ.get(api_key_name)
@@ -402,7 +421,7 @@ def collect_row(
         "sampling_parameters": {
             "temperature": config["candidate_common_parameters"]["temperature"],
             "top_p": config["candidate_common_parameters"]["top_p"],
-            "max_output_tokens": config["candidate_common_parameters"]["max_output_tokens"],
+            "max_output_tokens": output_token_ceiling(config, model),
             "seed": "not_controlled",
         },
         "retry_history": [],
@@ -502,8 +521,14 @@ def collect_row(
         routing = model.get("openrouter_routing")
         if routing and routing.get("pinning_status") == "pinned":
             expected = routing.get("underlying_provider_name")
-            if expected and resolved_provider != expected:
+            accepted = {expected} if config["model_set_version"] != "api-model-set-1.4.0" else {expected, routing.get("underlying_provider_slug")}
+            if expected and resolved_provider not in accepted:
                 metadata["protocol_deviations"].append("resolved_provider_differs_from_frozen_provider")
+        if config["model_set_version"] == "api-model-set-1.4.0" and model["condition_id"] == "M2" and metadata["protocol_deviations"]:
+            metadata["collection_status"] = "failed"
+            metadata["failure_reason"] = "provider_identity_mismatch"
+            write_json(run_directory / "metadata.json", metadata)
+            raise ValueError("M2 returned model or underlying provider differs from frozen identity")
         write_json(run_directory / "metadata.json", metadata)
         return run_directory
 

@@ -65,38 +65,51 @@ class V25Tests(unittest.TestCase):
         self.assertEqual(Counter(r['run_repetition'] for r in rows), {r: 120 for r in ('R01','R02','R03')})
         self.assertEqual(Counter(r['category'] for r in rows), {c: 60 for c in ('AUTH-FED','DATA-ADV','DIST-OBS','DOC-BINARY','ENT-INT','PKI-CRYPTO')})
         self.assertTrue(all(r['collection_status'] == 'pending' and r['run_id'].startswith('API-v2.5-') for r in rows))
-        state = json.loads(STATE.read_text())
-        self.assertEqual(state['events'], [])
-        self.assertEqual(state['provider_next_allowed_at_epoch'], {})
-        self.assertEqual(state['manifest_sha256'], hashlib.sha256(MANIFEST.read_bytes()).hexdigest())
-        self.assertEqual(list((ROOT / 'data/final/raw').glob('API-v2.5-*')), [])
+        # The real v2.5 state and raw root legitimately progress during collection.
+        # Verify the prospective initial-state contract with an isolated fixture.
+        with tempfile.TemporaryDirectory() as tmp:
+            fixture_state = Path(tmp) / 'initial-state.json'
+            initial = collect_api_batch.load_state(
+                fixture_state, hashlib.sha256(MANIFEST.read_bytes()).hexdigest()
+            )
+            self.assertEqual(initial['events'], [])
+            self.assertEqual(initial['provider_next_allowed_at_epoch'], {})
+            self.assertEqual(initial['manifest_sha256'], hashlib.sha256(MANIFEST.read_bytes()).hexdigest())
+            self.assertFalse(fixture_state.exists())
+            self.assertEqual(list((Path(tmp) / 'raw').glob('API-v2.5-*')), [])
         generated = create_api_manifest.make_rows(collect_api_run.load_config(CONFIG), create_api_manifest.load_frozen_tasks(), ROOT / 'data/generated_prompts/v2.5.0', 'API-v2.5')
         self.assertEqual(MANIFEST.read_bytes(), create_api_manifest.csv_bytes(generated))
 
     def test_dry_run_and_preserved_statuses(self):
         config = collect_api_run.load_config(CONFIG)
         rows = collect_api_batch.ordered_rows(MANIFEST)
-        result = collect_api_batch.run_batch(config, rows, manifest_hash=hashlib.sha256(MANIFEST.read_bytes()).hexdigest(), state_path=STATE, dry_run=True, continue_after_failed=True)
-        self.assertEqual(result, {'next_run_id': 'API-v2.5-AUTH-FED-01-M1-R01', 'collection_order': 1, 'api_provider': 'OpenRouter', 'wait_seconds': 0.0})
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
+            result = collect_api_batch.run_batch(
+                config, rows,
+                manifest_hash=hashlib.sha256(MANIFEST.read_bytes()).hexdigest(),
+                state_path=root / 'initial-state.json', raw_root=root / 'raw',
+                dry_run=True, continue_after_failed=True,
+            )
+            self.assertEqual(result, {'next_run_id': 'API-v2.5-AUTH-FED-01-M1-R01', 'collection_order': 1, 'api_provider': 'OpenRouter', 'wait_seconds': 0.0})
             for row, status in zip(rows, ('completed', 'truncated', 'failed')):
-                d = root / row['run_id']
-                d.mkdir()
+                d = root / 'raw' / row['run_id']
+                d.mkdir(parents=True)
                 (d / 'metadata.json').write_text(json.dumps({'collection_status': status}))
-            result = collect_api_batch.run_batch(config, rows[:4], manifest_hash='test', state_path=root / 'state.json', raw_root=root, dry_run=True, continue_after_failed=True)
+            result = collect_api_batch.run_batch(config, rows[:4], manifest_hash='test', state_path=root / 'state.json', raw_root=root / 'raw', dry_run=True, continue_after_failed=True)
             self.assertEqual(result['collection_order'], 4)
             self.assertFalse((root / 'state.json').exists())
-            blocked = collect_api_batch.run_batch(config, rows[:4], manifest_hash='test', state_path=root / 'state.json', raw_root=root, dry_run=True, continue_after_failed=False)
+            blocked = collect_api_batch.run_batch(config, rows[:4], manifest_hash='test', state_path=root / 'state.json', raw_root=root / 'raw', dry_run=True, continue_after_failed=False)
             self.assertEqual(blocked['existing_status'], 'failed')
 
     def test_freeze_record_is_reproducible(self):
         record = json.loads((ROOT / 'config/experiment_freeze_v2.5.0.json').read_text())
         self.assertEqual(record['sampling_parameters']['max_output_tokens'], 16000)
         self.assertEqual(record['failure_policy']['continue_after_preserved_failure'], True)
-        expected = create_experiment_freeze_v2_5.build_record()
-        expected['freeze_record_created_at_utc'] = record['freeze_record_created_at_utc']
-        self.assertEqual(record, expected)
+        # The verifier is deliberately progress-aware: it checks immutable frozen
+        # inputs after collection has advanced without rebuilding the initial state.
+        with patch.object(sys, 'argv', ['create_experiment_freeze_v2_5.py', '--check']):
+            self.assertEqual(create_experiment_freeze_v2_5.main(), 0)
         self.assertEqual((ROOT / 'docs/experiment_freeze_v2.5.0.md').read_text(), create_experiment_freeze_v2_5.markdown(record))
 
 if __name__ == '__main__':

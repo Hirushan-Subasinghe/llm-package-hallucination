@@ -1,0 +1,7 @@
+Create a self-contained Node.js TypeScript Avro event producer and consumer with a local schema-registry adapter. Define two compatible schema versions using records, enums, unions, defaults, logical timestamp and decimal types, assign schema identifiers, encode messages with a registry wire envelope, and resolve older writer schemas against the current reader schema. Enforce backward-compatibility checks before registration and demonstrate compatible evolution, rejected breaking changes, and unknown schema identifiers without contacting an external registry. Include a complete package.json with exact dependency versions and scripts, identify exact Avro and compatibility APIs used, and provide reproducible installation and example commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

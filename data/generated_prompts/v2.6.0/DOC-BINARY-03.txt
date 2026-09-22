@@ -1,0 +1,7 @@
+Build a self-contained Node.js TypeScript core image-to-searchable-PDF pipeline. Process one oriented JPEG and one small multipage TIFF, honor EXIF orientation, report ICC and XMP metadata with a documented preserve-or-normalize policy, run selectable-language OCR, and place an invisible text layer while retaining page geometry. Emit extracted text and a metadata report, show bounded worker concurrency, and include representative orientation and OCR-coordinate assertions. State any required local OCR language data or native runtime explicitly; omit unrelated upload-service boilerplate. Include a complete package.json with exact dependency versions and scripts, state the exact APIs used for metadata, imaging, OCR, and PDF creation, and provide reproducible installation and example commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

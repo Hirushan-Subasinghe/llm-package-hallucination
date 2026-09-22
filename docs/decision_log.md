@@ -535,3 +535,17 @@ Each decision record contains the following standardized fields:
 - **preserved_protocol:** Same 30 task IDs and wording, byte-identical prompt template and rendered prompts, four model/provider conditions and pins, no-fallback/no-tools stateless interface, temperature 0.6, top_p 0.95, omitted seed, retry/backoff, v2.4 failure continuation, truncation policy, and zero artificial pacing.
 - **data_boundary:** New `API-v2.5-` run namespace, all-pending manifest, and empty state. No v2.4 observation is reused. No v2.5 API request was sent during implementation or validation.
 - **analysis_effect:** v2.0–v2.4 remain methodological evidence outside v2.5 primary SHR/PHR denominators. Failed and truncated v2.5 observations, if later collected, remain excluded from those denominators under the preserved policy.
+
+---
+
+### D031 — Implement Fresh Final v2.6 Dataset with Model-Specific Ceilings and Darkbloom-Pinned M2
+
+- **decision_id:** D031
+- **date:** 2026-09-22
+- **status:** IMPLEMENTED; collection not started; commit and tag pending researcher review
+- **decision:** Prospectively stop v2.5 after preserved 16,000-token truncations and create a separate v2.6 360-observation dataset beginning at observation 1. v2.5 observations remain immutable methodological evidence and are excluded from v2.6 primary SHR/PHR.
+- **experimental_changes:** Set max output tokens per model condition to M1 64,000, M2 32,768, M3 65,536, and M4 65,536. Move the unchanged M2 model ID `qwen/qwen3.8-27b` from Groq to OpenRouter, pinned to provider slug `darkbloom` with `provider.order` and `provider.only` both restricted to `darkbloom`, `allow_fallbacks: false`, and `require_parameters: true`. No model fallback is supplied.
+- **provider_evidence:** OpenRouter's Qwen3.8 27B model and Darkbloom provider pages list the model/provider pairing. OpenRouter's provider-routing documentation defines `order`, `only`, `allow_fallbacks`, and `require_parameters`. OpenRouter model pages and Groq's GPT-OSS-120B model page document the selected output ceilings. The source URLs are recorded in the v2.6 freeze record.
+- **preserved_protocol:** The final-2.0.0 task set, template and rendered prompt bytes, four model identities, M1/M4 pins, three repetitions, temperature 0.6, top_p 0.95, uncontrolled seed, stateless single-user-message/no-tools interface, no browsing/retrieval/execution/function calling, infrastructure retry/backoff, preserved-failure continuation, truncation preservation, and zero researcher-imposed pacing remain unchanged.
+- **final_protocol_rule:** v2.6 is intended as the final version. Further ceiling hits are preserved as right-censored truncations and excluded from primary SHR/PHR without another protocol restart. Failed observations remain preserved once and excluded. No v2.6 result exists yet.
+- **data_boundary:** New `API-v2.6-` run namespace, 360 unique all-pending manifest rows, empty state, byte-identical prompt copies, and zero raw observations. No live API request was sent during implementation.

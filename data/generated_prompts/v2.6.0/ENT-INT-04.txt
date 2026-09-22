@@ -1,0 +1,7 @@
+Build a self-contained Node.js TypeScript SOAP interoperability example from a small supplied WSDL fixture. Implement one client operation and a minimal local handler using WS-Security UsernameToken, an X.509 XML signature, timestamp and replay checks, and one binary attachment transferred with MTOM/XOP rather than inline base64. Validate a representative SOAP fault, namespaces, signature references, attachment content identifier, and content hash. Keep endpoints local and configurable and focus on the exact WSDL, signature, security, and multipart integration points rather than a general SOAP platform. Include a complete package.json with exact dependency versions and scripts, identify the exact package APIs used, and provide reproducible installation and example commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

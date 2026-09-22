@@ -1,13 +1,30 @@
 # Current Research Status
 
-**Last updated:** 2026-09-21 (v2.5 prospective implementation and validation)
+**Last updated:** 2026-09-22 (v2.6 prospective implementation and validation)
 **Project:** LLM Package Hallucination Study
 
-## Current phase: v2.5 frozen and ready for official collection
+## Current phase: v2.6 prospectively implemented; collection has not begun
+
+v2.5 was prospectively stopped after preserved observations showed repeated 16,000-token truncation. Its raw responses, state, manifest, freeze, and prompts remain separate historical evidence and are excluded from v2.6 primary SHR/PHR. The historical v2.5 freeze remains anchored to commit `87d3158` and tag `v2.5.0-freeze`; the live v2.5 state and observations have since advanced beyond that initial freeze.
+
+v2.6.0 is a fresh independent 360-observation experiment beginning at observation 1. Its manifest contains 360 unique pending rows, its state has no collection events or provider pacing history, and there are zero v2.6 raw observations. No v2.6 API request was sent during implementation. v2.6 is intended as the final protocol version. Any remaining output-ceiling hit will be preserved as a right-censored truncation, excluded from primary SHR/PHR, and will not trigger another restart.
+
+## Frozen prospective v2.6 inputs
+
+- Task set: `prompts/tasks/final_2.0.0.jsonl` (unchanged from v2.5).
+- Model set: `config/api_model_set_1.4.0.json`.
+- Prompt template: `prompts/prompt_template_v2.6.0.md`; all 30 rendered prompts are byte-identical to v2.5.
+- Manifest: `manifests/api_final_v2.6.0_manifest.csv`.
+- Initial state: `data/final/api_batch_state_v2.6.0.json`.
+- Freeze record: `config/experiment_freeze_v2.6.0.json` and `docs/experiment_freeze_v2.6.0.md`.
+
+The v2.5-to-v2.6 experimental changes are model-specific output ceilings (M1 64,000; M2 32,768; M3 and M4 65,536) and moving the unchanged M2 model ID `qwen/qwen3.8-27b` from Groq to OpenRouter, pinned exclusively to Darkbloom (`darkbloom`) with fallback disabled. All other generation and collection rules remain unchanged.
+
+## Historical v2.5 freeze snapshot
 
 v2.4 was prospectively stopped at the documented checkpoint of 30 finalized observations: 14 completed, 12 truncated, and 4 failed (40.0% preliminary truncation). Its frozen inputs and preserved observations remain methodological evidence only. No further v2.4 collection is planned.
 
-v2.5.0 is a fresh, independent 360-observation experiment beginning at observation 1. Its manifest has 360 pending rows, its state has no events or provider pacing history, and there are zero official v2.5 raw observations. No v2.5 API request was sent during implementation. The implementation and prospective freeze records were reviewed and frozen at commit `87d3158`, tagged `v2.5.0-freeze`.
+At its prospective freeze, v2.5.0 began as a fresh, independent 360-observation experiment at observation 1. Its manifest had 360 pending rows, its initial state had no events or provider pacing history, and there were zero official v2.5 raw observations. No v2.5 API request was sent during implementation. The implementation and prospective freeze records were reviewed and frozen at commit `87d3158`, tagged `v2.5.0-freeze`. Official v2.5 collection subsequently produced preserved observations before the prospective stop.
 
 ## Frozen v2.5 inputs
 
