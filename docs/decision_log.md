@@ -549,3 +549,14 @@ Each decision record contains the following standardized fields:
 - **preserved_protocol:** The final-2.0.0 task set, template and rendered prompt bytes, four model identities, M1/M4 pins, three repetitions, temperature 0.6, top_p 0.95, uncontrolled seed, stateless single-user-message/no-tools interface, no browsing/retrieval/execution/function calling, infrastructure retry/backoff, preserved-failure continuation, truncation preservation, and zero researcher-imposed pacing remain unchanged.
 - **final_protocol_rule:** v2.6 is intended as the final version. Further ceiling hits are preserved as right-censored truncations and excluded from primary SHR/PHR without another protocol restart. Failed observations remain preserved once and excluded. No v2.6 result exists yet.
 - **data_boundary:** New `API-v2.6-` run namespace, 360 unique all-pending manifest rows, empty state, byte-identical prompt copies, and zero raw observations. No live API request was sent during implementation.
+
+---
+
+### D032 — Finalize Stranded v2.6 Active Request as a Preserved Failure
+
+- **decision_id:** D032
+- **date:** 2026-09-22
+- **status:** IMPLEMENTED
+- **decision:** When `API-v2.6-PKI-CRYPTO-04-M4-R01` was interrupted by the researcher during the active HTTP response read, do not retry or regenerate it. Finalize the already-sent request once as failed with `failure_reason: researcher_interrupted_active_request`.
+- **integrity_controls:** The offline-only recovery utility verifies the frozen manifest identity and prompt hash, preserved request hash, original start timestamp, and `requesting` status. It refuses completed, truncated, failed, or response-bearing directories; writes an immutable pre-recovery hash audit before the sole metadata update; and makes no network call.
+- **analysis_effect:** This failed observation is retained as failure evidence and excluded from primary v2.6 SHR/PHR denominators under the frozen failed-observation policy. No experimental input, manifest row, model configuration, token ceiling, retry policy, or other raw observation is changed.
