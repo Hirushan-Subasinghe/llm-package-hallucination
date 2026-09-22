@@ -357,3 +357,12 @@
 - Together with the previously verified M1 and M2 observations, all four `AUTH-FED-05` model-condition runs completed normally under the frozen 16,000-token ceiling.
 - This confirms that M4 does not always truncate under v2.5; earlier M4 ceiling hits remain valid observations but are not universal for that condition.
 - No SHR, PHR, hallucination-prevalence, or risk conclusion is inferred from this task-level completion pattern.
+
+### v2.5 PKI-CRYPTO collection begins with mixed completion outcomes
+
+- Verified the first two collected `PKI-CRYPTO-01` observations from authoritative per-run metadata.
+- `API-v2.5-PKI-CRYPTO-01-M2-R01` was preserved as `TRUNCATED` with finish reason `length` at exactly 16,000 completion tokens.
+- `API-v2.5-PKI-CRYPTO-01-M3-R01` completed normally with finish reason `stop` and 6,429 completion tokens.
+- Both observations used the frozen v2.5 16,000-token ceiling and completed on the first HTTP attempt.
+- This provides another verified example that truncation under v2.5 is not limited to M4; M2 can also reach the 16,000-token ceiling.
+- Truncated observations remain preserved once and excluded from primary SHR/PHR denominators.

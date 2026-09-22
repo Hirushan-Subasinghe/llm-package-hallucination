@@ -271,3 +271,14 @@ No final experimental results belong here yet. Add results only from verified, v
 - The dissertation should therefore report M4 truncation as an observed recurring collection outcome, not as an inevitable property of every M4 response.
 - No hallucination-rate or risk conclusion should be inferred from this task-level completion pattern.
 - Evidence: `data/final/raw/API-v2.5-AUTH-FED-05-M1-R01/` through `API-v2.5-AUTH-FED-05-M4-R01/`.
+
+### 2026-09-22 — PKI-CRYPTO begins with mixed v2.5 completion outcomes
+
+- **Affected sections:** Data Collection, Dataset Completion, Limitations.
+- The first two verified `PKI-CRYPTO-01` observations produced mixed completion outcomes under the frozen 16,000-token ceiling.
+- `API-v2.5-PKI-CRYPTO-01-M2-R01` was truncated at exactly 16,000 completion tokens with finish reason `length`.
+- `API-v2.5-PKI-CRYPTO-01-M3-R01` completed normally with finish reason `stop` and 6,429 completion tokens.
+- This confirms that v2.5 truncation is not confined to the M4 condition; M2 can also reach the configured ceiling.
+- Truncated observations remain preserved once and excluded from primary SHR/PHR denominators.
+- Do not infer hallucination prevalence or model-quality differences from these collection-completion outcomes alone.
+- Evidence: `data/final/raw/API-v2.5-PKI-CRYPTO-01-M2-R01/metadata.json`, `data/final/raw/API-v2.5-PKI-CRYPTO-01-M3-R01/metadata.json`, and `data/final/api_batch_state_v2.5.0.json`.
