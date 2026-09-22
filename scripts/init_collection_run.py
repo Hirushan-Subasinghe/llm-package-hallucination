@@ -15,6 +15,7 @@ from collection_common import (
     verified_prompt_bytes,
     write_metadata,
 )
+from repository_guard import assert_live_collection_allowed
 
 
 def is_pristine_initialized(directory, row, metadata: dict) -> bool:
@@ -77,6 +78,7 @@ def main() -> int:
     parser.add_argument("run_id")
     args = parser.parse_args()
     try:
+        assert_live_collection_allowed()
         row, manifest_path, directory, _ = initialize_run(args.run_id)
         print(f"Initialized {row['run_id']} at {directory}")
         print(f"Prompt copy: {directory / 'prompt.txt'}")

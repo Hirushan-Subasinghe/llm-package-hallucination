@@ -30,6 +30,7 @@ from collect_api_run import (
     write_exclusive,
     write_json,
 )
+from repository_guard import assert_live_collection_allowed
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -164,6 +165,7 @@ def main() -> int:
     parser.add_argument("--summary-name", default="smoke_summary.json")
     args = parser.parse_args()
     try:
+        assert_live_collection_allowed()
         config = load_config(DEFAULT_CONFIG)
         if config.get("status") != "frozen_for_collection":
             raise ValueError("Smoke tests require a frozen model configuration")

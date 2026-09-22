@@ -11,6 +11,7 @@ from pathlib import Path
 
 from collect_api_batch import ordered_rows, run_batch
 from collect_api_run import DEFAULT_RAW_ROOT, load_config
+from repository_guard import assert_live_collection_allowed
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_MANIFEST = ROOT / "manifests/api_final_v2.6.0_manifest.csv"
@@ -63,6 +64,7 @@ def main() -> int:
     )
     args = parser.parse_args()
     try:
+        assert_live_collection_allowed()
         if args.limit < 1:
             raise ValueError("--limit must be at least 1")
         rows = filter_excluded_models(ordered_rows(args.manifest), args.exclude_model)

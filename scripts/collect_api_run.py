@@ -23,6 +23,8 @@ from typing import Callable
 
 import requests
 
+from repository_guard import assert_live_collection_allowed
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = ROOT / "config" / "api_model_set_1.2.0.json"
@@ -544,6 +546,7 @@ def main() -> int:
     parser.add_argument("--timeout-seconds", type=float, default=180.0)
     args = parser.parse_args()
     try:
+        assert_live_collection_allowed()
         config = load_config(args.config)
         row = select_manifest_row(load_manifest(args.manifest), args.run_id)
         directory = collect_row(config, row, raw_root=args.raw_root, timeout_seconds=args.timeout_seconds)
