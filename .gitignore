@@ -7,29 +7,24 @@ __pycache__/
 .venv/
 venv/
 env/
-
 # Tool caches
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
-
 # OS/editor noise
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
-
 # Local secrets
 .env
 .env.*
 !.env.example
-
 # Logs and generated outputs (keep directory placeholders only)
 logs/*
 !logs/.gitkeep
 results/*
 !results/.gitkeep
-
 # Data artifacts (track structure, not collected records)
 data/pilot/raw/*
 !data/pilot/raw/.gitkeep
@@ -47,8 +42,5 @@ data/processed/*
 !data/processed/.gitkeep
 data/manual_review/*
 !data/manual_review/.gitkeep
-
 # Optional local notebooks/checkpoints
 .ipynb_checkpoints/
-.venv/
-.venv/
