@@ -400,3 +400,15 @@ No final experimental results belong here yet. Add results only from verified, v
 - Multiple v2.6 M4 observations failed because the upstream Nvidia provider reported temporary overload (`503 provider_overloaded`) through OpenRouter.
 - These events should be classified as provider/infrastructure failures and excluded from hallucination and truncation interpretations.
 - The predefined preservation policy was maintained: each failed observation was retained once without regeneration or substitution.
+
+### 2026-09-22 — accidental duplicate generation excluded from study data
+
+- **Affected sections:** Methodology / Data Collection Integrity, Reproducibility, Limitations.
+- One accidental duplicate live generation occurred outside the official collection workspace when the v2.6 collector was mistakenly run from the analysis repository.
+- The accidental completed run used the same request bytes as the official observation but produced a different provider response ID and response content, confirming it was a second generation rather than a copy of the official observation.
+- The accidental run and associated failed attempt were quarantined and excluded from all study datasets and downstream metrics.
+- The official v2.6 dataset remains the copy collected under `~/Dev/ai-hallucination-study/data/final/raw/`.
+- The analysis repository now contains a hard guard that blocks all collection CLI entry points before network access or data/state mutation.
+- The guard is recorded in commit `fa01ad4`.
+- This incident did not change the frozen v2.6 experimental inputs or the official observation set.
+- Avoid wording that implies the accidental duplicate contributed to sample size, SHR, PHR, validation counts, or risk-model results.

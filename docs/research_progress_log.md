@@ -532,3 +532,22 @@
 - These failures are therefore treated as recurring provider/infrastructure availability failures rather than model-output, prompt-format, hallucination, or truncation events.
 - Failed M4 observations are preserved once and are not retried, regenerated, deleted, or substituted.
 - Pending M2 observations remain temporarily excluded from collection; no new M2 observation was attempted during this non-M2 batch.
+
+### 2026-09-22 — accidental collection in analysis workspace quarantined and blocked
+
+- An API collection command was accidentally run from the analysis repository instead of the official study repository.
+- The accidental analysis-repo run created:
+  - `API-v2.6-AUTH-FED-01-M1-R01` as `failed` with `transport_failure`;
+  - `API-v2.6-AUTH-FED-01-M3-R01` as a completed duplicate generation.
+- The M3 accidental run used the same request hash as the official study-repo observation but produced a different provider response ID and different response hash, confirming that it was a second live generation for the same planned observation.
+- The official dataset remains exclusively under `~/Dev/ai-hallucination-study/data/final/raw/`.
+- The accidental analysis-repo artifacts were removed from the active `data/final/raw/` location and preserved under `data/quarantine/accidental_v2.6_collection_2026-09-22/`.
+- The tracked `data/final/api_batch_state_v2.6.0.json` was restored to its pre-accident Git version.
+- Active analysis-repo `data/final/raw/` contains no `API-v2.6-*` directories.
+- Quarantined evidence is excluded from SHR, PHR, package validation, classification, risk-model inputs, and all final analysis.
+- Quarantine hashes were preserved; the `SHA256SUMS.txt` file contains a self-referential checksum entry and should not be treated as validating itself, while the individual evidence-file hashes were verified.
+- A hard sentinel-based repository guard was added so all 10 collection CLI entry points refuse to run in this analysis repository.
+- The guard aborts before network/provider calls, raw-directory creation, and collection-state mutation.
+- Guard implementation committed as `fa01ad4` (`Block live collection in analysis repository`).
+- Repository-guard tests passed 25/25 before the final init-guard extension; after extension the full suite ran 179 tests with no new failures. Two historical freeze tests remain failing because gitignored historical raw artifacts are absent from this worktree; these failures pre-existed the guard work and are unrelated.
+- Two legacy initializer tests currently pass because the new CLI guard intercepts before the logic named by those tests; this is a testing-quality caveat for later cleanup, not a collection-safety failure.
