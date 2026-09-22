@@ -50,3 +50,5 @@ data/manual_review/*
 
 # Optional local notebooks/checkpoints
 .ipynb_checkpoints/
+.venv/
+.venv/

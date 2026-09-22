@@ -1,0 +1,21 @@
+{
+  "excluded_from_research_metrics": true,
+  "results": [
+    {
+      "collection_status": "completed",
+      "model_condition_id": "M2",
+      "resolved_underlying_provider": "Groq",
+      "returned_model_id": "qwen/qwen3.8-27b",
+      "tool_calls_returned": 0
+    },
+    {
+      "collection_status": "completed",
+      "model_condition_id": "M3",
+      "resolved_underlying_provider": "Groq",
+      "returned_model_id": "openai/gpt-oss-120b",
+      "tool_calls_returned": 0
+    }
+  ],
+  "smoke_attempt_series": "SMOKE-API-003",
+  "smoke_task_id": "SMOKE-API-001"
+}

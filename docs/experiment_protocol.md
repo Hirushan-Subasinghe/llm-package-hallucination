@@ -2,11 +2,35 @@
 
 Define the reproducible procedure for data collection, dependency extraction, registry validation, classification, baseline metrics, and risk assessment.
 
+> **Controlling redesign (2026-09-16):** Before official final collection, the former ChatGPT Web, Gemini Web, Codex CLI, and Antigravity CLI comparison and v1 general functional task set were superseded by frozen model set `api-model-set-1.0.0` and frozen task set `final-2.0.0`. No official final API data has been generated. The current research questions, objectives, conditions, provenance correction, and generation procedure are defined in [methodology_update_2026-09-16.md](methodology_update_2026-09-16.md), [api_model_protocol.md](api_model_protocol.md), and [task_set_v2_design.md](task_set_v2_design.md). Where the historical v1 material below conflicts, those current documents control.
+
+## Current Official Main-Study Design
+
+The study remains limited to direct Node.js/npm dependencies and retains a balanced 360-generation design: 30 tasks × 4 fixed model/API conditions × 3 independent runs. Pilot and exploratory outputs are excluded.
+
+The frozen comparison conditions are M1 OpenRouter `cohere/north-mini-code:free` pinned to `cohere`, M2 Groq preview `qwen/qwen3.8-27b`, M3 Groq `openai/gpt-oss-120b`, and M4 OpenRouter `nvidia/nemotron-3-ultra-550b-a55b:free` pinned to `nvidia`. These are model/API conditions, not representations of the four superseded web/CLI products. Exact IDs and API providers appear in generation metadata. The first candidate M1/M2 IDs were rejected before collection because metadata preflight exposed zero runnable endpoints; no experimental outcome influenced their replacement.
+
+The frozen v2 task set contains five tasks in each of `AUTH-FED`, `PKI-CRYPTO`, `DOC-BINARY`, `ENT-INT`, `DATA-ADV`, and `DIST-OBS`. Dependency knowledge, standards interoperability, version selection, and exact package APIs create the intended challenge; application size does not. Before freeze, previously warned tasks were minimally constrained to core implementation files, representative fixtures, essential validation, and focused tests that can reasonably fit the 6,000-token output cap. V1 prompt and pilot artifacts are preserved only as provenance.
+
+All conditions receive one identical rendered prompt as the only user message in a fresh request. Tools, functions, browsing, retrieval augmentation, code execution, prior context, and model-specific additions are prohibited. Frozen sampling is temperature 0.6, top-p 0.95, and maximum output tokens 6000. Seed is not controlled or sent.
+
+OpenRouter endpoint information is inspected before freeze. One underlying provider is pinned for each OpenRouter model where possible, fallbacks are disabled, and the resolved provider is captured per run. If pinning is technically unavailable, the limitation and prospective approval must be recorded and the resolved provider still captured. Frozen-model unavailability stops the affected condition; there is no silent substitution.
+
+Only 429, transport/network failure, or 5xx without a valid response permits infrastructure retry. All attempts are logged. Content never triggers retry. The exact prompt, safe request, raw provider response, assistant content, timestamps, identifiers, sampling values, usage, finish reason, routing metadata, and hashes are preserved before downstream work. API credentials are environment-only.
+
+The current RQs are package-name prevalence; secondary version/API/capability hallucination extent; variation in frequency, type, and risk across models and specialized domains; and practical risks from confirmed package-related hallucinations. The five primary classifications, SHR, PHR, separate secondary categories, and deterministic Impact × Detectability `risk-model-1.0.0` are unchanged.
+
+## Historical v1 Protocol Material
+
+> **Historical note:** The material from this point records the superseded v1 workflow design. The package taxonomy and `risk-model-1.0.0` remain applicable, but v1 workflow, task, persistence, and collection instructions are not instructions for official v2 collection.
+
 ## Research Topic
 
 AI Hallucination Attack Surface: A Risk Assessment of Fake APIs and Libraries in AI-Generated Code.
 
 ## Final Research Questions
+
+The questions below preserve the earlier protocol wording. The current working research questions are defined in [methodology_update_2026-09-16.md](methodology_update_2026-09-16.md).
 
 ### RQ1 — Prevalence
 
@@ -25,6 +49,8 @@ To what extent do confirmed hallucinated npm package names recur within the same
 What security risk do confirmed hallucinated npm dependencies present when assessed using namespace claimability, within-tool persistence, functional criticality, and cross-tool consistency?
 
 ## Final Research Objective
+
+The objective and specific objectives below preserve the earlier protocol wording. Current objectives are defined in [methodology_update_2026-09-16.md](methodology_update_2026-09-16.md).
 
 To empirically evaluate hallucinated npm dependencies generated by contemporary AI coding workflows and assess their software supply-chain security risk using a lightweight risk-assessment framework based on namespace claimability, persistence, functional criticality, and cross-tool consistency.
 
@@ -150,6 +176,18 @@ AI generation
   → classification
   → analysis dataset
 ```
+
+### Codex CLI Automated Collection Condition
+
+Codex CLI uses a deterministic, pilot-first collection runner so that exact frozen prompt bytes, process isolation, output capture, and failure state are applied consistently. The condition is frozen as Codex CLI `0.154.0`, provider `OpenAI`, model `gpt-5.6-sol`, reasoning effort `medium`, service tier `default`, workflow type `agentic_cli`, and `not_exposed` for model version, temperature, and seed.
+
+Each row starts a new ephemeral `codex exec` process in a fresh disposable workspace outside the repository. User config and execpolicy rules are ignored; the Git-repository check is skipped; the sandbox is read-only; web search is disabled; and the verified apps, hooks, plugins, remote plugins, multi-agent, memories, goals, shell, skill dependency installation, Browser Use, external Browser Use, and Computer Use features are disabled. A dedicated clean external `CODEX_HOME` supplies authentication without user skills, plugins, hooks, memories, or conversation history.
+
+The prompt is read from the manifest-associated rendered file, checked against the manifest SHA-256, copied by the initializer, rechecked, and passed through stdin as exact bytes. JSONL stdout, stderr, and the `--output-last-message` final response are staged outside the repository. Only after process termination are they preserved byte-for-byte under the existing run directory. For Codex, `response.md` is the canonical raw model output; `transcript.txt` and `stderr.txt` are separate operational evidence. Hashes are recorded for all three.
+
+The runner never executes generated code, installs packages, queries npm during generation, or publishes, registers, reserves, or claims package names. It does not retry automatically. Nonzero exits, timeouts, missing or empty final responses, integrity failures, and interruptions remain failed/incomplete records with available evidence preserved.
+
+Automation is initially restricted in code to the six Codex pilot rows. Baseline execution remains locked until pilot approval and a deliberate code change. Pilot data remains under `data/pilot/` and is excluded from the final 360-output baseline. Manual Web workflows retain their fresh-chat, single-submission operator capture procedure.
 
 ## Dependency Extraction
 
@@ -298,19 +336,29 @@ The following safety and ethical guardrails are strictly mandatory across all ex
 
 ### Sample-level Hallucination Rate (SHR)
 
-$$\text{SHR} = \frac{\text{number of completed generations containing at least one CONFIRMED\_HALLUCINATION}}{\text{number of completed generations being analysed}}$$
+$$\text{SHR} = \frac{\text{completed, non-truncated generations containing at least one CONFIRMED\_HALLUCINATION}}{\text{completed, non-truncated generations eligible for analysis}}$$
 
-- When the full baseline is complete, final SHR uses the fixed baseline denominator N = 360. Any preliminary analysis conducted before all baseline runs are complete uses the actual number of completed generations being analysed.
+- The experiment retains 360 scheduled official runs, but the primary SHR denominator is the actual number of completed, non-truncated generations eligible for analysis. An official `TRUNCATED` observation is preserved but excluded from the primary denominator.
 
 ### Package-level Hallucination Rate (PHR)
 
-$$\text{PHR} = \frac{\text{number of CONFIRMED\_HALLUCINATION external package recommendation occurrences}}{\text{total eligible external npm package recommendation occurrences}}$$
+$$\text{PHR} = \frac{\text{CONFIRMED\_HALLUCINATION occurrences from completed, non-truncated generations}}{\text{eligible external npm package recommendation occurrences from completed, non-truncated generations}}$$
+
+`CONFIRMED_HALLUCINATION` in SHR and PHR means confirmed package-name hallucination. Secondary package-version, package-API, and package-capability findings are reported separately and are never added to either primary metric.
+
+A provider-valid response with `finish_reason: "length"` is an official observation with operational status `TRUNCATED`. Preserve its original run ID, exact raw provider response, visible assistant content including empty content, exposed reasoning metadata, token usage, and finish reason; never regenerate it merely for truncation. Truncated observations remain in the research dataset but must not be mixed into primary SHR/PHR. They may be described qualitatively or used only in a separately labelled sensitivity analysis. This treatment was frozen before the first official API generation.
 
 ### Reporting Metrics and Breakdown
 
 The empirical study must explicitly distinguish recommendation occurrences (total recommendation instances) from unique package names, and report:
 
-- Total completed generations
+- Total scheduled runs
+- Total completed, non-truncated generations
+- Total truncated runs
+- Total infrastructure failures
+- Truncation rate overall
+- Truncation rate by model
+- Truncation rate by task category
 - Total external package recommendation occurrences
 - Confirmed hallucination occurrences
 - Unique hallucinated package names
@@ -330,6 +378,8 @@ Persistence testing is NOT part of the 360-output baseline:
 - **Scale:** Keep persistence testing small and targeted.
 
 ## Lightweight Risk Model
+
+> **Superseded risk rubric:** The risk model in this section preserves the earlier protocol state. Official package-related hallucination risk assessment now uses the deterministic Impact × Detectability model `risk-model-1.0.0` in [risk_assessment_protocol.md](risk_assessment_protocol.md), as authorized by [methodology_update_2026-09-15.md](methodology_update_2026-09-15.md).
 
 The risk assessment model freezes exactly four risk dimensions:
 

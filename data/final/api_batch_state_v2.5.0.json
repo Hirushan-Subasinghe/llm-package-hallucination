@@ -1052,13 +1052,177 @@
       "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.5-PKI-CRYPTO-01-M3-R01",
       "event": "completed",
       "run_id": "API-v2.5-PKI-CRYPTO-01-M3-R01"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.546669Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-01-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.548880Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-01-M2-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.550090Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-01-M3-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.551274Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-01-M4-R01",
+      "status": "truncated"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.552452Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-02-M2-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.553606Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-02-M3-R01",
+      "status": "completed"
+    },
+    {
+      "action": "continued_to_next_manifest_row_without_retry_or_substitution",
+      "at_utc": "2026-09-22T01:16:14.554698Z",
+      "event": "skipped_preserved_failed_observation",
+      "run_id": "API-v2.5-AUTH-FED-02-M4-R01",
+      "status": "failed"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.556093Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-02-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.557375Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-03-M3-R01",
+      "status": "completed"
+    },
+    {
+      "action": "continued_to_next_manifest_row_without_retry_or_substitution",
+      "at_utc": "2026-09-22T01:16:14.558567Z",
+      "event": "skipped_preserved_failed_observation",
+      "run_id": "API-v2.5-AUTH-FED-03-M4-R01",
+      "status": "failed"
+    },
+    {
+      "action": "continued_to_next_manifest_row_without_retry_or_substitution",
+      "at_utc": "2026-09-22T01:16:14.559741Z",
+      "event": "skipped_preserved_failed_observation",
+      "run_id": "API-v2.5-AUTH-FED-03-M1-R01",
+      "status": "failed"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.560885Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-03-M2-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.561981Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-04-M4-R01",
+      "status": "truncated"
+    },
+    {
+      "action": "continued_to_next_manifest_row_without_retry_or_substitution",
+      "at_utc": "2026-09-22T01:16:14.563035Z",
+      "event": "skipped_preserved_failed_observation",
+      "run_id": "API-v2.5-AUTH-FED-04-M1-R01",
+      "status": "failed"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.564194Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-04-M2-R01",
+      "status": "truncated"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.565410Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-04-M3-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.566531Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-05-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.567524Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-05-M2-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.568570Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-05-M3-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.569642Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-05-M4-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.570809Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-PKI-CRYPTO-01-M2-R01",
+      "status": "truncated"
+    },
+    {
+      "at_utc": "2026-09-22T01:16:14.571833Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-PKI-CRYPTO-01-M3-R01",
+      "status": "completed"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-22T01:16:14.573571Z",
+      "collection_order": 23,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-22T01:16:14.572925Z",
+      "run_id": "API-v2.5-PKI-CRYPTO-01-M4-R01"
+    },
+    {
+      "at_utc": "2026-09-22T01:25:49.419836Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.5-PKI-CRYPTO-01-M4-R01",
+      "event": "completed",
+      "run_id": "API-v2.5-PKI-CRYPTO-01-M4-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-22T01:25:49.421960Z",
+      "collection_order": 24,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-22T01:25:49.421547Z",
+      "run_id": "API-v2.5-PKI-CRYPTO-01-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-22T01:27:39.107483Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.5-PKI-CRYPTO-01-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.5-PKI-CRYPTO-01-M1-R01"
     }
   ],
   "manifest_sha256": "c7911420181f090a16df33ed041caa800d5859e8e9a30882655b4ca02e72c438",
   "provider_next_allowed_at_epoch": {
     "Groq": 1790038901.8958986,
-    "OpenRouter": 1790008119.2340772
+    "OpenRouter": 1790040349.4215467
   },
   "state_version": "api-batch-state-1.0.0",
-  "updated_at_utc": "2026-09-22T01:02:10.573903Z"
+  "updated_at_utc": "2026-09-22T01:27:39.107496Z"
 }

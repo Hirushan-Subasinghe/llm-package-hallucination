@@ -7,6 +7,7 @@ import argparse
 import sys
 
 from collection_common import REQUIRED_METADATA, ROOT, load_metadata, read_manifest, run_directory, sha256_bytes
+from finalize_collection_run import CODEX_FIXED_METADATA
 
 
 def verify_phase(phase: str) -> int:
@@ -41,10 +42,27 @@ def verify_phase(phase: str) -> int:
                 integrity_ok = False
             if metadata.get("workflow", "").endswith("_web"):
                 capture_path = directory / "response.md"
+            elif metadata.get("workflow") == "codex_cli":
+                capture_path = directory / "response.md"
             else:
                 capture_path = directory / "transcript.txt"
             if not capture_path.is_file():
                 integrity_ok = False
+            elif metadata.get("collection_status") == "completed":
+                if metadata.get("raw_response_sha256") != sha256_bytes(capture_path.read_bytes()):
+                    integrity_ok = False
+                    counts["metadata problems"] += 1
+            if metadata.get("workflow") == "codex_cli" and metadata.get("collection_method") == "automated_codex_exec":
+                transcript_path = directory / "transcript.txt"
+                stderr_path = directory / "stderr.txt"
+                if metadata.get("cli_exit_status") != 0:
+                    integrity_ok = False
+                if not transcript_path.is_file() or metadata.get("transcript_sha256") != sha256_bytes(transcript_path.read_bytes()):
+                    integrity_ok = False
+                if not stderr_path.is_file() or metadata.get("stderr_sha256") != sha256_bytes(stderr_path.read_bytes()):
+                    integrity_ok = False
+                if any(metadata.get(field) != value for field, value in CODEX_FIXED_METADATA.items()):
+                    integrity_ok = False
             if metadata.get("collection_status") == "completed" and integrity_ok:
                 counts["completed"] += 1
             elif metadata.get("collection_status") in ("pending", "initialized"):
@@ -58,7 +76,9 @@ def verify_phase(phase: str) -> int:
     print(f"Manifest rows: {len(rows)}")
     for label, count in counts.items():
         print(f"{label}: {count}")
-    return 0
+    return 1 if any(counts[label] for label in (
+        "error/incomplete", "missing directories", "prompt-hash mismatches", "metadata problems"
+    )) else 0
 
 
 def main() -> int:

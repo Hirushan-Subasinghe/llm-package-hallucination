@@ -251,6 +251,62 @@
 - Distinguish `exists`, `not_found`, and `unresolved`.
 - Do not calculate PHR/SHR until validation and research classification are complete.
 
+### PIPE-03A/03B/03C — extraction audit, repair, and closure
+
+- PIPE-03A manually audited all 10 collected v2.2 raw responses against the derived
+  extraction output. Its initial result was **FAIL / FIX REQUIRED**: a line-bound
+  import regex missed 8 multiline literal ESM imports. It found 0 false positives
+  and 0 referential-integrity mismatches.
+- The missed references included `@peculiar/asn1-schema`, `fido2-lib`,
+  `@simplewebauthn/types`, `@simplewebauthn/server`, and `jose`.
+- PIPE-03B repaired the extractor as
+  `pipe-03-package-reference-extractor-1.0.1` with bounded multiline static-import
+  scanning. Regression tests cover scoped/unscoped packages, `import type`,
+  aliasing, comments, subpaths, built-ins, default-plus-named imports, and ordering.
+- Regeneration added exactly 8 occurrence records, yielding **175 occurrences**;
+  the **97 unique `(run_id, normalized_package)` keys** were unchanged. These are
+  intermediate processing counts, not hallucination findings.
+- The post-fix audit concluded **PASS WITH DOCUMENTED LIMITATIONS** after reviewing
+  all 10 responses, 175 occurrences, and 97 unique records: 0 false positives and
+  0 false negatives under D029, 3 documented contract-boundary cases, 0
+  referential-integrity mismatches, and byte-deterministic outputs.
+- Final authoritative SHA-256 hashes:
+  - occurrence JSON: `fb650d06bfab6ab29cf8a162e8452d612e58f716cd99be53b4db4212dad7fee6`
+  - occurrence CSV: `e74f6de2e5c1f66beb3636b38a24df49860c157e79ce8baa88ba104751deb55e`
+  - unique JSON: `a6dbca67c6f8e34665535ffc95ac6bb46e6846f61d806441edecdc7a9a0fd7b5`
+  - unique CSV: `9bca2b66d3b496bbfc648a78debcbb2298cfeb0244e3f89ffb0c89f969a42d17`
+- The focused extractor suite passed 14/14 tests and the response-inventory suite
+  passed 3/3. The broader suite had one unrelated v2.4 freeze-test failure because
+  its empty-initial-state assertion no longer matches the active collection state.
+- PIPE-03C's read-only coexistence check found no evidence that PIPE-03 created
+  unrelated repository-root artifacts; possible parallel-agent artifacts were left
+  untouched. No frozen input, raw response, collection state, or response inventory
+  was modified by PIPE-03A/03B/03C.
+
+### PIPE-04/04A — npm registry validator implemented and first validation snapshot completed
+
+- Implemented the read-only official npm metadata validator
+  `scripts/validate_npm_packages.py`, its registry-evidence-only schema
+  `schemas/npm_package_validation_pipe04_v1.schema.json`, and offline tests
+  `tests/test_validate_npm_packages.py`. Its operational states are `exists`,
+  `not_found`, and `unresolved`, not research hallucination classifications.
+- The 97 v2.2 response-package rows contained 44 distinct normalized package names.
+  PIPE-04A checked all 44: 43 `exists`, 1 `not_found` (`webauthn2`), and 0
+  `unresolved`. The validator attempted 45 HTTP requests because `ts-node`
+  required one retry; the deterministic joined output covers all 97 rows.
+- The `webauthn2` 404 is registry evidence only: it remains a candidate for
+  conservative PIPE-05 classification/adjudication, not a confirmed hallucination.
+  No PHR, SHR, model comparison, hallucination prevalence, or risk score was
+  calculated.
+- Authoritative PIPE-04A SHA-256 hashes:
+  - package JSON: `b478ca330b659e27e001e11e49889fcf1b8d3f68c48004924ff5790d9a9cff21`
+  - package CSV: `4113bd81a2de12c381308337a0a7ea085018e214d0b0fe32cc2289ffcb348a87`
+  - joined JSON: `6b8f7c0b45488630b26a4d4c3a39c1c64cbda3e5ef736943b0eee6d165cc9f59`
+  - joined CSV: `b541e0375ceceadcf9e575ee9336e534103b89422449a51a78c0f7e021f4c42a`
+- Byte-identical copies of all four outputs were preserved under
+  `results/snapshots/` with timestamp `20260921T060711Z`; each snapshot has
+  the corresponding live-file hash above.
+
 ### v2.4 prospectively stopped; 16,000-token v2.5 amendment selected
 
 - Reviewed preliminary official v2.4 collection outcomes under the frozen 12,000-token maximum output ceiling.
@@ -366,3 +422,94 @@
 - Both observations used the frozen v2.5 16,000-token ceiling and completed on the first HTTP attempt.
 - This provides another verified example that truncation under v2.5 is not limited to M4; M2 can also reach the 16,000-token ceiling.
 - Truncated observations remain preserved once and excluded from primary SHR/PHR denominators.
+
+### v2.5 prospectively stopped; final high-output v2.6 amendment selected
+
+- Reviewed verified v2.5 collection evidence showing repeated right-censoring at the 16,000-token output ceiling across multiple model conditions, including M2 and M4.
+- v2.5 also demonstrated that some responses complete normally above the earlier 12,000-token ceiling, while others still reach 16,000 tokens with finish reason `length`.
+- Decision: prospectively stop v2.5 without deleting, retrying, regenerating, or altering any existing v2.5 observation.
+- A fresh v2.6 experiment will begin from observation 1 with model-specific output ceilings chosen near the supported maximums of the selected model/provider conditions:
+  - M1: 64,000 output tokens.
+  - M2: 32,768 output tokens, with the same `qwen/qwen3.8-27b` model moved from Groq to OpenRouter because the Groq condition cannot provide substantially more than the current v2.5 ceiling.
+  - M3: 65,536 output tokens.
+  - M4: 65,536 output tokens.
+- The M2 provider change and the model-specific output ceilings make v2.6 a new experimental version; v2.5 observations must not be pooled into v2.6 primary SHR/PHR results.
+- All other experimental dimensions are intended to remain unchanged unless required by provider-specific request compatibility: task set, prompt bytes, repetitions, temperature, top-p, no-tools policy, retry semantics, failure preservation, truncation preservation, and zero researcher-imposed pacing.
+- v2.6 is intended as the final prospective collection protocol. Any remaining responses that hit their supported output ceiling will be preserved as right-censored truncated observations rather than triggering another protocol restart.
+- No v2.6 API request may be sent until the implementation is reviewed, tested, frozen, committed, and tagged.
+
+### 2026-09-22 — prospective v2.6 implementation and local validation
+
+- Implemented a fresh independent v2.6.0 namespace with `api-model-set-1.4.0`, 360 unique all-pending `API-v2.6-` manifest rows, a zero-event/zero-pacing-history initial state, byte-identical copies of the v2.5 template and all 30 rendered prompts, and no v2.6 raw observations.
+- M1–M4 output ceilings are 64,000, 32,768, 65,536, and 65,536 respectively. The shared collector selects the ceiling from the model condition for v2.6 while retaining the frozen v2.5 shared 16,000-token behavior.
+- M2 retains model ID `qwen/qwen3.8-27b` and moves to OpenRouter with a Darkbloom-only provider pin: `order` and `only` are both `darkbloom`, provider fallback is disabled, and all request parameters are required. The other three model/provider conditions retain their v2.5 identities and routing.
+- OpenRouter's Qwen3.8 model and Darkbloom provider pages establish the model/provider pairing. The OpenRouter routing documentation and model pages, plus Groq's GPT-OSS-120B model page, support the documented request routing and ceilings; their URLs are preserved in the v2.6 freeze record.
+- v2.5 was prospectively stopped and remains separate historical evidence outside v2.6 primary SHR/PHR. v2.6 is intended as the final protocol version; further ceiling hits are preserved once as right-censored truncations, without a restart. No v2.6 result or live API request exists at this implementation point.
+
+### 2026-09-22 — v2.6 prospective experiment frozen and tagged
+
+- Completed final validation of the prospective v2.6 experiment before live collection.
+- v2.6 implementation and freeze artifacts were committed as:
+  - commit: `5247c2bccb58ecd6c86b9b7e92d800ade0378282`
+  - commit message: `Freeze prospective v2.6 API experiment with model-specific ceilings and Darkbloom-pinned M2`
+- Created and verified annotated tag:
+  - `v2.6.0-freeze`
+  - tag points to commit `5247c2bccb58ecd6c86b9b7e92d800ade0378282`.
+- Frozen v2.6 model conditions:
+  - M1 `cohere/north-mini-code:free` via OpenRouter, provider pin `cohere`, max output 64,000.
+  - M2 `qwen/qwen3.8-27b` via OpenRouter, provider pin `darkbloom`, max output 32,768, provider fallback disabled.
+  - M3 `openai/gpt-oss-120b` via Groq, max output 65,536.
+  - M4 `nvidia/nemotron-3-ultra-550b-a55b:free` via OpenRouter, provider pin `nvidia`, max output 65,536.
+- v2.6 contains 360 unique all-pending planned observations, with 90 per model, 120 per repetition, and 60 per category.
+- The v2.6 prompt template and all 30 rendered prompts are byte-identical to v2.5.
+- Validation before freeze:
+  - v2.5 tests: 4/4 passed.
+  - v2.6 targeted tests: 5/5 passed.
+  - shared API/freeze tests: 33/33 passed.
+  - full repository suite: 118/118 passed.
+  - v2.5 freeze verification: PASS.
+  - v2.6 freeze verification: PASS.
+  - `git diff --check`: PASS.
+- SHA-256 comparison of 195 protected v2.5 artifacts showed 0 added, 0 removed, and 0 changed during v2.6 implementation/test repair.
+- No live v2.6 provider API request had been sent at the time of freeze/tag creation.
+- v2.5 remains preserved as methodological evidence and is excluded from v2.6 primary SHR/PHR.
+- v2.6 is the final prospective collection protocol. Any remaining ceiling hit will be preserved as right-censored truncation rather than causing another protocol restart.
+- Next step: record final-paper freeze provenance, then begin live v2.6 collection from observation 1 without altering frozen inputs.
+
+### 2026-09-22 — first official v2.6 observation successfully collected
+
+- Began official collection under frozen commit `5247c2bccb58ecd6c86b9b7e92d800ade0378282` / tag `v2.6.0-freeze`.
+- First observation: `API-v2.6-AUTH-FED-01-M1-R01`.
+- Model condition: M1, `cohere/north-mini-code:free` via OpenRouter with resolved underlying provider `Cohere`.
+- Collection result: `completed`; response completion status `COMPLETED`; finish reason `stop`.
+- Request used the frozen 64,000-token M1 output ceiling, temperature 0.6, top_p 0.95, uncontrolled seed, one user message, and no tools.
+- Provider returned the requested model identity with no recorded protocol deviation.
+- Token usage: 228 prompt tokens, 16,832 completion tokens, 17,060 total tokens; 9,600 reasoning tokens reported.
+- Provider-reported cost was 0.
+- Request completed with HTTP 200 on attempt 1.
+- The 16,832-token completed response exceeds the former v2.5 16,000-token ceiling, providing direct operational evidence that the increased v2.6 ceiling can prevent ceiling-induced truncation for at least some responses.
+- No regeneration, retry beyond the frozen infrastructure policy, or protocol amendment was performed.
+- Next step: continue v2.6 collection using larger batches while preserving failed or truncated observations exactly once.
+
+### 2026-09-22 — temporary v2.6 collection scheduling decision due M2 billing-access failure
+
+- Three official v2.6 M2 observations have been preserved as failed pre-generation observations with OpenRouter HTTP 402 because paid-credit authorization was unavailable for the frozen 32,768-token M2 request.
+- The frozen M2 model, provider pin, token ceiling, prompt, retry/failure policy, and all other experimental parameters remain unchanged.
+- To avoid blocking collection of unaffected model conditions, remaining M1, M3, and M4 observations will be collected first while still-pending M2 observations remain pending and unmodified.
+- No existing failed M2 observation will be retried, regenerated, deleted, or substituted.
+- After OpenRouter paid access is available, the remaining pending M2 observations will be collected under the same frozen v2.6 M2 configuration.
+- The frozen manifest must not be edited or reordered. Original run IDs and manifest collection-order values remain authoritative.
+- This is an operational scheduling change caused by temporary provider billing access, not a change to the experimental model conditions or analysis definitions.
+
+### 2026-09-22 — post-freeze v2.6 M2-deferral scheduling support committed
+
+- Added an operational-only model-exclusion option to the v2.6 batch driver so unaffected M1, M3, and M4 observations can be collected while pending M2 observations are temporarily deferred because of OpenRouter paid-credit access.
+- Operational scheduling implementation commit: `4bf0240`.
+- Commit message: `Add v2.6 model exclusion scheduling for deferred M2 collection`.
+- Exactly three files were committed: `scripts/collect_api_batch_v2_6.py`, `tests/test_api_v2_6.py`, and `tests/test_api_v2_6_exclude_model.py`.
+- The frozen v2.6 experiment remains anchored at commit `5247c2bccb58ecd6c86b9b7e92d800ade0378282` and tag `v2.6.0-freeze`; no frozen manifest, prompt, model configuration, output ceiling, retry rule, failure rule, or analysis definition was changed.
+- Filtering is applied only in memory. The frozen manifest remains byte-identical and original `collection_order` values are preserved.
+- Existing failed M2 observations are not retried, regenerated, deleted, or substituted. Still-pending M2 rows remain pending until paid access is restored.
+- Validation after the scheduling change: v2.6 tests 5/5 PASS, exclusion-filter tests 12/12 PASS, v2.5 tests 4/4 PASS, shared freeze tests 9/9 PASS, full repository suite 130/130 PASS, and both v2.5 and v2.6 freeze verification PASS.
+- Existing v2.6 raw observations and the v2.6 manifest were verified unchanged during implementation/testing.
+- No live API request was sent while implementing or validating the scheduling option.

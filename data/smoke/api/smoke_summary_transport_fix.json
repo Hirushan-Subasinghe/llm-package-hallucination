@@ -1,0 +1,21 @@
+{
+  "excluded_from_research_metrics": true,
+  "results": [
+    {
+      "collection_status": "failed",
+      "model_condition_id": "M2",
+      "resolved_underlying_provider": null,
+      "returned_model_id": null,
+      "tool_calls_returned": null
+    },
+    {
+      "collection_status": "failed",
+      "model_condition_id": "M3",
+      "resolved_underlying_provider": null,
+      "returned_model_id": null,
+      "tool_calls_returned": null
+    }
+  ],
+  "smoke_attempt_series": "SMOKE-API-002",
+  "smoke_task_id": "SMOKE-API-001"
+}

@@ -1,0 +1,61 @@
+{
+  "api_provider": "OpenRouter",
+  "collection_status": "completed",
+  "excluded_from_research_metrics": true,
+  "expected_underlying_provider": "Nvidia",
+  "finish_reason": "stop",
+  "generation_ended_at_utc": "2026-09-16T06:21:32.851915Z",
+  "generation_started_at_utc": "2026-09-16T06:20:48.610262Z",
+  "model_condition_id": "M4",
+  "phase": "smoke_excluded",
+  "prompt_sha256": "a82e27c2aeffc7de557eec8a4eb6a4afab41901043be70a2fea3507790384a4a",
+  "provider_response_id": "gen-1789539649-4Xic2vg6zOtmy4fJDreh",
+  "provider_response_sha256": "952977666855fa69ca74cd15912929dbc248cc91fd1d33739993b3af46c35f9b",
+  "request_sha256": "a4cfb06bd93149627bc4389dbb4cb919d97ecb7d18e70c0f414838847135575f",
+  "requested_model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "resolved_underlying_provider": "Nvidia",
+  "response_sha256": "826b38fdb33bd8c7ba139cfcf5fd769533b70ac76a1be0420869f8386758fe57",
+  "retry_history": [
+    {
+      "attempt_number": 1,
+      "ended_at_utc": "2026-09-16T06:21:32.851295Z",
+      "http_status": 200,
+      "outcome": "http_response",
+      "response_sha256": "952977666855fa69ca74cd15912929dbc248cc91fd1d33739993b3af46c35f9b",
+      "started_at_utc": "2026-09-16T06:20:48.610409Z"
+    }
+  ],
+  "returned_model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "run_id": "SMOKE-API-001-M4",
+  "safe_response_headers": {
+    "content-type": "application/json",
+    "date": "Wed, 16 Sep 2026 06:20:49 GMT"
+  },
+  "smoke_task_id": "SMOKE-API-001",
+  "token_usage": {
+    "completion_tokens": 1374,
+    "completion_tokens_details": {
+      "audio_tokens": 0,
+      "image_tokens": 0,
+      "reasoning_tokens": 967
+    },
+    "cost": 0,
+    "cost_details": {
+      "upstream_inference_completions_cost": 0,
+      "upstream_inference_cost": 0,
+      "upstream_inference_prompt_cost": 0
+    },
+    "is_byok": false,
+    "prompt_tokens": 76,
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "video_tokens": 0
+    },
+    "total_tokens": 1450
+  },
+  "tool_calls_returned": 0,
+  "tool_choice": "none",
+  "tools_exposed": false
+}

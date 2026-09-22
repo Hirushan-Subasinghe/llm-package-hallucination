@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/package_classification_pipe05_v1.schema.json",
+  "title": "PIPE-05 package-level research classification record",
+  "description": "Registry evidence and research classification are separate. This schema is for a package record within the versioned PIPE-05 output envelope.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["normalized_package", "validation_status", "registry_evidence", "classification", "classification_basis", "adjudication_status", "review_required", "reviewer_id", "reviewed_at", "review_notes", "review_evidence", "review_checks", "run_ids", "occurrence_evidence", "classifier_version"],
+  "properties": {
+    "normalized_package": {"type": "string", "minLength": 1},
+    "validation_status": {"enum": ["exists", "not_found", "unresolved"]},
+    "registry_evidence": {"$ref": "#/$defs/registryEvidence"},
+    "classification": {"enum": ["VALID", "CONFIRMED_HALLUCINATION", "LEGACY_OR_REMOVED", "AMBIGUOUS", "BUILTIN_OR_LOCAL", null]},
+    "classification_basis": {"type": "string", "minLength": 1},
+    "adjudication_status": {"enum": ["AUTO_VALID", "REVIEW_REQUIRED", "REVIEWED", "VALIDATION_UNRESOLVED"]},
+    "review_required": {"type": "boolean"},
+    "reviewer_id": {"type": ["string", "null"]},
+    "reviewed_at": {"type": ["string", "null"], "format": "date-time"},
+    "review_notes": {"type": ["string", "null"]},
+    "review_evidence": {"type": "array", "items": {"$ref": "#/$defs/reviewEvidence"}},
+    "review_checks": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/reviewChecks"}]},
+    "run_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "occurrence_evidence": {"type": "array", "items": {"$ref": "#/$defs/occurrenceEvidence"}},
+    "classifier_version": {"const": "pipe-05-classifier-1.0.0"}
+  },
+  "$defs": {
+    "reviewChecks": {
+      "type": "object", "additionalProperties": false,
+      "required": ["historical", "normalization", "ambiguity"],
+      "properties": {
+        "historical": {"enum": ["no_prior_evidence", "prior_or_removed", "inconclusive"]},
+        "normalization": {"enum": ["external_npm_reference", "builtin_or_local", "inconclusive"]},
+        "ambiguity": {"enum": ["cleared", "inconclusive"]}
+      }
+    },
+    "registryEvidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["validation_status", "registry", "request_url", "http_status", "checked_at", "validator_version", "evidence_summary", "error_type", "retry_count"],
+      "properties": {
+        "validation_status": {"enum": ["exists", "not_found", "unresolved"]},
+        "registry": {"type": "string", "format": "uri"},
+        "request_url": {"type": "string", "format": "uri"},
+        "http_status": {"type": ["integer", "null"]},
+        "checked_at": {"type": "string", "format": "date-time"},
+        "validator_version": {"type": "string"},
+        "evidence_summary": {"type": "string"},
+        "error_type": {"type": ["string", "null"]},
+        "retry_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "reviewEvidence": {
+      "type": "object", "additionalProperties": true,
+      "required": ["source", "summary", "checked_at"],
+      "properties": {
+        "source": {"type": "string", "minLength": 1},
+        "summary": {"type": "string", "minLength": 1},
+        "checked_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "occurrenceEvidence": {
+      "type": "object", "additionalProperties": false,
+      "required": ["run_id", "occurrence_index", "original_reference", "normalized_package", "source_type", "source_text", "source_offset", "version_specifier", "response_artifact_path", "truncated"],
+      "properties": {
+        "run_id": {"type": "string"},
+        "occurrence_index": {"type": "integer", "minimum": 1},
+        "original_reference": {"type": "string"},
+        "normalized_package": {"type": "string"},
+        "source_type": {"type": "string"},
+        "source_text": {"type": "string"},
+        "source_offset": {"type": "integer", "minimum": 0},
+        "version_specifier": {"type": ["string", "null"]},
+        "response_artifact_path": {"type": "string"},
+        "truncated": {"type": "boolean"}
+      }
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "api_provider": "OpenRouter",
+  "collection_status": "completed",
+  "excluded_from_research_metrics": true,
+  "expected_underlying_provider": "Cohere",
+  "finish_reason": "stop",
+  "generation_ended_at_utc": "2026-09-16T06:20:47.694663Z",
+  "generation_started_at_utc": "2026-09-16T06:20:15.922294Z",
+  "model_condition_id": "M1",
+  "phase": "smoke_excluded",
+  "prompt_sha256": "a82e27c2aeffc7de557eec8a4eb6a4afab41901043be70a2fea3507790384a4a",
+  "provider_response_id": "gen-1789539616-5duYUDDkgJCfx4b6sgGF",
+  "provider_response_sha256": "975923c5f51ff938a568972ca18b1431e1070e932f7dca7e6b5224e8dc16aa18",
+  "request_sha256": "6946169413c2348a31d65015cb5bcc6562ab469d99837b4512852041f9a9be1c",
+  "requested_model_id": "cohere/north-mini-code:free",
+  "resolved_underlying_provider": "Cohere",
+  "response_sha256": "1d2feda1032b069132cc6f6001970807ff2daa5a0ce44acd1d94c0ef9f37a472",
+  "retry_history": [
+    {
+      "attempt_number": 1,
+      "ended_at_utc": "2026-09-16T06:20:47.693965Z",
+      "http_status": 200,
+      "outcome": "http_response",
+      "response_sha256": "975923c5f51ff938a568972ca18b1431e1070e932f7dca7e6b5224e8dc16aa18",
+      "started_at_utc": "2026-09-16T06:20:15.922576Z"
+    }
+  ],
+  "returned_model_id": "cohere/north-mini-code:free",
+  "run_id": "SMOKE-API-001-M1",
+  "safe_response_headers": {
+    "content-type": "application/json",
+    "date": "Wed, 16 Sep 2026 06:20:17 GMT"
+  },
+  "smoke_task_id": "SMOKE-API-001",
+  "token_usage": {
+    "completion_tokens": 1988,
+    "completion_tokens_details": {
+      "audio_tokens": 0,
+      "image_tokens": 0,
+      "reasoning_tokens": 1603
+    },
+    "cost": 0,
+    "cost_details": {
+      "upstream_inference_completions_cost": 0,
+      "upstream_inference_cost": 0,
+      "upstream_inference_prompt_cost": 0
+    },
+    "is_byok": false,
+    "prompt_tokens": 57,
+    "prompt_tokens_details": {
+      "audio_tokens": 0,
+      "cache_write_tokens": 0,
+      "cached_tokens": 0,
+      "video_tokens": 0
+    },
+    "total_tokens": 2045
+  },
+  "tool_calls_returned": 0,
+  "tool_choice": "none",
+  "tools_exposed": false
+}

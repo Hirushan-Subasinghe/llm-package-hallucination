@@ -1,0 +1,32 @@
+{
+  "api_provider": "Groq",
+  "collection_status": "failed",
+  "excluded_from_research_metrics": true,
+  "expected_underlying_provider": null,
+  "failure_reason": "http_status_403",
+  "generation_ended_at_utc": "2026-09-16T06:20:48.608944Z",
+  "generation_started_at_utc": "2026-09-16T06:20:48.186518Z",
+  "model_condition_id": "M3",
+  "phase": "smoke_excluded",
+  "prompt_sha256": "a82e27c2aeffc7de557eec8a4eb6a4afab41901043be70a2fea3507790384a4a",
+  "request_sha256": "36398ec5fed80760139497c72ad3414742cab6e8119f1c89853ff0eefadf6c95",
+  "requested_model_id": "openai/gpt-oss-120b",
+  "retry_history": [
+    {
+      "attempt_number": 1,
+      "ended_at_utc": "2026-09-16T06:20:48.608898Z",
+      "http_status": 403,
+      "outcome": "http_response",
+      "response_sha256": "2938e9f1284180959e33ab1718d0793a72ff6e4cdb8108c34dcd14e69446de5c",
+      "started_at_utc": "2026-09-16T06:20:48.186664Z"
+    }
+  ],
+  "run_id": "SMOKE-API-001-M3",
+  "safe_response_headers": {
+    "content-type": "text/plain; charset=UTF-8",
+    "date": "Wed, 16 Sep 2026 06:20:48 GMT"
+  },
+  "smoke_task_id": "SMOKE-API-001",
+  "tool_choice": "none",
+  "tools_exposed": false
+}

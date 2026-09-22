@@ -64,12 +64,12 @@
       "type": "string",
       "enum": [
         "VALID",
-        "HALLUCINATED",
+        "CONFIRMED_HALLUCINATION",
+        "LEGACY_OR_REMOVED",
         "AMBIGUOUS",
-        "EXCLUDED",
-        "UNRESOLVED"
+        "BUILTIN_OR_LOCAL"
       ],
-      "description": "Final classification assigned after applying the study's classification procedure."
+      "description": "Final research classification assigned after the conservative package-name procedure. UNRESOLVED is an operational validation status, not a final classification."
     },
     "manual_review_required": {
       "type": "boolean",

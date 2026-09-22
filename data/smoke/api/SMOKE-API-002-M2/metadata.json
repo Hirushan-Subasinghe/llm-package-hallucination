@@ -1,0 +1,62 @@
+{
+  "api_provider": "Groq",
+  "authorization_scheme": "Bearer (credential omitted)",
+  "collection_status": "failed",
+  "excluded_from_research_metrics": true,
+  "expected_underlying_provider": null,
+  "failure_reason": "transport_failure",
+  "generation_ended_at_utc": "2026-09-16T06:47:07.724350Z",
+  "generation_started_at_utc": "2026-09-16T06:46:50.705237Z",
+  "http_client": {
+    "http_protocol": "HTTP/1.1",
+    "library": "requests",
+    "proxy_environment": "honored_if_set",
+    "redirects": "disabled",
+    "version": "2.33.1"
+  },
+  "model_condition_id": "M2",
+  "phase": "smoke_excluded",
+  "prompt_sha256": "a82e27c2aeffc7de557eec8a4eb6a4afab41901043be70a2fea3507790384a4a",
+  "request_sha256": "c6d38ca868d26ab98fb324eb6aa200b6cfd30cd1e5aa86468326b26814103863",
+  "requested_model_id": "qwen/qwen3.8-27b",
+  "retry_history": [
+    {
+      "attempt_number": 1,
+      "ended_at_utc": "2026-09-16T06:46:50.715510Z",
+      "error_type": "TransportFailure",
+      "outcome": "transport_failure",
+      "started_at_utc": "2026-09-16T06:46:50.705429Z"
+    },
+    {
+      "attempt_number": 2,
+      "ended_at_utc": "2026-09-16T06:46:52.718225Z",
+      "error_type": "TransportFailure",
+      "outcome": "transport_failure",
+      "started_at_utc": "2026-09-16T06:46:52.716179Z"
+    },
+    {
+      "attempt_number": 3,
+      "ended_at_utc": "2026-09-16T06:46:57.721868Z",
+      "error_type": "TransportFailure",
+      "outcome": "transport_failure",
+      "started_at_utc": "2026-09-16T06:46:57.719332Z"
+    },
+    {
+      "attempt_number": 4,
+      "ended_at_utc": "2026-09-16T06:47:07.724240Z",
+      "error_type": "TransportFailure",
+      "outcome": "transport_failure",
+      "started_at_utc": "2026-09-16T06:47:07.722722Z"
+    }
+  ],
+  "run_id": "SMOKE-API-002-M2",
+  "smoke_attempt_series": "SMOKE-API-002",
+  "smoke_task_id": "SMOKE-API-001",
+  "stable_request_headers": {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "User-Agent": "ai-hallucination-study/1.0"
+  },
+  "tool_choice": "none",
+  "tools_exposed": false
+}

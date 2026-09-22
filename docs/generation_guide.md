@@ -1,5 +1,25 @@
 # Data Collection Generation Guide
 
+> **Current status (2026-09-16):** The v2 model set, task set, common prompt template, rendered prompts, and 360-row official manifest are frozen. Official collection has not started. The API design below supersedes the web/CLI workflow retained later as historical v1 guidance.
+
+## Frozen v2 API Workflow
+
+The official main study will contain 30 tasks × 4 fixed model/API conditions × 3 repetitions = 360 generations. The exact conditions are listed in [api_model_protocol.md](api_model_protocol.md) and configured in `config/api_model_set_1.0.0.json`. API keys are read only from `OPENROUTER_API_KEY` and `GROQ_API_KEY`.
+
+Before official collection, verify the freeze record, recheck exact model availability, and use the immutable `manifests/api_final_v2.0.0_manifest.csv`. Do not modify historical manifests or the frozen v2 manifest.
+
+Future official collection uses `scripts/collect_api_batch.py`, which processes rows sequentially in frozen `collection_order`, persists cross-invocation pacing state, defaults to one row per invocation, delegates one-row preservation and infrastructure retries to `collect_api_run.py`, and never retries based on content.
+
+For each eventual manifest row, `scripts/collect_api_run.py` will verify the manifest identity and prompt hash, reserve a new raw run directory, send one fresh request containing one user message, and preserve the exact prompt, safe request body, every HTTP attempt, raw provider response, assistant response, metadata, and hashes. It refuses an existing run directory and refuses a candidate/un-preflighted configuration.
+
+Infrastructure retries are limited to HTTP 429, transport/network failure, and HTTP 5xx without a valid response. Never retry based on response content. In particular, preserve a valid response with `finish_reason: "length"` once, mark it `TRUNCATED`, retain its official run ID, and never regenerate it for more complete content. Report truncated observations separately in dataset-quality statistics. If a frozen model is unavailable, stop that model condition and document the event before any design change. Never substitute a model or hide an OpenRouter provider change.
+
+Every API observation records the provider finish reason and full token-usage object, plus total completion tokens, reasoning tokens when exposed, and visible response tokens when exposed. `TRUNCATED` observations remain official preserved dataset observations but are not completed generations for primary analysis. Primary SHR uses only completed, non-truncated generations eligible for analysis, and primary PHR uses only eligible external npm package recommendation occurrences extracted from completed, non-truncated generations. Never mix truncated observations into either primary estimate. Report scheduled, completed, truncated, and infrastructure-failure counts plus truncation rates overall, by model, and by task category. Any qualitative description or later sensitivity analysis of truncated outputs must be separately labelled. This rule was frozen before the first official API generation.
+
+No tools, browsing, retrieval, code execution, or generated dependency installation are permitted. Generated responses are inert research data. Do not run official collection during methodology review.
+
+## Historical v1 Web/CLI Guide
+
 This guide describes how a data-collection operator captures the frozen AI-generated outputs for the study **AI Hallucination Attack Surface: A Risk Assessment of Fake APIs and Libraries in AI-Generated Code**. The operator collects and preserves evidence; the operator does not interpret dependencies or decide whether a package is hallucinated.
 
 ## Purpose
@@ -90,11 +110,43 @@ For Codex CLI and Antigravity CLI:
 - Prevent unsafe command execution wherever possible. If the workflow proposes or attempts to execute a command, stop it when possible and record the event.
 - Never run generated programs, scripts, tests, or package-manager commands. Generated files are research data only.
 
-The finalizer requires `metadata.json` and `transcript.txt` for CLI runs. `response.md` is optional for CLI runs.
+The finalizer requires `metadata.json` and `transcript.txt` for CLI runs. For automated Codex runs, `response.md` is also required and is the canonical generated response; `transcript.txt` is the separate JSONL operational event stream. Antigravity CLI retains the existing transcript-based manual collection behavior.
+
+## Automated Codex CLI Pilot Collection
+
+Codex CLI collection is automated to eliminate prompt copy/paste variation, guarantee a new process for every run, preserve exact stdin bytes, and capture exit state and timing consistently. This automation changes collection mechanics only; it does not change the frozen prompt or research methodology.
+
+The frozen Codex condition is Codex CLI `0.154.0`, provider `OpenAI`, model `gpt-5.6-sol`, model reasoning effort `medium`, service tier `default`, workflow type `agentic_cli`, and `not_exposed` for temperature, seed, and model version.
+
+The runner currently accepts only `pilot` manifest rows whose workflow is `codex_cli`. Baseline execution is rejected in code until the pilot is reviewed and a deliberate implementation change is approved. Pilot outputs remain under `data/pilot/` and are never included in the final 360-run baseline.
+
+Before collection, prepare a dedicated clean `CODEX_HOME` outside this repository. It must contain the required `auth.json` but no `config.toml`, `AGENTS.md`, hooks, skills, plugins, memories, history, or sessions. Never copy authentication data into the repository.
+
+Run exactly one selected pilot row with:
+
+```text
+python scripts/collect_codex_runs.py \
+  --phase pilot \
+  --run-id PILOT-AUTH-04-codex_cli-R01 \
+  --limit 1 \
+  --codex-home /absolute/path/to/clean-codex-home
+```
+
+The runner verifies the installed CLI version and feature-disable registry before initializing a new run. It verifies the manifest prompt hash, accepts an existing pristine `initialized` directory, creates a fresh disposable workspace and staging directory outside the repository, and starts a new `codex exec` process. It never uses `resume` or `fork`.
+
+Every invocation explicitly uses an ephemeral session, ignores user config and rules, skips the Git-repository check, uses the read-only sandbox, disables web search and the verified optional tool/integration features, pins the provider/model/reasoning effort/service tier, sends the exact `prompt.txt` bytes through stdin, captures JSONL stdout and stderr, and writes the final assistant message to external staging with `--output-last-message`.
+
+No response, transcript, or stderr file is written into the research repository while Codex is running. After termination, successful captures are copied byte-for-byte without overwrite as `response.md` (the canonical first final response), `transcript.txt` (JSONL operational events), and `stderr.txt`. SHA-256 hashes and byte sizes are recorded for each capture.
+
+A nonzero exit, timeout, missing or empty final response, changed manifest, or integrity failure never becomes a completed run. Available failure evidence is retained under `failed_attempts/attempt-01/`. The runner never retries automatically, including when a response recommends no external package or contains no apparent hallucination.
+
+Automated Codex collection differs from manual Web collection: Web operators start a fresh chat, paste the verified prompt once, and preserve the first response manually as `response.md`; Codex uses a fresh isolated process and byte-preserving automated capture. Both procedures preserve the first response without downstream interpretation during generation.
+
+Generated code is inert research data. It is never executed, and dependency commands or packages are never installed. Package names are never published, registered, reserved, or claimed.
 
 ## Raw and Generated-File Preservation
 
-Web responses are stored as `data/<phase>/raw/<run_id>/response.md`. CLI transcripts are stored as `transcript.txt`, and generated files are stored under `artifacts/`. The finalizer records SHA-256 hashes without changing captured AI content. Raw data is append-only once collection begins.
+Web responses are stored as `data/<phase>/raw/<run_id>/response.md`. CLI transcripts are stored as `transcript.txt`, and generated files are stored under `artifacts/`. Automated Codex final responses are stored as canonical `response.md` files, with stderr stored separately. The finalizer records SHA-256 hashes without changing captured AI content. Raw data is append-only once collection begins.
 
 ## Metadata
 
