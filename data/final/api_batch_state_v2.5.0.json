@@ -760,13 +760,153 @@
       "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.5-AUTH-FED-05-M2-R01",
       "event": "completed",
       "run_id": "API-v2.5-AUTH-FED-05-M2-R01"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:12.015182Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-01-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:12.017357Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-01-M2-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:12.018895Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-01-M3-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:12.020232Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-01-M4-R01",
+      "status": "truncated"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:12.021094Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-02-M2-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:12.021992Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-02-M3-R01",
+      "status": "completed"
+    },
+    {
+      "action": "continued_to_next_manifest_row_without_retry_or_substitution",
+      "at_utc": "2026-09-21T16:28:12.023069Z",
+      "event": "skipped_preserved_failed_observation",
+      "run_id": "API-v2.5-AUTH-FED-02-M4-R01",
+      "status": "failed"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:12.024365Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-02-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:12.025419Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-03-M3-R01",
+      "status": "completed"
+    },
+    {
+      "action": "continued_to_next_manifest_row_without_retry_or_substitution",
+      "at_utc": "2026-09-21T16:28:12.026415Z",
+      "event": "skipped_preserved_failed_observation",
+      "run_id": "API-v2.5-AUTH-FED-03-M4-R01",
+      "status": "failed"
+    },
+    {
+      "action": "continued_to_next_manifest_row_without_retry_or_substitution",
+      "at_utc": "2026-09-21T16:28:12.027614Z",
+      "event": "skipped_preserved_failed_observation",
+      "run_id": "API-v2.5-AUTH-FED-03-M1-R01",
+      "status": "failed"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:12.028456Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-03-M2-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:12.029299Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-04-M4-R01",
+      "status": "truncated"
+    },
+    {
+      "action": "continued_to_next_manifest_row_without_retry_or_substitution",
+      "at_utc": "2026-09-21T16:28:12.030113Z",
+      "event": "skipped_preserved_failed_observation",
+      "run_id": "API-v2.5-AUTH-FED-04-M1-R01",
+      "status": "failed"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:12.031046Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-04-M2-R01",
+      "status": "truncated"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:12.032160Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-04-M3-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:12.033172Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-05-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:12.034173Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-v2.5-AUTH-FED-05-M2-R01",
+      "status": "completed"
+    },
+    {
+      "api_provider": "Groq",
+      "at_utc": "2026-09-21T16:28:12.035560Z",
+      "collection_order": 19,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-21T16:28:12.034981Z",
+      "run_id": "API-v2.5-AUTH-FED-05-M3-R01"
+    },
+    {
+      "at_utc": "2026-09-21T16:28:39.232651Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.5-AUTH-FED-05-M3-R01",
+      "event": "completed",
+      "run_id": "API-v2.5-AUTH-FED-05-M3-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-21T16:28:39.234524Z",
+      "collection_order": 20,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-21T16:28:39.234077Z",
+      "run_id": "API-v2.5-AUTH-FED-05-M4-R01"
+    },
+    {
+      "at_utc": "2026-09-21T16:41:22.326864Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.5-AUTH-FED-05-M4-R01",
+      "event": "completed",
+      "run_id": "API-v2.5-AUTH-FED-05-M4-R01"
     }
   ],
   "manifest_sha256": "c7911420181f090a16df33ed041caa800d5859e8e9a30882655b4ca02e72c438",
   "provider_next_allowed_at_epoch": {
-    "Groq": 1790007588.527199,
-    "OpenRouter": 1790007535.8399842
+    "Groq": 1790008092.0349805,
+    "OpenRouter": 1790008119.2340772
   },
   "state_version": "api-batch-state-1.0.0",
-  "updated_at_utc": "2026-09-21T16:20:36.741909Z"
+  "updated_at_utc": "2026-09-21T16:41:22.326876Z"
 }

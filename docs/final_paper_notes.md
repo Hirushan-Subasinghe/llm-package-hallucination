@@ -261,3 +261,13 @@ No final experimental results belong here yet. Add results only from verified, v
 - These observations reinforce that the 16,000-token ceiling provides additional response headroom but does not remove right-censoring, and that preserved provider-response failures remain a separate dataset-completion category.
 - Primary SHR/PHR analysis must exclude both truncated and failed observations according to the frozen protocol.
 - Evidence: the corresponding per-run `metadata.json` files and `data/final/api_batch_state_v2.5.0.json`.
+
+### 2026-09-22 — AUTH-FED-05 completed across all four v2.5 model conditions
+
+- **Affected sections:** Data Collection, Dataset Completion, Limitations.
+- All four `AUTH-FED-05` model-condition observations completed normally under the frozen 16,000-token ceiling.
+- The verified completion-token counts were 6,219 for M1, 13,024 for M2, 9,215 for M3, and 13,154 for M4.
+- This provides direct evidence that the previously observed M4 truncations are not universal across that model condition.
+- The dissertation should therefore report M4 truncation as an observed recurring collection outcome, not as an inevitable property of every M4 response.
+- No hallucination-rate or risk conclusion should be inferred from this task-level completion pattern.
+- Evidence: `data/final/raw/API-v2.5-AUTH-FED-05-M1-R01/` through `API-v2.5-AUTH-FED-05-M4-R01/`.

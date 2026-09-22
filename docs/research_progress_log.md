@@ -348,3 +348,12 @@
 - All six requests used the frozen 16,000-token ceiling and all recorded attempts were first-attempt HTTP 200 responses.
 - These observations further confirm that v2.5 still contains three distinct collection outcomes: completed responses, right-censored truncated responses, and preserved provider-response failures.
 - Truncated and failed observations remain excluded from primary SHR/PHR denominators and are not regenerated or substituted.
+
+### v2.5 AUTH-FED-05 completed across all four model conditions
+
+- Verified the remaining `AUTH-FED-05` observations from authoritative per-run metadata.
+- `API-v2.5-AUTH-FED-05-M3-R01` completed normally with finish reason `stop` and 9,215 completion tokens.
+- `API-v2.5-AUTH-FED-05-M4-R01` completed normally with finish reason `stop` and 13,154 completion tokens.
+- Together with the previously verified M1 and M2 observations, all four `AUTH-FED-05` model-condition runs completed normally under the frozen 16,000-token ceiling.
+- This confirms that M4 does not always truncate under v2.5; earlier M4 ceiling hits remain valid observations but are not universal for that condition.
+- No SHR, PHR, hallucination-prevalence, or risk conclusion is inferred from this task-level completion pattern.
