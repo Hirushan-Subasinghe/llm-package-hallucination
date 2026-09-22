@@ -92,22 +92,37 @@ class V26Tests(unittest.TestCase):
         self.assertEqual(Counter(row["category"] for row in rows), {c: 60 for c in ("AUTH-FED", "DATA-ADV", "DIST-OBS", "DOC-BINARY", "ENT-INT", "PKI-CRYPTO")})
         expected_rows = create_api_manifest.make_rows(collect_api_run.load_config(CONFIG), create_api_manifest.load_frozen_tasks(), ROOT / "data/generated_prompts/v2.6.0", "API-v2.6")
         self.assertEqual(MANIFEST.read_bytes(), create_api_manifest.csv_bytes(expected_rows))
-        state = json.loads(STATE.read_text())
-        self.assertEqual(state["events"], [])
-        self.assertEqual(state["provider_next_allowed_at_epoch"], {})
-        self.assertEqual(state["manifest_sha256"], hashlib.sha256(MANIFEST.read_bytes()).hexdigest())
-        self.assertEqual(list((ROOT / "data/final/raw").glob("API-v2.6-*")), [])
+        # The real v2.6 state and raw root legitimately progress during collection.
+        # Verify the prospective initial-state contract with an isolated fixture.
+        with tempfile.TemporaryDirectory() as tmp:
+            fixture_state = Path(tmp) / "initial-state.json"
+            initial = collect_api_batch.load_state(
+                fixture_state, hashlib.sha256(MANIFEST.read_bytes()).hexdigest()
+            )
+            self.assertEqual(initial["events"], [])
+            self.assertEqual(initial["provider_next_allowed_at_epoch"], {})
+            self.assertEqual(initial["manifest_sha256"], hashlib.sha256(MANIFEST.read_bytes()).hexdigest())
+            self.assertFalse(fixture_state.exists())
+            self.assertEqual(list((Path(tmp) / "raw").glob("API-v2.6-*")), [])
 
     def test_dry_run_and_freeze(self):
         record = json.loads((ROOT / "config/experiment_freeze_v2.6.0.json").read_text())
-        expected = create_experiment_freeze_v2_6.build_record()
-        expected["freeze_record_created_at_utc"] = record["freeze_record_created_at_utc"]
-        self.assertEqual(record, expected)
+        # The verifier is deliberately progress-aware: it checks immutable frozen
+        # inputs after collection has advanced without rebuilding the initial state.
+        with patch.object(sys, "argv", ["create_experiment_freeze_v2_6.py", "--check"]):
+            self.assertEqual(create_experiment_freeze_v2_6.main(), 0)
         self.assertEqual((ROOT / "docs/experiment_freeze_v2.6.0.md").read_text(), create_experiment_freeze_v2_6.markdown(record))
-        before = STATE.read_bytes()
-        result = collect_api_batch.run_batch(collect_api_run.load_config(CONFIG), collect_api_batch.ordered_rows(MANIFEST), manifest_hash=hashlib.sha256(MANIFEST.read_bytes()).hexdigest(), state_path=STATE, dry_run=True, continue_after_failed=True)
-        self.assertEqual(result, {"next_run_id": "API-v2.6-AUTH-FED-01-M1-R01", "collection_order": 1, "api_provider": "OpenRouter", "wait_seconds": 0.0})
-        self.assertEqual(STATE.read_bytes(), before)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            result = collect_api_batch.run_batch(
+                collect_api_run.load_config(CONFIG), collect_api_batch.ordered_rows(MANIFEST),
+                manifest_hash=hashlib.sha256(MANIFEST.read_bytes()).hexdigest(),
+                state_path=root / "initial-state.json", raw_root=root / "raw",
+                dry_run=True, continue_after_failed=True,
+            )
+            self.assertEqual(result, {"next_run_id": "API-v2.6-AUTH-FED-01-M1-R01", "collection_order": 1, "api_provider": "OpenRouter", "wait_seconds": 0.0})
+            self.assertFalse((root / "initial-state.json").exists())
+            self.assertEqual(list((root / "raw").glob("API-v2.6-*")), [])
 
     def test_m2_response_provenance_and_truncation_without_network(self):
         config = collect_api_run.load_config(CONFIG)
