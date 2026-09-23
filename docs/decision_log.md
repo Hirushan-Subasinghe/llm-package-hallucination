@@ -577,3 +577,15 @@ Each decision record contains the following standardized fields:
 - **impact_on_analysis:** API/manual interface assignment is retained as collection-design provenance. It must not be treated as a completed-response count or used to replace failed API observations. Existing failed and truncated observations retain their separately defined analysis eligibility rules.
 - **affected_research_questions:** RQ1, RQ2, RQ3, RQ4.
 - **scope_effect:** `manifests/api_final_v2.6.0_manifest.csv` remains byte-identical with verified SHA-256 `b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f`. The HYBRID artifact is a derived allocation layer, not a modification of frozen experimental inputs.
+
+---
+
+### D034 — Constrain Future API Selection to Verified HYBRID Assignments
+
+- **decision_id:** D034
+- **date:** 2026-09-23
+- **status:** IMPLEMENTED; collection not started
+- **decision:** Future v2.6 API collection is selected by `scripts/collect_hybrid_api_batch.py`, which verifies the frozen manifest SHA-256 and HYBRID-assignment SHA-256 before selecting rows. It supplies the existing v2.6 batch collector only API-assigned, never-attempted rows in original frozen `collection_order`.
+- **current_operational_state:** 58 rows are actionable through the API: M1 has 24 and M2 has 34. Three M3 rows remain API-assigned but are operationally paused because the unchanged frozen Groq request conflicts with the provider TPM constraint; `--exclude-model M3` is the explicit temporary scheduling control. M4 has no further API rows because its API allocation is already satisfied.
+- **integrity_controls:** Manual-assigned rows are never eligible for this API path. Every pre-existing raw run directory, including preserved failed observations, is excluded from selection and remains protected by the established collector's no-overwrite guard. The selector does not retry failures or substitute a later row after a failure; it delegates the unchanged v2.6 request, retry, failure-continuation, pacing, and raw-artifact behavior to the established collector.
+- **data_boundary:** This implementation adds no API or manual observations and does not alter the frozen manifest, HYBRID assignment, prompts, model configuration, experiment freeze, collection order, raw observations, metadata, or run IDs.
