@@ -854,3 +854,34 @@
 - No superseded SLR, autonomy-comparison, Java/Maven experimental, survey, predictive-modelling, or mitigation-study methodology remains in Chapter 1.
 - After the verified wording correction, Chapter 1 Sections 1.1–1.11 are ready for transfer into the dissertation Word document.
 - No frozen experimental artifacts were modified and no final v2.6 metrics were calculated.
+
+### 2026-09-23 — Chapter 2 literature synthesis and baseline reconciliation completed
+
+- Created `docs/final_report_support/chapter2_literature_synthesis.md`.
+- Reconciled the baseline Chapter 2 against the implemented Node.js/npm study.
+- Assessed all 34 approved references in a reference-theme matrix.
+- Assessed 20 candidate literature claims.
+- Audited 21 numeric/prevalence claims from the baseline literature review.
+- Established the proposed final Chapter 2 structure and section-by-section writing plan.
+- Distinguished literature context from the actual experimental scope so Java/Maven, PyPI, autonomy, slopsquatting, mitigation, and related cross-ecosystem topics are not misrepresented as performed experimental variables.
+- Established a bounded literature-gap synthesis rather than a broad novelty claim.
+- Identified source-level verification as a prerequisite before final Chapter 2 prose is drafted.
+- No approved reference was added or removed.
+- No frozen/experimental artifact was modified.
+- No empirical result was calculated.
+- `git diff --check` passed for the synthesis task.
+
+### 2026-09-23 — Chapter 2 source verification, reference-coverage plan, and pre-draft freeze completed
+
+- Completed `CHAPTER-2-SOURCE-VERIFICATION-01`, `CHAPTER-2-REFERENCE-COVERAGE-PLAN-01`, and `CHAPTER-2-PRE-DRAFT-FREEZE-01`.
+- Created `docs/final_report_support/chapter2_source_verification.md` and `docs/final_report_support/chapter2_reference_coverage_plan.md`.
+- Updated `docs/final_report_support/chapter2_literature_synthesis.md` with a source-verification addendum and the final Chapter 2 reference-coverage requirement; the original reconciliation assessment was preserved.
+- Source-checked all 34 approved references: `FULL_TEXT_VERIFIED` 11; `METADATA_ONLY` 23; `ABSTRACT_ONLY` 0; `UNAVAILABLE` 0.
+- Claim verification (20 claims): `DIRECTLY_SUPPORTED` 14; `SUPPORTED_WITH_QUALIFICATION` 5; `NOT_SUPPORTED` 0; `NOT_VERIFIABLE` 1 (LC19, agentic-systems context).
+- Numeric-claim audit (21 baseline claims): `SAFE_TO_USE` 0; `USE_ONLY_WITH_CONTEXT` 6; removed/unverified 15.
+- All 34 approved references have a planned Chapter 2 use: 11 full-text-verified references are planned for multiple substantive use; 22 metadata-only references are planned for single conservative contextual use; Gandhi (2026) was held as conditional pending bibliographic reconciliation.
+- Gandhi bibliographic reconciliation: the baseline `IM2021101.pdf` reference list contains exactly one Gandhi entry, labelled `[Gandhi, 2026]` with year field 2026 and DOI `10.36227/techrxiv.176800890.09196406/v1`, identical to approved entry 6 in `docs/references/approved_references.md`. All 16 baseline in-text Gandhi citations use `Gandhi, 2025`; none uses 2026, and no other Gandhi entry exists. The discrepancy is therefore an in-text citation-year mismatch only, not a source-identity conflict. Status: `RESOLVED — USE Gandhi (2026)`. `approved_references.md` was not changed because its entry matches the baseline reference list. External bibliographic verification remains not performed, consistent with the approved-reference status.
+- Gandhi (2026) remains `METADATA_ONLY`; resolution of the year makes it citable for one conservative contextual use only (Section 2.7, autonomous-development security-risk context). LC19 remains `NOT_VERIFIABLE`, and autonomy remains outside the performed study.
+- Froze the Chapter 2 reference policy: all 34 approved references must appear at least once; argumentative weight follows source strength; no citation dumping; no unsupported percentages; no broad novelty claim.
+- Chapter 2 drafting verdict remains `READY_WITH_RESTRICTED_CLAIMS`.
+- No approved reference was added or removed. No frozen/experimental file was modified. No empirical result was calculated.

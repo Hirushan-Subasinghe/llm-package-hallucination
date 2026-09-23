@@ -609,3 +609,26 @@ Analysis Methodology, Results structure, Discussion.
 - Group comparisons remain descriptive and where-estimable, and practical-risk assessment is limited to eligible confirmed package-hallucination findings.
 - No final empirical findings are stated in Chapter 1; result-dependent contributions remain pending final v2.6 analysis.
 - The verified Chapter 1 is suitable for transfer into the final Word dissertation after the Section 1.8 wording correction.
+
+### 2026-09-23 — Chapter 2 literature review reconciliation
+
+- **Affected section:** Chapter 2 — Literature Review.
+- The final literature review should be organized around LLM-assisted software development, code hallucination, dependency/package ecosystems, software supply-chain threats, package hallucination, validation/classification approaches, reliability/risk, comparative dimensions, and a bounded synthesis/research gap.
+- Cross-ecosystem literature on PyPI, Maven, Java, Python, autonomous systems, slopsquatting, mitigation, and other topics may remain as literature context where supported, but must not be described as part of the performed Node.js/npm experiment.
+- Unsupported baseline prevalence/adoption/detection percentages must not be carried into the final dissertation until source-level verification supports them.
+- Chapter 2 must not claim that no prior work exists or that this dissertation is the first study of package hallucination.
+- Source-level verification of priority approved references is required before final Chapter 2 prose is written.
+- Final literature claims must remain within the approved 34-reference citation set.
+
+### 2026-09-23 — Chapter 2 reference policy frozen before drafting
+
+- **Affected section:** Chapter 2 — Literature Review.
+- All 34 approved references in `docs/references/approved_references.md` must appear at least once in final Chapter 2.
+- Citation frequency and argumentative weight follow evidence strength, not equal distribution. Citation dumping to satisfy coverage is not permitted.
+- The 11 full-text-verified sources should carry the central literature synthesis: Spracklen et al. (2025), Al-Zofi (2025), Gao et al. (2025), Ladisa et al. (2023), Duan et al. (2020), Williams et al. (2025), Zhao et al. (2025), Tian et al. (2025), Liu et al. (2026), Woesle et al. (2025), and Twist et al. (2026). Detailed claims must stay within the verified evidence summaries in `docs/final_report_support/chapter2_source_verification.md`.
+- Metadata-only references should normally be used only once, for bounded contextual coverage, and must not be the sole support for a detailed finding, number, comparison, causal conclusion, or superiority claim.
+- No unsupported numeric or prevalence claim from the baseline should be restored. The six `USE_ONLY_WITH_CONTEXT` numeric claims may be used only with their exact source-specific population, ecosystem, model, and task/prompt context, and only if analytically needed.
+- Spracklen et al.'s 19.7% figure uses approximately 2.23 million recommended packages (440,445 hallucinated) as its denominator, not 576,000 code samples; 576,000 is that study's code-sample count.
+- No broad "first study", "no prior work", "unexplored", or equivalent novelty claim may appear.
+- Gandhi citation rule: cite as **Gandhi (2026)**, matching the baseline reference list and the approved entry. The baseline in-text `Gandhi, 2025` citations are a citation-year error and must not be reused. Gandhi (2026) remains metadata-only: one conservative contextual use in the autonomous-development security-risk context only, with no agentic finding and no implication that autonomy was a performed study variable.
+- Chapter 2 prose may now be drafted with restricted claims (`READY_WITH_RESTRICTED_CLAIMS`).
