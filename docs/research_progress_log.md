@@ -532,3 +532,107 @@
 - These failures are therefore treated as recurring provider/infrastructure availability failures rather than model-output, prompt-format, hallucination, or truncation events.
 - Failed M4 observations are preserved once and are not retried, regenerated, deleted, or substituted.
 - Pending M2 observations remain temporarily excluded from collection; no new M2 observation was attempted during this non-M2 batch.
+
+### SCREEN-01 — interim review-required dependency screening completed
+
+- A fresh v2.6 checkpoint was processed through the current PIPE-03/04/05/07 pipeline using extractor version 1.0.2.
+- Screening population contained 350 metric-eligible unique `(run_id, normalized_package)` package-response rows across 35 eligible completed responses.
+- 5/350 eligible package-response rows (1.43%) were classified `AMBIGUOUS` / `REVIEW_REQUIRED`.
+- These 5 rows occurred in 5 distinct eligible responses, giving an interim review-required response screening rate of 5/35 (14.29%).
+- Each affected eligible response contained one review-required package.
+- Eligible review-required package names at this checkpoint:
+  `@types/xpath`, `@xmldom/xpath`, `pkcs12`, `mtls-pfx-loader`, `mime-node`.
+- Two additional review-required rows were excluded from the primary screening rates because their responses were truncated:
+  `@peculiar/asn1-rs` and `@types/pdf-lib`.
+- These values are INTERIM DESCRIPTIVE SCREENING ONLY and are not final study results.
+- `REVIEW_REQUIRED` is not equivalent to confirmed hallucination or confirmed dependency failure; evidence-based PIPE-05B adjudication is required before stronger conclusions are made.
+
+### PIPE-05B — REVIEW_REQUIRED adjudication infrastructure implemented
+
+- Implemented `scripts/adjudicate_review_required_packages.py`, a conservative, evidence-based secondary adjudication tool for PIPE-05 rows already marked `AMBIGUOUS`/`REVIEW_REQUIRED`.
+- Taxonomy: `CONFIRMED_HALLUCINATION`, `LEGACY_OR_REMOVED`, `NAMESPACE_CONFUSION`, `PACKAGE_NAME_CONFUSION`, `INVALID_OR_REDUNDANT_TYPES_PACKAGE`, `ECOSYSTEM_CONFUSION`, `OTHER_DEPENDENCY_ERROR`, `UNRESOLVED`; `dependency_failure` is tracked independently of `confirmed_package_hallucination`.
+- Reads an existing PIPE-05 joined classification envelope read-only; writes a separate PIPE-05B adjudication output. It does not modify PIPE-05 outputs, PHR, or SHR.
+- Created `scripts/adjudicate_review_required_packages.py`, `schemas/package_adjudication_pipe05b_v1.schema.json`, and `tests/test_adjudicate_review_required_packages.py`.
+- 22/22 new PIPE-05B tests passed using synthetic fixtures only; full suite 287 run, 285 passed, with 2 pre-existing unrelated `test_api_freeze.py` failures.
+- No real `REVIEW_REQUIRED` package was adjudicated; this milestone covers infrastructure only.
+
+### 2026-09-22 — M3/M4-first scheduling checkpoint
+
+- Continued v2.6 collection using the operational scheduling filter with M1 and M2 excluded, leaving only pending M3 and M4 observations eligible.
+- This scheduling change did not modify the frozen manifest, collection order, prompts, model configuration, token ceilings, or any finalized observation.
+- The checkpoint successfully finalized:
+  - order 64 `API-v2.6-ENT-INT-01-M3-R01`: completed;
+  - order 67 `API-v2.6-ENT-INT-02-M3-R01`: completed;
+  - order 68 `API-v2.6-ENT-INT-02-M4-R01`: completed;
+  - order 70 `API-v2.6-ENT-INT-03-M3-R01`: completed;
+  - order 71 `API-v2.6-ENT-INT-03-M4-R01`: completed;
+  - order 73 `API-v2.6-ENT-INT-04-M3-R01`: completed.
+- Order 74 `API-v2.6-ENT-INT-04-M4-R01` was finalized as failed with collector reason `HTTP 200 response is not a valid chat completion`.
+- Preserved response evidence for order 74 shows the underlying Nvidia error was HTTP 503 with `error_type: provider_overloaded` and message `Service temporarily overloaded`.
+- Order 74 therefore matches the previously observed recurring M4 infrastructure/provider-overload failure pattern.
+- No retry, regeneration, protocol change, or new experiment version was introduced.
+
+### 2026-09-22 — M3 Groq TPM rejection identified at order 83
+
+- Observation `API-v2.6-DATA-ADV-01-M3-R01` (collection order 83) was finalized as failed with `http_status_413`.
+- Preserved Groq response evidence identified the underlying error as `rate_limit_exceeded` for tokens per minute (TPM).
+- Groq reported service tier `on_demand`, TPM limit `8000`, and requested tokens `65830` for model `openai/gpt-oss-120b`.
+- The requested amount is consistent with the frozen M3 high output ceiling plus prompt tokens and indicates a provider/account rate-limit constraint rather than a generated-response failure.
+- Order 83 remains preserved once as failed and must not be retried or regenerated.
+- The frozen M3 token ceiling must not be reduced mid-experiment merely to fit the current provider TPM limit.
+- Pending M3 collection is deferred while Groq account/tier capability is investigated; this does not modify the frozen manifest or finalized observations.
+
+### 2026-09-23 — M3 collection temporarily paused after another Groq HTTP 413
+
+- Restarted the original v2.6 M3 condition for the remaining pending observations.
+- The collector exited immediately on another finalized HTTP 413 response.
+- No M3 observation remained stranded in `requesting` state, so interruption recovery was not required.
+- This follows multiple previously verified Groq TPM/rate-limit failures interspersed with successful M3 completions.
+- Decision: temporarily pause M3 collection rather than repeatedly consume pending M3 slots during the current provider/account rate-limit condition.
+- Existing completed and failed M3 observations remain preserved unchanged and will not be retried.
+- Next step: test one still-pending M2 observation now that OpenRouter paid access is active.
+
+### 2026-09-23 — M2 paid-access gate reached Darkbloom but exhausted output budget in reasoning
+
+- After OpenRouter paid access was activated, the next pending M2 observation `API-v2.6-AUTH-FED-04-M2-R01` (order 15) no longer failed with the previous HTTP 402 affordability error.
+- The request was routed to the frozen M2 model/provider condition:
+  - model: `qwen/qwen3.8-27b`
+  - provider: Darkbloom
+- OpenRouter usage evidence reported:
+  - prompt tokens: 305
+  - completion tokens: 32,768
+  - reasoning tokens: 32,767
+- The frozen M2 maximum output is 32,768 tokens.
+- The model therefore consumed essentially the entire available output budget in reasoning and produced no non-empty assistant content.
+- The collector finalized the observation as failed with `HTTP 200 response contains no non-empty assistant content`.
+- This failure is not attributable to OpenRouter billing/credit exhaustion.
+- Order 15 remains preserved and will not be regenerated.
+- No frozen M2 model, provider pin, prompt, or generation setting was changed.
+- Next step: test another still-unstarted M2 observation under the unchanged frozen condition before determining whether this is an isolated or recurrent M2 behavior.
+
+### 2026-09-23 — M1 order 62 empty-content failure verified as provider/model error
+
+- Inspected preserved response evidence for `API-v2.6-ENT-INT-01-M1-R01` (order 62).
+- OpenRouter routed the request to the frozen M1 condition:
+  - model: `cohere/north-mini-code:free`
+  - provider: Cohere
+- The HTTP response was successful at the transport level but the model response reported:
+  - `finish_reason: error`
+  - `native_finish_reason: error`
+  - assistant `content: null`
+  - completion tokens: 3,603
+  - reasoning tokens: 3,603
+  - generation time: approximately 27.9 seconds
+- Because the frozen M1 output ceiling is 64,000 tokens, this failure was not caused by reaching the output-token ceiling.
+- The observation remains finalized as failed and will not be retried.
+- This establishes a second M1 failure mode distinct from M1 output-ceiling truncation.
+
+### 2026-09-23 — HYBRID interface assignment formalized and verified
+
+- Created the deterministic derived allocation artifact `manifests/hybrid_assignment_v1.0.0.csv`, with one assignment for each of the 360 frozen v2.6 manifest rows. It is an allocation layer and does not replace or modify `manifests/api_final_v2.6.0_manifest.csv`.
+- The preserved raw metadata baseline was verified as 119 API-attempted rows: M1 16, M2 6, M3 38, M4 59. This includes failed and truncated observations; interface assignment is not based on successful responses.
+- The verified final allocation is M1 40 API / 50 manual, M2 40 / 50, M3 41 / 49, and M4 59 / 31, for totals of 180 API and 180 manual rows.
+- All 119 preserved raw observations remain API-assigned. The remaining API assignments are 61 never-attempted rows selected per model in ascending frozen manifest `collection_order`: M1 24, M2 34, M3 3, and M4 0.
+- Added `scripts/create_hybrid_assignment_v1_0.py` and `tests/test_hybrid_assignment.py`. The utility verifies unique IDs, unchanged order, target counts, raw-observation preservation, earliest eligible selection, no M4 addition, and the frozen-manifest hash. `python3 scripts/create_hybrid_assignment_v1_0.py --verify` passed; `python3 -m unittest tests/test_hybrid_assignment.py` passed (2 tests).
+- The frozen manifest SHA-256 was `b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f` before derivation and after verification. The derived assignment SHA-256 is `e4b9295b2efc0fe639092161561e915c1d0c47f9a545df2699f7fe12595dd54f`.
+- No API request and no manual collection was started by this allocation task. M3 remains paused; the allocation does not alter the frozen M3 configuration or retry policy.

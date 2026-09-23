@@ -400,3 +400,73 @@ No final experimental results belong here yet. Add results only from verified, v
 - Multiple v2.6 M4 observations failed because the upstream Nvidia provider reported temporary overload (`503 provider_overloaded`) through OpenRouter.
 - These events should be classified as provider/infrastructure failures and excluded from hallucination and truncation interpretations.
 - The predefined preservation policy was maintained: each failed observation was retained once without regeneration or substitution.
+
+### 2026-09-22 — Interim dependency-review screening produced a non-zero signal
+
+**Affected sections:** Chapter 3 / Secondary Analysis Method; Results structure;
+Discussion / Dependency Reliability.
+
+- A current v2.6 checkpoint contained 350 metric-eligible package-response rows and 35 eligible completed responses.
+- 5 eligible package recommendations required manual review (1.43%), occurring in 5 distinct eligible responses (14.29%).
+- These are screening observations only and must not be presented as final research results.
+- `REVIEW_REQUIRED` must remain distinct from confirmed hallucination and confirmed dependency failure.
+- The next analysis stage is evidence-based PIPE-05B adjudication of the real review-required candidates.
+- Two additional review-required cases occurred in truncated responses and are excluded from primary screening rates but may be retained for qualitative or sensitivity analysis.
+
+### 2026-09-22 — PIPE-05B secondary dependency-reliability adjudication infrastructure implemented
+
+**Affected sections:** Chapter 3 / Secondary Analysis Method; Results methodology; Discussion / Dependency Reliability.
+
+- To characterize `AMBIGUOUS` / `REVIEW_REQUIRED` package references without weakening the primary conservative hallucination definition, a separate manual adjudication layer was implemented.
+- PIPE-05B distinguishes confirmed package-name hallucination from other evidence-backed dependency-reliability outcomes: legacy/removed package, namespace confusion, package-name confusion, invalid/redundant types package, ecosystem confusion, other dependency error, and unresolved cases.
+- `dependency_failure` is tracked independently from `confirmed_package_hallucination`.
+- PIPE-05B is additive and does not feed back into the frozen primary PHR/SHR definitions.
+- The implementation was validated with synthetic fixtures only; no real review-required package had been adjudicated at this milestone.
+
+### 2026-09-22 — M3 provider TPM constraint
+
+- **Affected sections:** Methodology / Provider Configuration, Data Collection Reliability, Limitations.
+- A v2.6 M3 observation was rejected by Groq before generation because the current `on_demand` service tier exposed an 8,000 TPM limit while the frozen request reserved approximately 65.8k tokens.
+- This event is a provider/account capacity constraint, not a hallucination, truncation, or generated model failure.
+- The failed observation remains excluded from primary SHR/PHR.
+- The frozen M3 generation ceiling was not reduced in response to this event.
+
+### 2026-09-23 — M3 temporarily paused after recurrent Groq rate-limit failures
+
+- Sections affected: Experimental Execution / Data Quality / Threats to Validity.
+- The M3 condition continued to experience intermittent Groq HTTP 413 failures under the account's 8,000 TPM limit.
+- A subsequent restart again produced a finalized HTTP 413 with no stranded request.
+- Collection was temporarily paused to avoid repeatedly consuming pending observations during an unstable provider/account rate-limit period.
+- Existing M3 completed and failed observations remain preserved, and finalized failures are not regenerated.
+- The paper should distinguish these provider/account failures from model-output behavior.
+
+### 2026-09-23 — M2 output budget consumed by reasoning without usable assistant content
+
+- Sections affected: Experimental Execution / Data Quality / Threats to Validity.
+- M2 order 15 reached the intended `qwen/qwen3.8-27b` Darkbloom condition after paid OpenRouter access was enabled, showing that the earlier HTTP 402 access problem was no longer the immediate blocker.
+- Provider usage reported 32,768 completion tokens against the frozen 32,768-token output ceiling, of which 32,767 were reported as reasoning tokens.
+- No non-empty assistant content was produced, so the observation was finalized as failed rather than treated as a usable generation.
+- This observation provides evidence of output-budget exhaustion dominated by provider-reported reasoning tokens.
+- The observation remains excluded from primary SHR/PHR eligibility under the frozen protocol.
+- Avoid attributing this failure to billing or credit exhaustion.
+- Evidence: preserved M2 order-15 response and metadata.
+
+### 2026-09-23 — M1 exhibited both truncation and provider/model-error failure modes
+
+- Sections affected: Experimental Execution / Data Quality / Threats to Validity.
+- M1 order 62 returned HTTP 200 but no assistant content, with provider/model `finish_reason=error`.
+- Provider usage reported only 3,603 completion/reasoning tokens, well below the frozen 64,000-token M1 ceiling.
+- Therefore this observation should not be described as output-ceiling truncation.
+- M1 missingness includes at least two distinct mechanisms:
+  1. output-ceiling truncation;
+  2. provider/model errors producing no usable assistant content.
+- Failed rows remain excluded from primary SHR/PHR eligibility and are not regenerated.
+
+### 2026-09-23 — HYBRID collection-interface allocation
+
+- **Affected sections:** Methodology / Data Collection, Dataset Completion, Reproducibility, Limitations.
+- A derived HYBRID allocation layer assigned the 360 frozen v2.6 manifest rows evenly by collection interface: 180 API and 180 manual. The frozen original manifest remains unchanged and is not replaced by the allocation artifact.
+- The assignment preserves all 119 previously API-attempted observations (M1 16, M2 6, M3 38, M4 59), including completed, truncated, and failed observations. Interface allocation must not be interpreted as a successful-response count, and failed observations are not replaced to obtain successful outputs.
+- Remaining API quotas were filled deterministically from never-attempted rows in each model condition's ascending frozen manifest order: 24 M1, 34 M2, 3 M3, and 0 M4 rows. Final model allocations are M1 40 API / 50 manual, M2 40 / 50, M3 41 / 49, and M4 59 / 31.
+- The allocation is documented in `manifests/hybrid_assignment_v1.0.0.csv`; reproducibility checks and row lists are in `reports/hybrid_assignment_v1.0.0_report.md`. The verified original-manifest SHA-256 before and after is `b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f`.
+- This formalization did not send API requests or start manual collection. M3 remains paused because of the documented Groq TPM/HTTP 413 incompatibility; no retry or frozen-configuration change is implied.
