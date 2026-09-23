@@ -796,3 +796,15 @@
 - Repository-guard validation in the integration worktree passed 24/25 tests. The sole failure was `test_quarantine_evidence_is_untouched` because `data/quarantine/` is intentionally absent from the integration worktree; the live-collection refusal and side-effect-prevention guard tests passed.
 - Active v2.6 raw observations, batch state, recovery-audit state, analysis quarantine evidence, and derived checkpoint material were not merged into the integration worktree.
 - Live v2.6 collection remains authoritative in `/home/hirushan/Dev/ai-hallucination-study` and can continue independently.
+
+### 2026-09-23 — Final dissertation reporting control layer established
+
+- Established the permanent final-dissertation/reporting control layer in the integration worktree.
+- Commit: `17b1ae6` (`docs: establish final dissertation reporting controls`).
+- Updated `AGENTS.md` to define the final-report worktree purpose, source-of-truth priority, frozen-experiment integrity rules, experiment/repository security safeguards, classification and metric controls, dissertation writing rules, citation controls, reporting workflow, and worktree safety boundaries.
+- Added `docs/report_generation_protocol.md` defining the detailed dissertation-generation workflow, including university formatting requirements, baseline-draft reconciliation, citation policy, chapter-specific workflows, results safety, claims-evidence requirements, AI-tool responsibilities, and the standard audit → reconciliation → drafting → verification process.
+- Added `docs/final_report_support/claims_evidence_matrix.md` as the control surface for `VERIFIED`, `PENDING`, and `REJECTED` dissertation claims.
+- Added `docs/references/approved_references.md` as a controlled reference-list skeleton. Reference extraction has not yet been performed.
+- Confirmed that no experimental/frozen files, raw data, manifests, prompts, model configuration, collection state, results, code, schemas, or tests were modified by this documentation milestone.
+- Confirmed that `recomendations.txt` was not present under `~/Dev` within the checked search scope; repository instructions therefore treat it as advisory only when present and do not reconstruct it from memory.
+- Next step: extract and verify the approved academic reference list from the baseline dissertation `IM2021101.pdf`, then begin the Chapter 1 evidence/reconciliation audit.
