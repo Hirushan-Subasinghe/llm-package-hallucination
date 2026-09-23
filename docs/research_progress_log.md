@@ -784,3 +784,15 @@
 - Readiness verdict: PASS WITH DOCUMENTED LIMITATIONS. No new D036/D037 implementation defect was identified.
 - No real v2.6 PHR, SHR, DFR, RDFR, interim adjudication metric, or final research result was calculated.
 - No raw data, frozen inputs, manifests, prompts, model configuration, pacing, collection state, quarantine data, or existing result outputs were modified.
+
+### 2026-09-23 — Final report integration worktree created and analysis pipeline consolidated
+
+- Created dedicated integration/report worktree `/home/hirushan/Dev/ai-hallucination-integration` on branch `integration/final-report`, based on the committed live-collection branch snapshot.
+- Merged committed `analysis/pipeline` state (`102320f`) into the integration branch without modifying the active live collection worktree.
+- Integration merge committed as `2607907` (`integration: combine collection history with verified analysis pipeline`).
+- Preserved the verified D033-D037 methodology and PIPE-05B/06/07/08/09/10 implementation while retaining the live collection/recovery history.
+- Resolved a branch-local decision-ID collision: the analysis risk-model decision retains canonical ID `D032`; the live interrupted-request recovery decision, originally branch-local `D032`, is preserved unchanged in substance as integrated decision `D038`, with its original ID explicitly recorded for provenance.
+- The integration/report repository retains the analysis collection-prevention guard and must not be used for live collection.
+- Repository-guard validation in the integration worktree passed 24/25 tests. The sole failure was `test_quarantine_evidence_is_untouched` because `data/quarantine/` is intentionally absent from the integration worktree; the live-collection refusal and side-effect-prevention guard tests passed.
+- Active v2.6 raw observations, batch state, recovery-audit state, analysis quarantine evidence, and derived checkpoint material were not merged into the integration worktree.
+- Live v2.6 collection remains authoritative in `/home/hirushan/Dev/ai-hallucination-study` and can continue independently.
