@@ -22,7 +22,12 @@ class HybridAssignmentTests(unittest.TestCase):
         })
 
     def test_artifact_is_exact_deterministic_derivation(self):
-        expected = hybrid.csv_bytes(hybrid.make_assignment())
+        rows = hybrid.read_assignment()
+        baseline = {
+            row["run_id"]: row["pre_hybrid_collection_status"]
+            for row in rows if row["api_attempted_before_hybrid"] == "true"
+        }
+        expected = hybrid.csv_bytes(hybrid.make_assignment(baseline))
         self.assertEqual(hybrid.ASSIGNMENT.read_bytes(), expected)
 
 

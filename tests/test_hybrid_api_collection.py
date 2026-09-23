@@ -32,17 +32,32 @@ class HybridApiSelectionTests(unittest.TestCase):
         self.assertEqual(ASSIGNMENT.read_bytes(), self.assignment_bytes)
 
     def test_pending_api_counts_and_order(self):
-        self.assertEqual(len(self.rows), 61)
-        self.assertEqual(Counter(row["model_condition_id"] for row in self.rows), {"M1": 24, "M2": 34, "M3": 3})
+        assignment = {row["run_id"]: row for row in hybrid_api.read_verified_assignment(MANIFEST, ASSIGNMENT)}
+        existing = {path.parent.name for path in RAW_ROOT.glob("API-v2.6-*/metadata.json")}
+        expected = [
+            row for row in assignment.values()
+            if row["collection_interface"] == "api"
+            and row["api_attempted_before_hybrid"] == "false"
+            and row["run_id"] not in existing
+        ]
+        self.assertEqual({row["run_id"] for row in self.rows}, {row["run_id"] for row in expected})
+        self.assertEqual(Counter(row["model_condition_id"] for row in self.rows), Counter(row["model_condition_id"] for row in expected))
         self.assertEqual([int(row["collection_order"]) for row in self.rows], sorted(int(row["collection_order"]) for row in self.rows))
         self.assertEqual(sum(row["model_condition_id"] == "M4" for row in self.rows), 0)
 
-    def test_m3_exclusion_leaves_58_actionable_api_rows(self):
+    def test_m3_exclusion_derives_actionable_api_rows_from_current_raw_state(self):
         rows = hybrid_api.select_pending_api_rows(MANIFEST, ASSIGNMENT, RAW_ROOT, exclude_models=["M3"])
-        self.assertEqual(len(rows), 58)
-        self.assertEqual(Counter(row["model_condition_id"] for row in rows), {"M1": 24, "M2": 34})
-        self.assertEqual(rows[0]["run_id"], "API-v2.6-PKI-CRYPTO-02-M2-R01")
-        self.assertEqual(rows[0]["collection_order"], "28")
+        assignment = {row["run_id"]: row for row in hybrid_api.read_verified_assignment(MANIFEST, ASSIGNMENT)}
+        existing = {path.parent.name for path in RAW_ROOT.glob("API-v2.6-*/metadata.json")}
+        expected = [
+            row for row in assignment.values()
+            if row["collection_interface"] == "api"
+            and row["api_attempted_before_hybrid"] == "false"
+            and row["model_condition_id"] != "M3"
+            and row["run_id"] not in existing
+        ]
+        self.assertEqual({row["run_id"] for row in rows}, {row["run_id"] for row in expected})
+        self.assertEqual(Counter(row["model_condition_id"] for row in rows), Counter(row["model_condition_id"] for row in expected))
 
     def test_only_api_assigned_never_attempted_rows_are_selected(self):
         assignment = {row["run_id"]: row for row in hybrid_api.read_verified_assignment(MANIFEST, ASSIGNMENT)}
@@ -53,7 +68,11 @@ class HybridApiSelectionTests(unittest.TestCase):
 
     def test_all_existing_observations_including_failed_are_skipped(self):
         existing = {path.parent.name for path in RAW_ROOT.glob("API-v2.6-*/metadata.json")}
-        self.assertEqual(len(existing), 119)
+        assignment = {row["run_id"]: row for row in hybrid_api.read_verified_assignment(MANIFEST, ASSIGNMENT)}
+        self.assertTrue(existing)
+        self.assertTrue(existing.issubset(assignment))
+        self.assertTrue(all(assignment[run_id]["collection_interface"] == "api" for run_id in existing))
+        self.assertTrue(existing.isdisjoint({run_id for run_id, row in assignment.items() if row["collection_interface"] == "manual"}))
         selected_ids = {str(row["run_id"]) for row in self.rows}
         self.assertTrue(existing.isdisjoint(selected_ids))
         failed = {
@@ -78,6 +97,8 @@ class HybridApiSelectionTests(unittest.TestCase):
     def test_frozen_input_hashes_remain_exact(self):
         self.assertEqual(hashlib.sha256(MANIFEST.read_bytes()).hexdigest(), hybrid_api.FROZEN_MANIFEST_SHA256)
         self.assertEqual(hashlib.sha256(ASSIGNMENT.read_bytes()).hexdigest(), hybrid_api.HYBRID_ASSIGNMENT_SHA256)
+        assignment = hybrid_api.read_verified_assignment(MANIFEST, ASSIGNMENT)
+        self.assertEqual(Counter(row["collection_interface"] for row in assignment), {"api": 180, "manual": 180})
 
     def test_changed_assignment_is_rejected_before_selection(self):
         with tempfile.TemporaryDirectory() as tmp:

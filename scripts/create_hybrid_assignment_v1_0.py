@@ -88,13 +88,20 @@ def read_preserved_observations(manifest_run_ids: set[str]) -> dict[str, str]:
     return observations
 
 
-def make_assignment() -> list[dict[str, str]]:
-    """Derive all interface assignments from frozen order and raw metadata only."""
+def make_assignment(observations: dict[str, str] | None = None) -> list[dict[str, str]]:
+    """Derive assignments from frozen order and an explicit attempted-row baseline.
+
+    Supplying ``observations`` permits verification against the immutable
+    pre-HYBRID baseline after ongoing collection has added legitimate API raw
+    observations.  Creation without an argument retains the original behavior
+    of reading the current finalized raw-observation set.
+    """
     manifest_hash_before = sha256(MANIFEST)
     if manifest_hash_before != FROZEN_MANIFEST_SHA256:
         raise ValueError("frozen manifest SHA-256 differs from the v2.6 freeze record")
     manifest = read_manifest()
-    observations = read_preserved_observations({row["run_id"] for row in manifest})
+    if observations is None:
+        observations = read_preserved_observations({row["run_id"] for row in manifest})
     attempted_by_model = Counter(
         row["model_condition_id"] for row in manifest if row["run_id"] in observations
     )
@@ -172,22 +179,27 @@ def verify_assignment(rows: list[dict[str, str]]) -> dict[str, Any]:
     if manifest_hash_before != FROZEN_MANIFEST_SHA256:
         raise ValueError("frozen manifest SHA-256 differs from the v2.6 freeze record")
     manifest = read_manifest()
-    expected_rows = make_assignment()
-    if rows != expected_rows:
-        raise ValueError("hybrid assignment does not exactly match deterministic derivation")
     if len(rows) != 360 or len({row["run_id"] for row in rows}) != 360:
         raise ValueError("hybrid assignment must contain exactly 360 unique run IDs")
     if [int(row["collection_order"]) for row in rows] != list(range(1, 361)):
         raise ValueError("hybrid assignment collection_order is not exactly 1..360")
 
-    observations = read_preserved_observations({row["run_id"] for row in manifest})
     attempted_rows = [row for row in rows if row["api_attempted_before_hybrid"] == "true"]
-    if len(attempted_rows) != len(observations):
-        raise ValueError("assignment attempted-row count differs from preserved raw observations")
     if any(row["collection_interface"] != "api" for row in attempted_rows):
-        raise ValueError("a preserved raw observation is assigned manual")
-    if {row["run_id"] for row in attempted_rows} != set(observations):
-        raise ValueError("assignment does not contain exactly the preserved raw observation set")
+        raise ValueError("a pre-HYBRID attempted observation is assigned manual")
+    baseline_observations = {row["run_id"]: row["pre_hybrid_collection_status"] for row in attempted_rows}
+    if any(status not in ATTEMPTED_STATUSES for status in baseline_observations.values()):
+        raise ValueError("pre-HYBRID attempted observation has an invalid preserved status")
+    expected_rows = make_assignment(baseline_observations)
+    if rows != expected_rows:
+        raise ValueError("hybrid assignment does not exactly match deterministic baseline derivation")
+
+    observations = read_preserved_observations({row["run_id"] for row in manifest})
+    assignment_by_run_id = {row["run_id"]: row for row in rows}
+    if not set(baseline_observations).issubset(observations):
+        raise ValueError("a pre-HYBRID attempted observation is missing from current raw observations")
+    if any(assignment_by_run_id[run_id]["collection_interface"] != "api" for run_id in observations):
+        raise ValueError("a current raw observation is assigned manual")
 
     interface_counts = Counter(row["collection_interface"] for row in rows)
     if interface_counts != Counter({"api": 180, "manual": 180}):
@@ -207,11 +219,11 @@ def verify_assignment(rows: list[dict[str, str]]) -> dict[str, Any]:
     for model in MODELS:
         expected_eligible = [
             row for row in manifest
-            if row["model_condition_id"] == model and row["run_id"] not in observations
+            if row["model_condition_id"] == model and row["run_id"] not in baseline_observations
         ]
         expected_ids = [
             row["run_id"] for row in expected_eligible[:API_TARGETS[model] - sum(
-                source["model_condition_id"] == model for source in manifest if source["run_id"] in observations
+                source["model_condition_id"] == model for source in manifest if source["run_id"] in baseline_observations
             )]
         ]
         actual_ids = [
@@ -227,7 +239,7 @@ def verify_assignment(rows: list[dict[str, str]]) -> dict[str, Any]:
         raise ValueError("frozen manifest changed during verification")
     return {
         "per_model": per_model,
-        "attempted_count": len(observations),
+        "attempted_count": len(baseline_observations),
         "additional_rows": additional_rows,
         "manual_rows": [row for row in rows if row["collection_interface"] == "manual"],
         "manifest_hash_before": manifest_hash_before,

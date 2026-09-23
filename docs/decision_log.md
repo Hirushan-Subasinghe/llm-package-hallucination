@@ -589,3 +589,16 @@ Each decision record contains the following standardized fields:
 - **current_operational_state:** 58 rows are actionable through the API: M1 has 24 and M2 has 34. Three M3 rows remain API-assigned but are operationally paused because the unchanged frozen Groq request conflicts with the provider TPM constraint; `--exclude-model M3` is the explicit temporary scheduling control. M4 has no further API rows because its API allocation is already satisfied.
 - **integrity_controls:** Manual-assigned rows are never eligible for this API path. Every pre-existing raw run directory, including preserved failed observations, is excluded from selection and remains protected by the established collector's no-overwrite guard. The selector does not retry failures or substitute a later row after a failure; it delegates the unchanged v2.6 request, retry, failure-continuation, pacing, and raw-artifact behavior to the established collector.
 - **data_boundary:** This implementation adds no API or manual observations and does not alter the frozen manifest, HYBRID assignment, prompts, model configuration, experiment freeze, collection order, raw observations, metadata, or run IDs.
+
+---
+
+### D035 — Offline Manual-Observation Preservation Scaffold for HYBRID v2.6
+
+- **decision_id:** D035
+- **date:** 2026-09-23
+- **status:** IMPLEMENTED; manual generation not authorized by this implementation
+- **decision:** Add `scripts/collect_hybrid_manual.py`, an offline-only selector and byte-preserving capture scaffold for rows already assigned `collection_interface=manual`. It verifies the frozen v2.6 manifest and verified HYBRID assignment hashes before selection, accepts only manual-assigned rows, preserves frozen `collection_order`, and never invokes a model, API, browser, or generated code.
+- **artifact separation:** Manual artifacts use the new, deliberately separate root `data/final/manual_raw/v2.6.0/<run_id>/`, rather than the established API root `data/final/raw/<run_id>/`. Each record contains the verified `prompt.txt`, untouched operator-supplied `response.md`, and provenance `metadata.json`; creation is exclusive and any existing manual directory blocks overwrite or retry.
+- **manual-interface boundary:** D033 assigns rows to the manual interface but does not name or approve a particular manual product/UI or alter the frozen M4 model condition. The scaffold therefore records actual model/interface labels verbatim and does not infer them. A researcher-approved manual interface configuration is required before any manual generation is performed.
+- **failure handling:** A failed, interrupted, or truncated manual attempt is preserved once with its exact available response bytes (including a valid zero-byte capture) and an operator-supplied failure/interruption note. It is not cleaned, replaced, regenerated, or automatically retried.
+- **data boundary:** This implementation creates no observation and does not modify the frozen manifest, HYBRID assignment, API batch state, existing API raw artifacts, prompts, model configuration, or collection order.
