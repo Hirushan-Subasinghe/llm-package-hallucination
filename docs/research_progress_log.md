@@ -808,3 +808,16 @@
 - Confirmed that no experimental/frozen files, raw data, manifests, prompts, model configuration, collection state, results, code, schemas, or tests were modified by this documentation milestone.
 - Confirmed that `recomendations.txt` was not present under `~/Dev` within the checked search scope; repository instructions therefore treat it as advisory only when present and do not reconstruct it from memory.
 - Next step: extract and verify the approved academic reference list from the baseline dissertation `IM2021101.pdf`, then begin the Chapter 1 evidence/reconciliation audit.
+
+### 2026-09-23 — Approved dissertation reference set extracted
+
+- Populated `docs/references/approved_references.md` from the baseline dissertation `IM2021101.pdf`.
+- Extracted and preserved 34 baseline-approved citation entries.
+- No external academic sources were added.
+- Citation keys were checked for duplicates; none were found.
+- Bibliographic metadata was preserved as supplied by the baseline dissertation rather than silently corrected.
+- One baseline ambiguity was retained for later verification: the Yadav et al. DOI is recorded without an `http(s)` scheme.
+- External DOI/bibliographic verification was not performed at this stage.
+- The approved reference set now acts as the citation gate for final dissertation drafting.
+- No experimental or frozen research artifacts were modified.
+- Next step: conduct the Chapter 1 evidence/reconciliation audit before drafting final prose.
