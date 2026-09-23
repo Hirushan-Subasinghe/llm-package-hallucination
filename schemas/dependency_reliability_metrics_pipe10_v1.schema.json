@@ -1,0 +1,9 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "$id":"https://example.org/schemas/dependency_reliability_metrics_pipe10_v1.schema.json",
+  "title":"PIPE-10 D036 secondary dependency reliability metrics",
+  "description":"Secondary/exploratory DFR and RDFR output. It is not a primary hallucination metric.",
+  "type":"object",
+  "required":["format_version","calculator_version","package_level","response_level","dfr","rdfr","completeness_gate","provenance"],
+  "properties":{"format_version":{"const":"pipe-10-dependency-reliability-metrics-1.0.0"},"calculator_version":{"const":"pipe-10-dependency-reliability-calculator-1.0.0"},"package_level":{"type":"object"},"response_level":{"type":"object"},"dfr":{"type":"object"},"rdfr":{"type":"object"},"completeness_gate":{"type":"object"},"provenance":{"type":"object"}}
+}

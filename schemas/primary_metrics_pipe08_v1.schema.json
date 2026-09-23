@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/primary_metrics_pipe08_v1.schema.json",
+  "title": "PIPE-08 primary PHR/SHR metrics record",
+  "description": "PIPE-08 v1.1 PHR/SHR metrics: D033 denominators and D037 numerator routing.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "format_version", "analysis_version", "source_version_label", "generated_at",
+    "metric_definition_reference", "phr", "shr", "eligible_response_count",
+    "eligible_package_row_count", "ambiguous_package_row_count",
+    "unresolved_package_row_count", "truncated_response_count", "primary_confirmed_by_pipe05_reviewed", "primary_confirmed_by_pipe05b", "eligible_review_required_without_pipe05b", "eligible_pipe05b_unresolved", "provenance"
+  ],
+  "properties": {
+    "format_version": {"const": "pipe-08-primary-metrics-1.1.0"},
+    "analysis_version": {"const": "pipe-08-metrics-calculator-1.1.0"},
+    "source_version_label": {"type": "string", "minLength": 1},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "metric_definition_reference": {"type": "string", "minLength": 1},
+    "phr": {"$ref": "#/$defs/rate"},
+    "shr": {"$ref": "#/$defs/rate"},
+    "eligible_response_count": {"type": "integer", "minimum": 0},
+    "eligible_package_row_count": {"type": "integer", "minimum": 0},
+    "ambiguous_package_row_count": {"type": "integer", "minimum": 0},
+    "unresolved_package_row_count": {"type": "integer", "minimum": 0},
+    "truncated_response_count": {"type": "integer", "minimum": 0},
+    "primary_confirmed_by_pipe05_reviewed": {"type": "integer", "minimum": 0},
+    "primary_confirmed_by_pipe05b": {"type": "integer", "minimum": 0},
+    "eligible_review_required_without_pipe05b": {"type": "integer", "minimum": 0},
+    "eligible_pipe05b_unresolved": {"type": "integer", "minimum": 0},
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "package_dataset_input_hash", "response_dataset_input_hash",
+        "package_dataset_upstream_hashes", "response_dataset_upstream_hashes"
+      ],
+      "properties": {
+        "package_dataset_input_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "response_dataset_input_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "package_dataset_upstream_hashes": {"type": "object"},
+        "response_dataset_upstream_hashes": {"type": "object"}
+      }
+    }
+  },
+  "$defs": {
+    "rate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["numerator", "denominator", "rate"],
+      "properties": {
+        "numerator": {"type": "integer", "minimum": 0},
+        "denominator": {"type": "integer", "minimum": 0},
+        "rate": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "maximum": 1,
+          "description": "numerator / denominator, or null when denominator is 0. Never encoded as 0 for a zero denominator."
+        }
+      }
+    }
+  }
+}

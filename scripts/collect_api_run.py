@@ -341,10 +341,18 @@ def response_token_metadata(response: dict) -> dict[str, int | None]:
 
 
 def completion_status(response: dict) -> tuple[str, str]:
+    """Map the provider finish reason to an operational status (D021, D035).
+
+    Only "stop" is a normal completion and only "length" is a truncation. Any
+    other value, including "error", is a provider-declared abnormal termination
+    and is failed even when partial assistant content was returned.
+    """
     finish_reason = response.get("choices", [{}])[0].get("finish_reason")
     if finish_reason == "length":
         return "truncated", "TRUNCATED"
-    return "completed", "COMPLETED"
+    if finish_reason == "stop":
+        return "completed", "COMPLETED"
+    return "failed", "FAILED"
 
 
 def resolved_openrouter_provider(response: dict) -> str | None:
@@ -531,6 +539,12 @@ def collect_row(
             metadata["failure_reason"] = "provider_identity_mismatch"
             write_json(run_directory / "metadata.json", metadata)
             raise ValueError("M2 returned model or underlying provider differs from frozen identity")
+        if collection_status == "failed":
+            # D035: the preserved partial content never overrides the provider's
+            # declared abnormal termination, and the observation is not retried.
+            metadata["failure_reason"] = f"provider_finish_reason_{metadata['finish_reason']}"
+            write_json(run_directory / "metadata.json", metadata)
+            raise ValueError(f"Provider declared abnormal termination: finish_reason={metadata['finish_reason']!r}")
         write_json(run_directory / "metadata.json", metadata)
         return run_directory
 
