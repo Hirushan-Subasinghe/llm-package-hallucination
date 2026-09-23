@@ -1,13 +1,15 @@
 # Current Research Status
 
-**Last updated:** 2026-09-22 (v2.6 prospective implementation and validation)
+**Last updated:** 2026-09-23 (v2.6 HYBRID allocation verified)
 **Project:** LLM Package Hallucination Study
 
-## Current phase: v2.6 prospectively implemented; collection has not begun
+## Current phase: v2.6 HYBRID interface allocation verified; no HYBRID collection started
 
 v2.5 was prospectively stopped after preserved observations showed repeated 16,000-token truncation. Its raw responses, state, manifest, freeze, and prompts remain separate historical evidence and are excluded from v2.6 primary SHR/PHR. The historical v2.5 freeze remains anchored to commit `87d3158` and tag `v2.5.0-freeze`; the live v2.5 state and observations have since advanced beyond that initial freeze.
 
-v2.6.0 is a fresh independent 360-observation experiment beginning at observation 1. Its manifest contains 360 unique pending rows, its state has no collection events or provider pacing history, and there are zero v2.6 raw observations. No v2.6 API request was sent during implementation. v2.6 is intended as the final protocol version. Any remaining output-ceiling hit will be preserved as a right-censored truncation, excluded from primary SHR/PHR, and will not trigger another restart.
+v2.6.0 is a fresh independent 360-observation experiment beginning at observation 1. Its frozen manifest remains 360 unique pending rows. The current preserved raw state contains 119 API-attempted observations: M1 16, M2 6, M3 38, and M4 59. Completed, truncated, and failed observations are all retained as API-interface assignments. M3 API collection remains paused because the frozen Groq configuration has a documented TPM/HTTP 413 incompatibility. No API or manual collection is authorized by the HYBRID allocation work.
+
+The derived `manifests/hybrid_assignment_v1.0.0.csv` assigns every frozen manifest row to an interface without modifying frozen inputs: 180 API and 180 manual. It preserves all 119 existing API attempts, fills the remaining model API quotas using earliest never-attempted rows in frozen `collection_order`, and assigns the rest to manual. Its verifier and report confirm M1 40/50, M2 40/50, M3 41/49, and M4 59/31 API/manual. The original frozen manifest SHA-256 remained `b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f` before and after derivation.
 
 ## Frozen prospective v2.6 inputs
 
@@ -15,6 +17,8 @@ v2.6.0 is a fresh independent 360-observation experiment beginning at observatio
 - Model set: `config/api_model_set_1.4.0.json`.
 - Prompt template: `prompts/prompt_template_v2.6.0.md`; all 30 rendered prompts are byte-identical to v2.5.
 - Manifest: `manifests/api_final_v2.6.0_manifest.csv`.
+- Derived HYBRID allocation: `manifests/hybrid_assignment_v1.0.0.csv` (not a frozen input and not a manifest replacement).
+- Derived verification report: `reports/hybrid_assignment_v1.0.0_report.md`.
 - Initial state: `data/final/api_batch_state_v2.6.0.json`.
 - Freeze record: `config/experiment_freeze_v2.6.0.json` and `docs/experiment_freeze_v2.6.0.md`.
 

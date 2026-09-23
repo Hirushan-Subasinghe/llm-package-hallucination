@@ -560,3 +560,20 @@ Each decision record contains the following standardized fields:
 - **decision:** When `API-v2.6-PKI-CRYPTO-04-M4-R01` was interrupted by the researcher during the active HTTP response read, do not retry or regenerate it. Finalize the already-sent request once as failed with `failure_reason: researcher_interrupted_active_request`.
 - **integrity_controls:** The offline-only recovery utility verifies the frozen manifest identity and prompt hash, preserved request hash, original start timestamp, and `requesting` status. It refuses completed, truncated, failed, or response-bearing directories; writes an immutable pre-recovery hash audit before the sole metadata update; and makes no network call.
 - **analysis_effect:** This failed observation is retained as failure evidence and excluded from primary v2.6 SHR/PHR denominators under the frozen failed-observation policy. No experimental input, manifest row, model configuration, token ceiling, retry policy, or other raw observation is changed.
+
+---
+
+### D033 — Formalize HYBRID Collection-Interface Allocation as a Derived Layer
+
+- **decision_id:** D033
+- **date:** 2026-09-23
+- **status:** IMPLEMENTED
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **original_design:** Frozen v2.6 collection proceeded through the API interface only, while preserved raw metadata accumulated unevenly across model conditions. The frozen 360-row manifest and all collected raw observations remain intact.
+- **final_design:** Create the deterministic derived artifact `manifests/hybrid_assignment_v1.0.0.csv`, assigning each frozen v2.6 manifest row to `api` or `manual` without changing any frozen input. Preserve all 119 existing API-attempted rows as API assignments, then fill remaining API quotas from the earliest never-attempted rows in each model condition's frozen manifest order. Targets are M1 40 API / 50 manual, M2 40 / 50, M3 41 / 49, and M4 59 / 31.
+- **rationale:** A balanced collection-interface design is required while retaining every observation already attempted through the API, including failed and truncated observations.
+- **methodological_justification:** Assignment is determined by interface and pre-existing attempt status, never by response outcome. The deterministic order rule prevents outcome-dependent selection. The allocation is independently reproducible from the frozen manifest, preserved raw metadata, and fixed target table.
+- **impact_on_data_collection:** Of the 180 API-assigned rows, 119 are preserved prior API attempts and 61 are additional assignments: M1 24, M2 34, M3 3, M4 0. The task does not authorize API or manual collection, retry any failure, change M3's paused frozen configuration, alter collection order, or modify prompts, model settings, provider routing, token ceilings, pacing, or retry policy.
+- **impact_on_analysis:** API/manual interface assignment is retained as collection-design provenance. It must not be treated as a completed-response count or used to replace failed API observations. Existing failed and truncated observations retain their separately defined analysis eligibility rules.
+- **affected_research_questions:** RQ1, RQ2, RQ3, RQ4.
+- **scope_effect:** `manifests/api_final_v2.6.0_manifest.csv` remains byte-identical with verified SHA-256 `b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f`. The HYBRID artifact is a derived allocation layer, not a modification of frozen experimental inputs.
