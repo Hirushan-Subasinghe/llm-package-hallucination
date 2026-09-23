@@ -1,6 +1,6 @@
 # Chapter 1 Literature Reconciliation - CHAPTER-1-LITERATURE-RECONCILIATION-01
 
-**Audit date:** 2026-09-23  
+**Audit date:** 2026-09-23
 **Purpose:** Determine which literature-context claims from the baseline dissertation can be retained in the final Chapter 1 without drafting Chapter 1 prose, adding references, calculating metrics, or changing frozen evidence.
 
 ## 1. Scope and source constraints
@@ -137,3 +137,5 @@ The following are safe only as claims, not ready-made Chapter 1 prose:
 - `docs/source_documents/IM2021101.pdf`: baseline Chapter 1 and the directly inspected Chapter 2 passages identified above.
 - `docs/final_report_support/chapter1_evidence_audit.md` and `docs/final_report_support/chapter1_draft_reconciliation.md`: final-study scope and prior reconciliation constraints; neither is academic literature evidence.
 - `docs/current_research_status.md` and `docs/final_paper_notes.md`: current-study/reporting constraints; not academic literature evidence.
+
+7. Ladisa et al. (2023), Wang et al. (2025), and Williams et al. (2025) appear in the baseline reference list but are not cited in the baseline body text; the baseline links typosquatting/dependency-confusion definitions (L05/L06) only to Al-Zofi (2025). Chapter 1 draft 1.1–1.4 therefore uses Ladisa and Williams only for general supply-chain context and cites Al-Zofi alone for those definitions, pending source-level verification.

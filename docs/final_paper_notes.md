@@ -599,3 +599,13 @@ Analysis Methodology, Results structure, Discussion.
 - Unsupported baseline percentages and literature-wide novelty claims must not appear.
 - Slopsquatting, autonomy, and mitigation remain background/literature topics only unless discussing future work or implications.
 - Final empirical contribution wording remains pending final v2.6 results.
+
+### 2026-09-23 — Chapter 1 verified for dissertation use
+
+- **Affected section:** Chapter 1 — Introduction.
+- The complete Chapter 1 draft (Sections 1.1–1.11) has passed repository-grounded factual and citation verification, subject to one verified wording correction in Section 1.8.
+- Final Chapter 1 preserves the existing dissertation title while explicitly delimiting the implemented empirical study to direct Node.js/npm dependency references.
+- Primary outcomes are PHR and SHR; DFR and RDFR remain secondary/exploratory dependency-reliability measures.
+- Group comparisons remain descriptive and where-estimable, and practical-risk assessment is limited to eligible confirmed package-hallucination findings.
+- No final empirical findings are stated in Chapter 1; result-dependent contributions remain pending final v2.6 analysis.
+- The verified Chapter 1 is suitable for transfer into the final Word dissertation after the Section 1.8 wording correction.

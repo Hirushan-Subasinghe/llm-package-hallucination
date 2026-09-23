@@ -1,6 +1,6 @@
 # Chapter 1 Evidence Audit — CHAPTER-1-EVIDENCE-AUDIT-01
 
-**Audit date:** 2026-09-23  
+**Audit date:** 2026-09-23
 **Purpose:** Establish a defensible Chapter 1 framing from the implemented final-study design without drafting Chapter 1 prose, calculating metrics, or changing frozen experimental evidence.
 
 ## 1. Audit scope
@@ -38,13 +38,13 @@ Milestone documentation decision: progress-log update needed **NO**; final-paper
 
 The following are options, not a title selection.
 
-1. **Package-Name Hallucinations in LLM-Generated Node.js Code: An Empirical Study of npm Dependency Reliability and Practical Risk**  
+1. **Package-Name Hallucinations in LLM-Generated Node.js Code: An Empirical Study of npm Dependency Reliability and Practical Risk**
    Scope note: accurately foregrounds primary package-name hallucination, while “dependency reliability” must be described as secondary/exploratory DFR/RDFR analysis.
 
-2. **LLM-Generated Node.js Code and npm Dependency Reliability: Package-Name Hallucination, Grouped Comparisons, and Practical Risk Assessment**  
+2. **LLM-Generated Node.js Code and npm Dependency Reliability: Package-Name Hallucination, Grouped Comparisons, and Practical Risk Assessment**
    Scope note: makes the comparative and rule-based risk components visible without asserting final results.
 
-3. **Assessing npm Package-Name Hallucinations in LLM-Generated Node.js Solutions: Implications for Software Supply-Chain Risk**  
+3. **Assessing npm Package-Name Hallucinations in LLM-Generated Node.js Solutions: Implications for Software Supply-Chain Risk**
    Scope note: the most conservative supply-chain wording; the dissertation must state that the risk rubric is an ordinal, evidence-bounded prioritization aid rather than a security-compromise estimate.
 
 ## 4. Research problem
@@ -194,4 +194,3 @@ These are proposals only; do **not** insert them into `claims_evidence_matrix.md
 | `manifests/api_final_v2.6.0_manifest.csv` | 360 planned row matrix and per-run identities. |
 | `scripts/build_analysis_dataset.py`, `scripts/calculate_primary_metrics.py`, `scripts/adjudicate_review_required_packages.py`, `scripts/calculate_dependency_reliability_metrics.py`, `scripts/analyze_group_comparisons.py`, `scripts/score_risk_findings.py` | Implemented analysis/risk pathways only; no final metrics run for this audit. |
 | `schemas/risk_finding_pipe06_v1.schema.json`, `schemas/package_response_analysis_pipe07_v1.schema.json`, `schemas/response_level_analysis_pipe07_v1.schema.json` | Implemented analysis-record and risk schema boundaries. |
-

@@ -842,3 +842,15 @@
 - The strongest approved Chapter 1 sources identified were Spracklen et al. (2025), Al-Zofi (2025), Gao et al. (2025), Ladisa et al. (2023), Wang et al. (2025), Williams et al. (2025), Duan et al. (2020), and Ohm and Stuke (2023).
 - Unsupported percentages and broad novelty claims must not be reused. Final empirical results remain pending.
 - No frozen or experimental files were modified.
+
+### 2026-09-23 — Chapter 1 final verification completed
+
+- Completed `FINAL-CHAPTER-1-VERIFICATION-01` against repository evidence, approved references, the baseline dissertation, and the reconciled Chapter 1 support documents.
+- Created `docs/final_report_support/chapter1_final_verification.md`.
+- Verified 24 study-specific factual claims and 22 citation uses.
+- Verification verdict: `PASS WITH MINOR CORRECTIONS`.
+- One wording correction was required in Section 1.8 so the practical-risk statement matches the implemented framework boundary: assessment is limited to eligible confirmed package-hallucination findings.
+- No final empirical result, prevalence value, model/category ranking, statistical conclusion, or risk distribution was introduced.
+- No superseded SLR, autonomy-comparison, Java/Maven experimental, survey, predictive-modelling, or mitigation-study methodology remains in Chapter 1.
+- After the verified wording correction, Chapter 1 Sections 1.1–1.11 are ready for transfer into the dissertation Word document.
+- No frozen experimental artifacts were modified and no final v2.6 metrics were calculated.

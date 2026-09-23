@@ -1,6 +1,6 @@
 # Chapter 1 Draft Reconciliation — CHAPTER-1-DRAFT-RECONCILIATION-01
 
-**Audit date:** 2026-09-23  
+**Audit date:** 2026-09-23
 **Purpose:** Reconcile the baseline dissertation's existing Chapter 1 with the implemented final v2.6 study, without drafting final Chapter 1 prose, modifying frozen evidence, calculating results, or changing the dissertation title.
 
 ## 1. Reconciliation basis
@@ -206,4 +206,3 @@ The following must not appear as descriptions of performed final research:
 | `docs/task_set_v2_design.md`; `prompts/tasks/final_2.0.0.jsonl` | Task count, categories, Node.js/npm records, and task-design context. |
 | `config/api_model_set_1.4.0.json`; `config/experiment_freeze_v2.6.0.json`; `docs/experiment_freeze_v2.6.0.md`; `manifests/api_final_v2.6.0_manifest.csv` | Frozen v2.6 conditions, model/provider identities, repetitions, and 360 planned observations. |
 | `scripts/build_analysis_dataset.py`; `scripts/calculate_primary_metrics.py`; `scripts/adjudicate_review_required_packages.py`; `scripts/calculate_dependency_reliability_metrics.py`; `scripts/analyze_group_comparisons.py`; `scripts/score_risk_findings.py` | Implemented pipeline boundaries only; no final metric computation was run. |
-
