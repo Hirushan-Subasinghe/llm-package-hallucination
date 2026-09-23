@@ -885,3 +885,52 @@
 - Froze the Chapter 2 reference policy: all 34 approved references must appear at least once; argumentative weight follows source strength; no citation dumping; no unsupported percentages; no broad novelty claim.
 - Chapter 2 drafting verdict remains `READY_WITH_RESTRICTED_CLAIMS`.
 - No approved reference was added or removed. No frozen/experimental file was modified. No empirical result was calculated.
+
+### 2026-09-23 — Chapter 2 first drafting block (Sections 2.1–2.4)
+
+- Created `docs/report_drafts/chapter2_sections_2_1_to_2_4.md` (approximately 4,640 words; Sections 2.5–2.10 not yet drafted).
+- Cited 18 of 34 approved references in this first block: 11 full-text-verified sources and 7 metadata-only sources used conservatively for contextual claims.
+- The seven metadata-only sources used once are Agarwal et al. (2024), Daoud (2026), Le-Anh et al. (2026), Zhuo et al. (2025), Dubey and Madisetti (2026), Ohm and Stuke (2023), and Wang et al. (2025).
+- Sixteen approved references remain to be incorporated in later Chapter 2 sections under the established reference-coverage plan.
+- Dubey and Madisetti (2026) and Ohm and Stuke (2023) used their planned single contextual citation earlier than originally allocated; they should not later be reused as independent support for stronger claims unless source-level evidence is available.
+- Spracklen et al. (2025) was additionally used in Section 2.2.1 for the verified non-determinism/repetition claim.
+- No numeric claims were used.
+- No `Gandhi, 2025`, `Spracklen, 2024`, or `Ohm et al., 2020` citation was used.
+- No dissertation empirical result was stated or inferred.
+- The draft remains uncommitted pending factual, citation, and synthesis review.
+
+### 2026-09-23 — Chapter 2 Block 1 correction
+
+- Applied CHAPTER-2-BLOCK-1-CORRECTION-01 to `docs/report_drafts/chapter2_sections_2_1_to_2_4.md`.
+- Completed C01–C16 and applied optional clarity revisions R1–R4.
+- Re-verified Table 2.1, citation constraints, metadata-only contextual uses, and absence of dissertation results and numeric claims.
+- Verdict: PASS; readiness: READY_TO_DRAFT_2_5_TO_2_10.
+
+### 2026-09-24 — Chapter 2 Block 2 drafted (Sections 2.5–2.7)
+
+- Created `docs/report_drafts/chapter2_sections_2_5_to_2_7.md` (working draft; ~5,325 words).
+- 23 approved references cited (9 full-text-verified; 14 metadata-only, each once at title/topic level only). Chapter 2 coverage now 32/34; Liu et al. (2025a) and Zheng et al. (2026) reserved for Section 2.8.
+- No numeric claims; no dissertation results; Gandhi cited once as Gandhi (2026); no Spracklen 2024 / Ohm et al. 2020 forms.
+- Package hallucination presented as a reliability defect; slopsquatting as a conditional downstream scenario; the Impact × Detectability framework stated as study-defined (Chapter 3), not literature-derived.
+- Block 2 source-level verification recommended before drafting Sections 2.8–2.10.
+
+### 2026-09-24 — Chapter 2 Block 3 drafted (Sections 2.8–2.10)
+
+- Drafted `docs/report_drafts/chapter2_sections_2_8_to_2_10.md` (comparative dimensions, bounded synthesis/research gap, chapter summary); Sections 2.1–2.7 unchanged.
+- Cumulative Chapter 2 approved-reference coverage: 34/34; Liu et al. (2025a) and Zheng et al. (2026) used once each at metadata/title level in Section 2.8.
+- No numeric literature claims; no dissertation results; no novelty/absence claims. Block 3 verification and chapter assembly pending.
+
+### 2026-09-24 — Chapter 2 assembled and final verification passed
+
+- Assembled the verified Chapter 2 drafting blocks into `docs/report_drafts/chapter2_complete_draft.md`.
+- Created `docs/final_report_support/chapter2_final_verification.md`.
+- Final Chapter 2 verification verdict: `PASS`.
+- Final Chapter 2 word count: approximately 13,192 words, estimated at approximately 32–36 pages under the dissertation formatting before final Word-layout verification.
+- Verified all 34 approved references appear at least once in Chapter 2, with no unapproved references.
+- Gandhi is cited only as `Gandhi (2026)`; the superseded forms `Gandhi (2025)`, `Spracklen (2024)`, and `Ohm et al. (2020)` do not appear.
+- Table 2.1 passed final verification and preserves the distinctions among typosquatting, dependency confusion, accidental dependency error, package hallucination, and slopsquatting.
+- Table 2.2 passed final verification as a literature-design synthesis; evidence-limited fields remain `—` rather than being inferred.
+- One duplicated topic-context sentence in Section 2.7 was removed during final assembly; no broader prose rewrite was performed.
+- No unverified numeric literature claim, dissertation empirical result, model/category ranking, statistical-significance result, risk distribution, or unsupported novelty/absence claim appears in the final Chapter 2 draft.
+- Final Word-readiness status: `READY_FOR_WORD`.
+- No frozen or experimental artifact was modified and no final study metric was calculated.

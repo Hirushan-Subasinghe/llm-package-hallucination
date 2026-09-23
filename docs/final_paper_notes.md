@@ -632,3 +632,15 @@ Analysis Methodology, Results structure, Discussion.
 - No broad "first study", "no prior work", "unexplored", or equivalent novelty claim may appear.
 - Gandhi citation rule: cite as **Gandhi (2026)**, matching the baseline reference list and the approved entry. The baseline in-text `Gandhi, 2025` citations are a citation-year error and must not be reused. Gandhi (2026) remains metadata-only: one conservative contextual use in the autonomous-development security-risk context only, with no agentic finding and no implication that autonomy was a performed study variable.
 - Chapter 2 prose may now be drafted with restricted claims (`READY_WITH_RESTRICTED_CLAIMS`).
+
+### 2026-09-24 — Chapter 2 verified for dissertation use
+
+- **Affected section:** Chapter 2 — Literature Review.
+- The assembled Chapter 2 draft (`docs/report_drafts/chapter2_complete_draft.md`) has passed final structural, citation, factual, and consistency verification and is ready for transfer into the dissertation Word document.
+- All 34 approved references are represented at least once; citation weight remains evidence-dependent, with full-text-verified sources carrying the substantive literature synthesis and metadata-only sources restricted to conservative contextual use.
+- Table 2.1 may be retained as the conceptual distinction table for package-naming/dependency threats.
+- Table 2.2 may be retained as a study-design synthesis table; evidence-limited cells must remain `—`.
+- Unsupported baseline percentages and broad novelty claims must not be reintroduced during Word editing.
+- The final literature synthesis distinguishes package hallucination from broader dependency failure and from downstream adversarial actions such as slopsquatting.
+- Chapter 2 does not treat the study-defined PHR/SHR, DFR/RDFR, or Impact × Detectability framework as prior-literature standards.
+- Detailed execution-safety and non-installation rationale removed from Chapter 2 should be documented in Chapter 3 Methodology.
