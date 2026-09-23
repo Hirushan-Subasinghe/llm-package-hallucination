@@ -18,7 +18,7 @@ from pathlib import Path
 from typing import Any, Iterable, Optional
 
 ROOT = Path(__file__).resolve().parents[1]
-EXTRACTOR_VERSION = "pipe-03-package-reference-extractor-1.0.1"
+EXTRACTOR_VERSION = "pipe-03-package-reference-extractor-1.0.2"
 DEFAULT_INVENTORY = ROOT / "results" / "response_inventory_v2.2.0.json"
 DEFAULT_RAW_ROOT = ROOT / "data" / "final" / "raw"
 DEFAULT_OCCURRENCES_JSON = ROOT / "results" / "package_reference_occurrences_v2.2.0.json"
@@ -45,6 +45,7 @@ ES_SIDE_EFFECT_IMPORT_RE = re.compile(r"(?P<q>['\"])(?P<ref>[^'\"\r\n]+)(?P=q)")
 REQUIRE_RE = re.compile(r"\brequire\s*\(\s*(?P<q>['\"])(?P<ref>[^'\"\r\n]+)(?P=q)\s*\)")
 DYNAMIC_IMPORT_RE = re.compile(r"\bimport\s*\(\s*(?P<q>['\"])(?P<ref>[^'\"\r\n]+)(?P=q)\s*\)")
 NPM_INSTALL_RE = re.compile(r"(?m)^[ \t]*(?:\$\s*)?npm\s+(?:install|i)\b(?P<args>[^\r\n]*)")
+SHELL_CONTROL_OPERATOR_RE = re.compile(r"&&|\|\||;|\|")
 DEPENDENCY_OBJECT_RE = re.compile(r'"(?:dependencies|devDependencies|peerDependencies|optionalDependencies)"\s*:\s*\{')
 
 OCCURRENCE_COLUMNS = [
@@ -185,14 +186,21 @@ def extract_candidates(text: str) -> list[dict[str, Any]]:
     add_literal_matches(DYNAMIC_IMPORT_RE, "dynamic_import")
 
     for match in NPM_INSTALL_RE.finditer(text):
+        # Stop package-operand parsing at a shell control operator so a chained
+        # command (e.g. "npm install && npm run build") never contributes the
+        # operator or the next command's words as fabricated package names.
+        args = match.group("args")
+        operator_match = SHELL_CONTROL_OPERATOR_RE.search(args)
+        if operator_match is not None:
+            args = args[:operator_match.start()]
         try:
-            tokens = shlex.split(match.group("args"), comments=True)
+            tokens = shlex.split(args, comments=True)
         except ValueError:
             continue
         for token in tokens:
             if token.startswith("-"):
                 continue
-            candidates.append({"offset": match.start("args") + match.group("args").find(token),
+            candidates.append({"offset": match.start("args") + args.find(token),
                                "source_type": "npm_install", "reference": token, "version": None,
                                "source_text": line_text(text, match.start())})
 

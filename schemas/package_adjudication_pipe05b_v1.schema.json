@@ -1,0 +1,155 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/package_adjudication_pipe05b_v1.schema.json",
+  "title": "PIPE-05B secondary adjudication record for a REVIEW_REQUIRED package reference",
+  "description": "A conservative PIPE-05B adjudication that never rewrites PIPE-05. Under D037, a guarded CONFIRMED_HALLUCINATION may be routed through PIPE-07 into primary PHR/SHR numerators.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id", "normalized_package", "source_classification", "source_validation_status",
+    "source_adjudication_status", "source_truncated", "adjudication_outcome",
+    "dependency_failure", "confirmed_package_hallucination", "evidence_status",
+    "evidence_sources", "current_registry_evidence", "historical_evidence",
+    "response_context_reference", "nearest_legitimate_reference", "installation_impact",
+    "checks", "external_dependency_eligible", "self_reference_evidence",
+    "rationale", "reviewer", "reviewed_at", "adjudication_version", "provenance"
+  ],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "normalized_package": {"type": "string", "minLength": 1},
+    "source_classification": {"const": "AMBIGUOUS"},
+    "source_validation_status": {"enum": ["exists", "not_found", "unresolved"]},
+    "source_adjudication_status": {"const": "REVIEW_REQUIRED"},
+    "source_truncated": {"type": "boolean"},
+    "adjudication_outcome": {
+      "enum": [
+        "CONFIRMED_HALLUCINATION",
+        "LEGACY_OR_REMOVED",
+        "NAMESPACE_CONFUSION",
+        "PACKAGE_NAME_CONFUSION",
+        "INVALID_OR_REDUNDANT_TYPES_PACKAGE",
+        "ECOSYSTEM_CONFUSION",
+        "OTHER_DEPENDENCY_ERROR",
+        "SELF_REFERENCE_OR_LOCAL_PACKAGE",
+        "UNRESOLVED"
+      ]
+    },
+    "dependency_failure": {"type": ["boolean", "null"]},
+    "confirmed_package_hallucination": {"type": "boolean"},
+    "evidence_status": {"enum": ["resolved", "insufficient"]},
+    "evidence_sources": {"type": "array", "items": {"$ref": "#/$defs/evidenceEntry"}},
+    "current_registry_evidence": {"type": ["object", "null"]},
+    "historical_evidence": {"type": ["array", "null"], "items": {"type": "object"}},
+    "response_context_reference": {"$ref": "#/$defs/responseContextReference"},
+    "nearest_legitimate_reference": {"type": ["string", "null"], "minLength": 1},
+    "installation_impact": {
+      "enum": [
+        "would_fail_install",
+        "would_install_different_package",
+        "would_install_but_functionally_invalid",
+        "unknown",
+        "not_applicable_local_reference"
+      ]
+    },
+    "checks": {"$ref": "#/$defs/adjudicationChecks"},
+    "external_dependency_eligible": {
+      "type": ["boolean", "null"],
+      "description": "false only for SELF_REFERENCE_OR_LOCAL_PACKAGE (excluded from secondary external-dependency numerators and denominators); null for UNRESOLVED; true otherwise."
+    },
+    "self_reference_evidence": {
+      "oneOf": [{"type": "null"}, {"$ref": "#/$defs/selfReferenceEvidence"}]
+    },
+    "rationale": {"type": "string", "minLength": 1},
+    "reviewer": {"type": "string", "minLength": 1},
+    "reviewed_at": {"type": "string", "format": "date-time"},
+    "adjudication_version": {"const": "pipe-05b-adjudicator-1.1.0"},
+    "provenance": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"adjudication_outcome": {"const": "CONFIRMED_HALLUCINATION"}}},
+      "then": {"properties": {"confirmed_package_hallucination": {"const": true}}},
+      "else": {"properties": {"confirmed_package_hallucination": {"const": false}}}
+    },
+    {
+      "if": {"properties": {"adjudication_outcome": {"const": "SELF_REFERENCE_OR_LOCAL_PACKAGE"}}},
+      "then": {
+        "properties": {
+          "dependency_failure": {"const": false},
+          "confirmed_package_hallucination": {"const": false},
+          "external_dependency_eligible": {"const": false},
+          "installation_impact": {"const": "not_applicable_local_reference"},
+          "self_reference_evidence": {"$ref": "#/$defs/selfReferenceEvidence"},
+          "checks": {"properties": {"normalization": {"const": "builtin_or_local"}}}
+        }
+      },
+      "else": {
+        "properties": {
+          "self_reference_evidence": {"type": "null"},
+          "installation_impact": {"not": {"const": "not_applicable_local_reference"}}
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "selfReferenceEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "basis", "declared_name", "declaration_location", "reference_locations",
+        "reference_contexts", "symbols_defined_in_response"
+      ],
+      "properties": {
+        "basis": {"enum": ["generated_project_own_package_name", "generated_local_or_workspace_package"]},
+        "declared_name": {"type": "string", "minLength": 1},
+        "declaration_location": {"type": "string", "minLength": 1},
+        "reference_locations": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "reference_contexts": {
+          "type": "array", "minItems": 1, "uniqueItems": true,
+          "items": {"enum": ["documentation_example", "project_source", "test_or_script", "package_manifest"]}
+        },
+        "symbols_defined_in_response": {"type": "boolean"}
+      }
+    },
+    "evidenceEntry": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["source", "summary", "checked_at"],
+      "properties": {
+        "source": {"type": "string", "minLength": 1},
+        "summary": {"type": "string", "minLength": 1},
+        "checked_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "responseContextReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "response_artifact_path", "task_id", "category", "model_condition_id",
+        "collection_order", "truncated", "first_occurrence_index"
+      ],
+      "properties": {
+        "response_artifact_path": {"type": ["string", "null"]},
+        "task_id": {"type": ["string", "null"]},
+        "category": {"type": ["string", "null"]},
+        "model_condition_id": {"type": ["string", "null"]},
+        "collection_order": {"type": ["integer", "null"]},
+        "truncated": {"type": ["boolean", "null"]},
+        "first_occurrence_index": {"type": ["integer", "null"]}
+      }
+    },
+    "adjudicationChecks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["historical", "normalization", "ambiguity", "namespace", "ecosystem", "types_package"],
+      "properties": {
+        "historical": {"enum": ["no_prior_evidence", "prior_or_removed", "inconclusive"]},
+        "normalization": {"enum": ["external_npm_reference", "builtin_or_local", "inconclusive"]},
+        "ambiguity": {"enum": ["cleared", "inconclusive"]},
+        "namespace": {"enum": ["cleared", "confirmed_mismatch", "inconclusive"]},
+        "ecosystem": {"enum": ["cleared", "confirmed_other_ecosystem", "inconclusive"]},
+        "types_package": {"enum": ["cleared", "invalid_or_redundant", "inconclusive"]}
+      }
+    }
+  }
+}

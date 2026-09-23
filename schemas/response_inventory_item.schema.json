@@ -24,7 +24,10 @@
     "completion_status",
     "truncated",
     "token_count",
-    "interface_pass"
+    "interface_pass",
+    "raw_collection_status",
+    "provider_finish_reason",
+    "status_correction"
   ],
   "properties": {
     "run_id": {
@@ -93,7 +96,7 @@
     },
     "completion_status": {
       "type": ["string", "null"],
-      "description": "Model completion status (e.g., COMPLETED, TRUNCATED), or null if pending."
+      "description": "Derived model completion status (COMPLETED, TRUNCATED, or FAILED for a D035-corrected provider abnormal termination), or null if pending or failed before a response."
     },
     "truncated": {
       "type": ["boolean", "null"],
@@ -106,6 +109,18 @@
     "interface_pass": {
       "type": ["boolean", "null"],
       "description": "Interface format/compliance pass indicator, or null if not applicable."
+    },
+    "raw_collection_status": {
+      "type": ["string", "null"],
+      "description": "collection_status exactly as recorded in the immutable raw metadata.json, or null when no readable metadata exists."
+    },
+    "provider_finish_reason": {
+      "type": ["string", "null"],
+      "description": "Provider finish_reason exactly as recorded in the raw metadata.json, or null when absent."
+    },
+    "status_correction": {
+      "enum": [null, "D035"],
+      "description": "Derived status-overlay marker: \"D035\" when a raw completed/truncated observation whose provider finish_reason is neither \"stop\" nor \"length\" is inventoried as failed; null otherwise. Raw metadata is never rewritten."
     }
   }
 }

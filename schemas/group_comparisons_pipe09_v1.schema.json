@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/group_comparisons_pipe09_v1.schema.json",
+  "title": "PIPE-09 statistical group-comparison result",
+  "description": "Neutral pairwise/omnibus statistical comparisons across the same groups as the matching grouped-summary output, for the package-level and response-level binary confirmed-hallucination outcomes. Never contains a ranking, best/worst label, or verdict field.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format_version", "analysis_version", "source_version_label", "group_by", "methodology_note", "provenance", "comparisons"],
+  "properties": {
+    "format_version": {"const": "pipe-09-comparison-1.1.0"},
+    "analysis_version": {"const": "pipe-09-group-comparisons-1.1.0"},
+    "source_version_label": {"type": "string", "minLength": 1},
+    "group_by": {
+      "type": "array", "minItems": 1, "maxItems": 2,
+      "items": {"enum": ["model_condition_id", "category", "repetition"]}
+    },
+    "methodology_note": {"type": "string", "minLength": 1},
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["package_dataset_input_hash", "response_dataset_input_hash"],
+      "properties": {
+        "package_dataset_input_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "response_dataset_input_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "comparisons": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["package_level_confirmed_vs_not", "response_level_contains_confirmed_vs_not"],
+      "properties": {
+        "package_level_confirmed_vs_not": {"$ref": "#/$defs/comparisonResult"},
+        "response_level_contains_confirmed_vs_not": {"$ref": "#/$defs/comparisonResult"}
+      }
+    }
+  },
+  "$defs": {
+    "comparisonResult": {
+      "description": "Either a two-group result (top-level method/p_value/effect sizes), a not_testable result, or a multi-group result (omnibus + pairwise_comparisons).",
+      "type": "object"
+    }
+  }
+}

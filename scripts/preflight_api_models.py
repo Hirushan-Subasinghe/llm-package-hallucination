@@ -13,6 +13,7 @@ from urllib.parse import quote
 from urllib.request import Request, urlopen
 
 from collect_api_run import DEFAULT_CONFIG, load_config, utc_now, write_json
+from repository_guard import assert_live_collection_allowed
 
 
 def get_json(url: str, api_key: str) -> dict:
@@ -108,6 +109,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     try:
+        assert_live_collection_allowed()
         config = load_config(args.config)
         snapshot = inspect(config)
         write_json(args.output, snapshot, exclusive=True)

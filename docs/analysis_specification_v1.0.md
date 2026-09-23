@@ -241,6 +241,12 @@ PHR will be calculated:
 
 Additional subgroup analysis may be performed only when justified and clearly marked as secondary.
 
+> **Primary unit and self-reference handling (D033, D034).** The controlling primary PHR unit is one unique `(run_id, normalized_package)` row per response (D033). Primary PHR and SHR are not retroactively changed by PIPE-05B adjudication. Rows adjudicated `SELF_REFERENCE_OR_LOCAL_PACKAGE` (`external_dependency_eligible = false`) are excluded only from a separately labelled secondary/exploratory external-dependency sensitivity analysis; rows with `external_dependency_eligible = null` are reported separately and never silently added to that denominator. See `docs/decision_log.md` D034.
+
+> **Confirmed-hallucination numerator routing (D037).** A metric-eligible unique `(run_id, normalized_package)` row counts in the PHR numerator when exactly one authorized path establishes `CONFIRMED_HALLUCINATION`: PIPE-05 `REVIEWED` review, or a guarded PIPE-05B `CONFIRMED_HALLUCINATION` on a PIPE-05 `REVIEW_REQUIRED` row. The PIPE-05B guard meets or exceeds the PIPE-05 evidence bar. PIPE-07 resolves this once, and the PIPE-05 classification is not rewritten. A key present on both paths fails closed. All other PIPE-05B outcomes stay outside the numerator. The D033 PHR denominator is unchanged. See `docs/decision_log.md` D037.
+
+> **Secondary dependency-reliability metrics (D036; secondary/exploratory).** The Dependency Failure Rate (DFR; unit = metric-eligible unique `(run_id, normalized_package)` row) and Response Dependency Failure Rate (RDFR; unit = metric-eligible completed response) measure exact-name npm dependency-resolution failures under the defined adjudication rules. They are not hallucination rates and never replace PHR/SHR. `AUTO_VALID` rows are external non-failures; adjudicated external failures enter the numerator and denominator; self/local references are excluded; undetermined rows (PIPE-05B `UNRESOLVED`, unadjudicated `REVIEW_REQUIRED`, registry-unresolved) are excluded from point estimates and reported with lower/upper bounds; zero-package responses are RDFR negatives; truncated and failed responses are excluded. See `docs/decision_log.md` D036.
+
 ---
 
 ## 9. Sample Hallucination Rate — SHR
@@ -275,9 +281,13 @@ SHR will be calculated:
 * by AI system/model
 * by functional task category
 
+> **Confirmed-hallucination numerator routing (D037).** A response counts in the SHR numerator when it contains at least one row that is primary-confirmed under D037 through either PIPE-05 `REVIEWED` review or a guarded PIPE-05B confirmation. The SHR denominator (all metric-eligible completed, non-truncated responses, including zero-package responses; D033) is unchanged. See `docs/decision_log.md` D037.
+
 ---
 
 ## 10. Truncation
+
+> **Superseded for primary metrics.** The "may include truncated responses" wording in this section is retained as historical pre-analysis text only. The frozen, controlling rule excludes `TRUNCATED` observations from primary PHR/SHR eligibility; see `docs/decision_log.md` D021 and D033, `docs/package_hallucination_taxonomy.md` (Metric Boundaries), and `docs/final_paper_notes.md` ("Truncation precedence").
 
 Truncation and hallucination are distinct variables.
 
@@ -327,6 +337,8 @@ The following must be stored separately from raw responses:
 * derived metrics
 
 No analysis script should rewrite or correct the raw response files.
+
+> **Derived status corrections (D035).** When a documented decision changes how a raw collection status is interpreted, the correction is applied as a derived overlay in the response inventory, never by editing raw artifacts. Under D035, an observation whose provider `finish_reason` is neither `stop` nor `length` (including `error`) is inventoried as `failed`/`FAILED` with `status_correction = "D035"`, the raw status and finish reason are kept alongside, and the observation is excluded from primary PHR/SHR. See `docs/decision_log.md` D035.
 
 ---
 
@@ -437,6 +449,8 @@ Effect sizes and confidence intervals should be reported where appropriate rathe
 ---
 
 ## 17. Truncation Sensitivity Analysis
+
+> **Superseded for primary metrics.** This section originally described truncation-exclusion as an optional secondary sensitivity pass. The frozen, controlling rule instead excludes `TRUNCATED` observations from the primary PHR/SHR analysis itself; see `docs/decision_log.md` D021 and D033, `docs/package_hallucination_taxonomy.md` (Metric Boundaries), and `docs/final_paper_notes.md` ("Truncation precedence"). Any further truncated-inclusion analysis is now the secondary/exploratory pass, not the reverse.
 
 The primary PHR and SHR analyses will be repeated after excluding responses classified as truncated.
 

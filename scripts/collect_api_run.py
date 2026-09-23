@@ -23,6 +23,8 @@ from typing import Callable
 
 import requests
 
+from repository_guard import assert_live_collection_allowed
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CONFIG = ROOT / "config" / "api_model_set_1.2.0.json"
@@ -339,10 +341,18 @@ def response_token_metadata(response: dict) -> dict[str, int | None]:
 
 
 def completion_status(response: dict) -> tuple[str, str]:
+    """Map the provider finish reason to an operational status (D021, D035).
+
+    Only "stop" is a normal completion and only "length" is a truncation. Any
+    other value, including "error", is a provider-declared abnormal termination
+    and is failed even when partial assistant content was returned.
+    """
     finish_reason = response.get("choices", [{}])[0].get("finish_reason")
     if finish_reason == "length":
         return "truncated", "TRUNCATED"
-    return "completed", "COMPLETED"
+    if finish_reason == "stop":
+        return "completed", "COMPLETED"
+    return "failed", "FAILED"
 
 
 def resolved_openrouter_provider(response: dict) -> str | None:
@@ -529,6 +539,12 @@ def collect_row(
             metadata["failure_reason"] = "provider_identity_mismatch"
             write_json(run_directory / "metadata.json", metadata)
             raise ValueError("M2 returned model or underlying provider differs from frozen identity")
+        if collection_status == "failed":
+            # D035: the preserved partial content never overrides the provider's
+            # declared abnormal termination, and the observation is not retried.
+            metadata["failure_reason"] = f"provider_finish_reason_{metadata['finish_reason']}"
+            write_json(run_directory / "metadata.json", metadata)
+            raise ValueError(f"Provider declared abnormal termination: finish_reason={metadata['finish_reason']!r}")
         write_json(run_directory / "metadata.json", metadata)
         return run_directory
 
@@ -544,6 +560,7 @@ def main() -> int:
     parser.add_argument("--timeout-seconds", type=float, default=180.0)
     args = parser.parse_args()
     try:
+        assert_live_collection_allowed()
         config = load_config(args.config)
         row = select_manifest_row(load_manifest(args.manifest), args.run_id)
         directory = collect_row(config, row, raw_root=args.raw_root, timeout_seconds=args.timeout_seconds)

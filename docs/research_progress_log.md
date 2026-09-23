@@ -532,3 +532,255 @@
 - These failures are therefore treated as recurring provider/infrastructure availability failures rather than model-output, prompt-format, hallucination, or truncation events.
 - Failed M4 observations are preserved once and are not retried, regenerated, deleted, or substituted.
 - Pending M2 observations remain temporarily excluded from collection; no new M2 observation was attempted during this non-M2 batch.
+
+### 2026-09-22 — accidental collection in analysis workspace quarantined and blocked
+
+- An API collection command was accidentally run from the analysis repository instead of the official study repository.
+- The accidental analysis-repo run created:
+  - `API-v2.6-AUTH-FED-01-M1-R01` as `failed` with `transport_failure`;
+  - `API-v2.6-AUTH-FED-01-M3-R01` as a completed duplicate generation.
+- The M3 accidental run used the same request hash as the official study-repo observation but produced a different provider response ID and different response hash, confirming that it was a second live generation for the same planned observation.
+- The official dataset remains exclusively under `~/Dev/ai-hallucination-study/data/final/raw/`.
+- The accidental analysis-repo artifacts were removed from the active `data/final/raw/` location and preserved under `data/quarantine/accidental_v2.6_collection_2026-09-22/`.
+- The tracked `data/final/api_batch_state_v2.6.0.json` was restored to its pre-accident Git version.
+- Active analysis-repo `data/final/raw/` contains no `API-v2.6-*` directories.
+- Quarantined evidence is excluded from SHR, PHR, package validation, classification, risk-model inputs, and all final analysis.
+- Quarantine hashes were preserved; the `SHA256SUMS.txt` file contains a self-referential checksum entry and should not be treated as validating itself, while the individual evidence-file hashes were verified.
+- A hard sentinel-based repository guard was added so all 10 collection CLI entry points refuse to run in this analysis repository.
+- The guard aborts before network/provider calls, raw-directory creation, and collection-state mutation.
+- Guard implementation committed as `fa01ad4` (`Block live collection in analysis repository`).
+- Repository-guard tests passed 25/25 before the final init-guard extension; after extension the full suite ran 179 tests with no new failures. Two historical freeze tests remain failing because gitignored historical raw artifacts are absent from this worktree; these failures pre-existed the guard work and are unrelated.
+- Two legacy initializer tests currently pass because the new CLI guard intercepts before the logic named by those tests; this is a testing-quality caveat for later cleanup, not a collection-safety failure.
+
+### PIPE-06 — risk-scoring infrastructure implemented
+
+- Implemented deterministic risk-scoring infrastructure for the frozen `risk-model-1.0.0` protocol in `docs/risk_assessment_protocol.md`.
+- Model uses:
+  - Impact 1-5;
+  - Detectability 1-4;
+  - risk score = Impact x Detectability;
+  - LOW 1-4;
+  - MODERATE 5-8;
+  - HIGH 9-14;
+  - CRITICAL 15-20.
+- `security_sensitive_context` is recorded separately and does not change the numeric score.
+- Only eligible, resolved hallucination findings are scoreable; ineligible or evidence-unresolved findings retain null score/band, never zero.
+- Created:
+  - `scripts/score_risk_findings.py`
+  - `schemas/risk_finding_pipe06_v1.schema.json`
+  - `tests/test_score_risk_findings.py`
+- 24/24 new risk-model tests passed using synthetic fixtures only.
+- No real finding was scored.
+- No PHR, SHR, prevalence, comparison, or real risk result was calculated.
+- No collection/raw/state file was modified by this implementation.
+- The broader suite (179 tests) still contains the same two pre-existing, unrelated `test_api_freeze.py` failures noted above; do not attribute those to PIPE-06.
+
+### PIPE-07 — derived analysis-dataset builder implemented
+
+- Implemented a version-agnostic derived analysis-dataset builder (`scripts/build_analysis_dataset.py`) that joins the response inventory, PIPE-03 unique package-per-response records, PIPE-04 joined registry evidence, and PIPE-05 joined research classification into two reusable datasets: package/response-level (one row per `(run_id, normalized_package)`) and response-level (one row per planned manifest run, including pending/failed/truncated rows with zero counts).
+- The primary package-level unit is one unique normalized package per response, `(run_id, normalized_package)`, per decision D033. Occurrence-level provenance (`occurrence_count`, `source_types`) is preserved on each row but never inflates a count on its own.
+- Primary metric eligibility uses `collection_status == "completed"` (completed, non-truncated responses only), per decision D033 and the frozen truncation-exclusion rule.
+- Created: `scripts/build_analysis_dataset.py`, `schemas/package_response_analysis_pipe07_v1.schema.json`, `schemas/response_level_analysis_pipe07_v1.schema.json`, `tests/test_build_analysis_dataset.py`.
+- 21/21 new PIPE-07 tests passed using synthetic fixtures only.
+- Verified exact broader-suite result after adding PIPE-07: 200 tests run, 198 passed, 2 failed, 0 errors. The 2 failures are the same pre-existing, unrelated `test_api_freeze.py` cases (`test_freeze_record_v2_1_historical_context_and_preserved_observations`, `test_freeze_record_v2_3_hashes_and_zero_observations`), both `AssertionError` from historical v2.1/v2.3 raw artifact directories being absent (gitignored) from this worktree; neither failure is caused by or related to PIPE-06 or PIPE-07.
+- An attempted v2.2 dry validation failed safely: this analysis worktree lacks the physical v2.2 raw response files that the existing `results/*_v2.2.0.json` derived snapshots were built from, so a freshly regenerated v2.2 response inventory (360/360 pending) disagreed with those 97-row snapshots. The builder's fail-safe cross-validation caught this and refused to write output rather than generating an inconsistent dataset; no PHR/SHR/result metric was calculated.
+- Final use of this builder will be against provenance-consistent v2.6-derived inputs (a response inventory and PIPE-03/04/05 outputs all built from the same v2.6 collection snapshot) once v2.6 collection is sufficiently complete.
+
+### DESIGN/SIGNAL-01 — v2.6 prompt-to-analysis alignment audit completed
+
+- The frozen v2.6 design was audited read-only against the implemented extraction and classification pipeline.
+- All 30/30 tasks are dependency-intensive and require complete package.json output with exact dependencies and documented API usage.
+- Package selection is model-selected rather than pre-specified; no task names a specific npm package for the model to reuse.
+- No prompt-level anti-dependency or anti-hallucination wording was found that would structurally suppress package-name hallucination opportunities.
+- Current v2.6 signal snapshot at audit time:
+  - 25 completed non-truncated responses;
+  - 3 truncated responses;
+  - 6 failed;
+  - 1 requesting;
+  - 325 pending;
+  - all 28 completed/truncated responses contained at least one explicit external package reference;
+  - 576 occurrence records;
+  - 292 unique `(run_id, normalized_package)` rows;
+  - 87 distinct normalized package names.
+- Current source-type mix: package_json 339, es_import 216, require 18, dynamic_import 3, npm_install 0.
+- Extractor coverage was adequate for all package-reference forms observed in the current v2.6 sample.
+- Theoretical gaps noted: `export ... from` re-export syntax, yarn/pnpm install syntax, and `require.resolve`; none were observed in the current sample.
+- Narrative-only package claims remain intentionally out of scope under the existing taxonomy.
+- Current model/category coverage is incomplete because collection is still in progress.
+- Audit conclusion: ADEQUATE WITH DOCUMENTED LIMITATIONS.
+- A future zero confirmed package-hallucination count would remain interpretable if package-opportunity density and extraction coverage remain comparable through the completed experiment.
+- No frozen prompt, manifest, raw response, state, or analysis file was modified.
+
+### PIPE-08 — primary PHR/SHR metric calculator implemented
+
+- Implemented version-agnostic `scripts/calculate_primary_metrics.py`.
+- Created `schemas/primary_metrics_pipe08_v1.schema.json`.
+- Added `tests/test_calculate_primary_metrics.py`.
+- PHR follows D033: confirmed package-name hallucination rows / all metric-eligible unique `(run_id, normalized_package)` rows.
+- Repeated occurrences of the same package in one response cannot inflate PHR.
+- SHR follows D033: eligible responses containing >=1 confirmed package-name hallucination / all metric-eligible responses.
+- Completed zero-package responses remain in the SHR denominator.
+- Truncated responses are excluded through the PIPE-07 `metric_eligible` field, not a recomputed rule.
+- Zero denominator produces null rate, never zero.
+- Ambiguous/unresolved/non-hallucination classifications do not enter the numerator.
+- The calculator independently cross-checks the package and response datasets and fails on inconsistent provenance/counts rather than repairing them.
+- 27/27 PIPE-08 tests passed using synthetic fixtures only.
+- Full suite: 227 run, 225 passed, 2 failed — the same pre-existing, unrelated `test_api_freeze.py` failures documented above; not caused by PIPE-08.
+- No real PHR, SHR, model comparison, or v2.6 result was calculated.
+- First real run must use provenance-consistent v2.6 PIPE-07 outputs.
+
+### Secondary dependency-reliability analysis planned
+
+- Decided to retain the frozen primary package-hallucination methodology unchanged:
+  confirmed package-name hallucinations remain the basis for primary PHR/SHR.
+- A secondary dependency-reliability analysis will be added to examine
+  `REVIEW_REQUIRED` package recommendations without reclassifying them automatically
+  as hallucinations or failures.
+- Planned workflow:
+  1. calculate review-required package/response screening counts;
+  2. implement PIPE-05B manual evidence-based adjudication;
+  3. freeze a secondary dependency-error taxonomy only after reviewing real cases;
+  4. implement secondary package-level and response-level reliability metrics;
+  5. use selected adjudicated cases for qualitative analysis.
+- The secondary analysis must remain separate from the frozen primary hallucination
+  outcome and must not alter v2.6 prompts, manifest, collection state, PHR, or SHR.
+- No secondary failure metric has yet been finalized or calculated.
+
+### PIPE-05B — REVIEW_REQUIRED adjudication infrastructure implemented
+
+- Implemented `scripts/adjudicate_review_required_packages.py`, a conservative, evidence-based secondary adjudication tool for PIPE-05 rows already marked `AMBIGUOUS`/`REVIEW_REQUIRED`.
+- Taxonomy: `CONFIRMED_HALLUCINATION`, `LEGACY_OR_REMOVED`, `NAMESPACE_CONFUSION`, `PACKAGE_NAME_CONFUSION`, `INVALID_OR_REDUNDANT_TYPES_PACKAGE`, `ECOSYSTEM_CONFUSION`, `OTHER_DEPENDENCY_ERROR`, `UNRESOLVED`; `dependency_failure` is tracked independently of `confirmed_package_hallucination`.
+- Reads an existing PIPE-05 joined classification envelope read-only; writes a separate PIPE-05B adjudication output. It does not modify PIPE-05 outputs, PHR, or SHR.
+- Created `scripts/adjudicate_review_required_packages.py`, `schemas/package_adjudication_pipe05b_v1.schema.json`, and `tests/test_adjudicate_review_required_packages.py`.
+- 22/22 new PIPE-05B tests passed using synthetic fixtures only; full suite 287 run, 285 passed, with 2 pre-existing unrelated `test_api_freeze.py` failures.
+- No real `REVIEW_REQUIRED` package was adjudicated; this milestone covers infrastructure only.
+
+### 2026-09-22 — PIPE-05B.1 — self-reference/local package adjudication outcome added
+
+- Added `SELF_REFERENCE_OR_LOCAL_PACKAGE` to `scripts/adjudicate_review_required_packages.py` and `schemas/package_adjudication_pipe05b_v1.schema.json`; adjudicator/schema version is now `pipe-05b-adjudicator-1.1.0`.
+- The outcome requires response-internal evidence (`self_reference_evidence`: the generated project's own package name or a generated local/workspace package, with declaration and reference locations).
+- It always records `dependency_failure=false`, `confirmed_package_hallucination=false`, and `external_dependency_eligible=false`.
+- 29/29 PIPE-05B tests passed using synthetic fixtures only; full suite 294 run, 292 passed, with the same 2 pre-existing unrelated `test_api_freeze.py` failures.
+- No real package was adjudicated.
+- Decision D034 resolves primary-vs-secondary denominator handling: D033 primary PHR and primary SHR are unchanged; adjudicated self/local references are excluded only from a separately labelled secondary/exploratory external-dependency sensitivity analysis, and `external_dependency_eligible=null` rows are reported separately.
+
+### PIPE-09 — grouped descriptive and statistical-comparison infrastructure implemented
+
+- Implemented `scripts/analyze_group_comparisons.py`, reusing the validated PIPE-07/08 package-response and response-level analysis units.
+- Grouped descriptive summaries support `model_condition_id`, `category`, `repetition`, and `model_condition_id × category`.
+- Statistical comparison support includes Fisher's exact test for 2×2 comparisons, assumption-gated Pearson chi-square or deterministic seeded Monte Carlo handling for sparse 2×C tables, and Holm-Bonferroni-corrected pairwise Fisher comparisons.
+- Two-group comparisons report odds ratio and risk/rate difference with 95% confidence intervals.
+- Sparse, zero-event, zero-total, and single-group cases are handled with explicit boundary or `not_testable` outputs rather than fabricated significance.
+- No ranking, best/worst, or winner output is produced.
+- 26/26 PIPE-09 tests passed using synthetic fixtures only.
+- No final v2.6 inferential comparison or model ranking has been produced; final use requires a provenance-consistent final v2.6 analysis dataset.
+
+### 2026-09-22 — STATUS-AUDIT-01 and D035: provider error finish reason reclassified as failed
+
+- STATUS-AUDIT-01 found `API-v2.6-AUTH-FED-04-M4-R01` recorded as completed/`COMPLETED`/metric-eligible although the provider returned HTTP 200 with `finish_reason: "error"`. It used 7,599 of 65,536 permitted completion tokens (no output-ceiling truncation), and `response.md` ends mid-identifier. Cause: the collector's `length`-else-`completed` mapping.
+- Decision D035 (`docs/decision_log.md`): `stop` → completed; `length` → truncated; any other provider finish reason, including `error`, → failed/`FAILED`, even with partial content. Failed observations are preserved once, not regenerated, and not primary-metric eligible.
+- Correction implemented as a derived inventory overlay (`scripts/build_response_inventory.py`; new inventory fields `raw_collection_status`, `provider_finish_reason`, `status_correction = "D035"`; schema updated). Raw `metadata.json`/`response.md` were not modified, and the run was not regenerated.
+- Collector hardened in this repository (`scripts/collect_api_run.py`): abnormal finish reasons are preserved as failed with `failure_reason: provider_finish_reason_<value>`. The same patch is **not yet applied** to the official collection repository `~/Dev/ai-hallucination-study`.
+- PIPE-03/PIPE-07 handling (approach A): failed responses are not extracted; PIPE-07 keeps an ineligible response-level row and rejects stale package rows for failed runs.
+- Tests: 14 new tests (collector 3, inventory 9, PIPE-07 2); full suite 308 run, 306 passed, with the same 2 pre-existing unrelated `test_api_freeze.py` failures.
+- Read-only live scan of all 60 v2.6 run directories on 2026-09-22 UTC: `API-v2.6-AUTH-FED-04-M4-R01` is the only observation recorded completed/truncated with a finish reason other than `stop`/`length`. The other 11 non-`stop`/`length` directories carry no finish reason: 10 are already `failed` before a response was parsed, and 1 (`API-v2.6-DATA-ADV-01-M4-R01`) is `requesting`.
+- Screening recompute on the same checkpoint `/tmp/v2.6_screening_checkpoint_20260922T161227Z` (outputs in `/tmp/v2.6_screening_d035_20260922T190815Z`, not in the repository). Inventory, PIPE-03, and PIPE-07 were rerun. PIPE-04/05 joined evidence is the preserved pre-D035 screening evidence with only this run's rows removed; no registry request was made. The rebuilt PIPE-03 output equals the earlier output minus this run's 18 unique rows / 26 occurrences, and every other row is unchanged.
+
+**INTERIM DESCRIPTIVE SCREENING — NOT FINAL RESEARCH RESULT** (49 of 360 v2.6 observations at the checkpoint; no real adjudication performed)
+
+| Count | Pre-D035 | D035-corrected |
+|---|---:|---:|
+| Completed responses | 35 | 34 |
+| Truncated responses | 6 | 6 |
+| Failed responses | 8 | 9 |
+| Eligible package-response rows | 350 | 332 |
+| Eligible `REVIEW_REQUIRED` package rows | 5 | 4 |
+| Eligible responses | 35 | 34 |
+| Eligible responses with ≥1 `REVIEW_REQUIRED` package | 5 | 4 |
+
+### POST-D035-LIVE-AUDIT-01 — live collector deployment verified
+
+- The D035 collector patch is present in `~/Dev/ai-hallucination-study`: `stop` → completed/`COMPLETED`, `length` → truncated/`TRUNCATED`, and every other finish reason → failed/`FAILED`.
+- The live collector's focused test suite passed 27/27.
+- A read-only scan covered 79 current v2.6 raw metadata records: 58 completed, 9 truncated, 11 failed, and 1 requesting; 281 of 360 manifest rows had no raw metadata yet.
+- Exactly one present abnormal finish reason was found: `API-v2.6-AUTH-FED-04-M4-R01`, raw completed/`COMPLETED` with `finish_reason="error"`. D035 analytically reclassifies it as failed/`FAILED`/metric-ineligible; it was not regenerated and its stored artifacts matched their recorded hashes.
+- Among observations collected after `2026-09-22T16:10:32Z`, no additional completed observation had an abnormal present finish reason; therefore no additional D035 analytical corrections were identified at this audit snapshot.
+- The audit modified no raw observation, collection state, manifest, prompt, configuration, or pacing rule.
+
+### 2026-09-23 — PIPE-05C-PROV-01 — reproducible provenance archived for first real adjudication
+
+- Archived a permanent non-frozen derived evidence snapshot at `data/derived_checkpoints/interim_val_01b_20260922T112234Z/` for `API-v2.6-PKI-CRYPTO-02-M4-R01` / `mtls-pfx-loader`.
+- Verified the original PIPE-05 joined source SHA-256 `2f5796d4d0ea06ee868a3602fb79eda87e0c39b3ea0d6ae6f2ce10c6a28256eb` and target response SHA-256 `6d2fbae0d09dd7463cacf9c386c48b829453729bf103638d011a82450f6764be`.
+- The snapshot contains the minimum provenance required to reproduce the adjudication, including the PIPE-05 source envelope, relevant PIPE-03/04/inventory evidence, the target response, a SHA-256 manifest, and provenance documentation.
+- Reproduced the PIPE-05B adjudication from the permanent snapshot. The outcome remained `SELF_REFERENCE_OR_LOCAL_PACKAGE`, with `dependency_failure=false`, `confirmed_package_hallucination=false`, `external_dependency_eligible=false`, and `installation_impact=not_applicable_local_reference`.
+- PIPE-05B focused tests passed 29/29 and the reproduced output satisfied the PIPE-05B schema contract.
+- No raw/frozen experiment data, manifests, prompts, quarantine data, collection state, or `/tmp` source files were modified.
+- Historical checkpoint-b PHR `0/309` and SHR `0/31` predate D035 and must not be used as current or final metrics.
+
+### 2026-09-23 — PIPE-05C-FINAL-01 — remaining three interim REVIEW_REQUIRED rows adjudicated
+
+- Adjudicated, from permanent derived snapshot `data/derived_checkpoints/interim_val_01b_20260922T112234Z_pipe05c-final-01/`:
+  - `API-v2.6-DOC-BINARY-02-M4-R01` / `@xmldom/xpath` → `NAMESPACE_CONFUSION`
+  - `API-v2.6-PKI-CRYPTO-02-M1-R01` / `pkcs12` → `PACKAGE_NAME_CONFUSION`
+  - `API-v2.6-PKI-CRYPTO-03-M4-R01` / `mime-node` → `PACKAGE_NAME_CONFUSION`
+- All three have `dependency_failure=true`, `confirmed_package_hallucination=false`, `external_dependency_eligible=true`, `installation_impact=would_fail_install`, and `checks.historical=inconclusive`.
+- No evidence of historical existence was found with the sources checked; this is not treated as proof that the exact package names never existed. Classification rests on positive evidence of the legitimate package/module relationship.
+- PIPE-05 source SHA-256: `2f5796d4d0ea06ee868a3602fb79eda87e0c39b3ea0d6ae6f2ce10c6a28256eb`.
+- Output: `results/pipe05b_adjudication_interim-v2.6-checkpoint-b_pipe05c-final-01_20260923T034600Z/`; JSON SHA-256 `33e5e28c381b910e4fa6f946158d77ecac40c6502d87aafe9eeffaa01fd2749a`.
+- Reproduction from the permanent snapshot was byte-identical; PIPE-05B focused tests passed 29/29.
+- All four metric-eligible interim REVIEW_REQUIRED rows are now adjudicated: 3 eligible external dependency failures, 1 excluded self-reference, 0 unresolved, and 0 confirmed package hallucinations.
+- D033 primary PHR/SHR definitions remain unchanged.
+- No raw/frozen data, manifests, prompts, quarantine data, or collection state were modified.
+- INTERIM — NOT FINAL RESEARCH RESULT.
+
+### 2026-09-23 — D037 primary confirmed-hallucination routing defined (no metrics calculated)
+
+- Accepted decision D037 (`docs/decision_log.md`): a metric-eligible unique `(run_id, normalized_package)` row counts in the primary PHR numerator, and its response in the primary SHR numerator, when confirmed as `CONFIRMED_HALLUCINATION` through exactly one authorized path: PIPE-05 `REVIEWED`, or a guarded PIPE-05B `CONFIRMED_HALLUCINATION` on a PIPE-05 `REVIEW_REQUIRED` row. PIPE-07 is the single resolution point.
+- A key present on both paths (even if they agree), unmatched PIPE-05B records, provenance-hash disagreement, guard failures, unsupported versions, or `source_truncated` mismatches fail closed. The PIPE-05B input must be supplied explicitly or explicitly declared absent.
+- PIPE-05 `research_classification` is not rewritten. D033 PHR/SHR units and denominators, zero-package handling, metric eligibility, D021, D035, and D034 are unchanged. D036 remains PROPOSED and is not affected.
+- Supersedes prospectively, for `CONFIRMED_HALLUCINATION` only, earlier statements that PIPE-05B never contributes to PHR/SHR. Earlier entries are preserved.
+- Interim effect: none. The four real PIPE-05B adjudications include no `CONFIRMED_HALLUCINATION`, and no PIPE-05 `REVIEWED` rows exist in the archived checkpoints. Earlier interim figures are not rewritten.
+- Definition only: no code changed, no PHR/SHR calculated. No raw/frozen data, manifests, prompts, quarantine data, results, or collection state were modified.
+
+### 2026-09-23 — D036 secondary dependency-reliability metrics defined (no rates calculated)
+
+- Accepted decision D036 (`docs/decision_log.md`), secondary/exploratory: Dependency Failure Rate (DFR; unit = metric-eligible unique `(run_id, normalized_package)` row) and Response Dependency Failure Rate (RDFR; unit = metric-eligible completed response, same eligibility as D033 SHR).
+- Construct: exact-name npm dependency-resolution failure under the defined adjudication rules. It excludes wrong-but-existing packages, version-resolution errors, API errors, capability mismatches, and functional-unsuitability errors.
+- `AUTO_VALID` rows enter the DFR denominator as non-failures. Adjudicated external failures enter the numerator and denominator. Self/local references are excluded. Undetermined rows (PIPE-05B `UNRESOLVED`, unadjudicated `REVIEW_REQUIRED`, registry-unresolved, PIPE-05 reviewed `AMBIGUOUS`) are excluded from point estimates, counted by reason, and bounded.
+- Zero-package and self/local-only responses remain in the RDFR denominator as NEGATIVE. INDETERMINATE responses are excluded from the point estimate and bounded. A response with any external failure is POSITIVE.
+- FINAL labelling requires zero unadjudicated `REVIEW_REQUIRED` rows and zero registry-unresolved rows.
+- Truncated (D021) and failed (D035) responses remain excluded. D033 primary PHR/SHR and the finalized D037 confirmation routing are unchanged. D034 is clarified: `AUTO_VALID` rows are deterministic external non-failures; its treatment of adjudicated rows is unchanged.
+- Definition only: no DFR, RDFR, PHR, or SHR has been calculated, and no calculator exists. The four interim PIPE-05B adjudications are not a denominator.
+- No code, schemas, tests, results, raw/frozen data, manifests, prompts, quarantine data, or collection state were modified.
+
+### 2026-09-23 — D037 implemented and D036/PIPE-10 secondary metric infrastructure completed
+
+- Implemented finalized D037 primary-confirmation routing in PIPE-07. PIPE-07 is now the single resolution point for `primary_confirmed_hallucination`, with explicit PIPE-05B or explicit no-PIPE-05B input modes, conservative confirmation guards, per-row provenance, and fail-closed integrity checks.
+- PIPE-08 and PIPE-09 now consume the D037-resolved confirmation fields rather than relying only on raw PIPE-05 classification.
+- D033 primary PHR/SHR units, denominators, metric eligibility, zero-package response handling, D021 truncation handling, and D035 failed-response handling remain unchanged.
+- Added PIPE-10 (`scripts/calculate_dependency_reliability_metrics.py`) implementing finalized D036 secondary/exploratory Dependency Failure Rate (DFR) and Response Dependency Failure Rate (RDFR), including external/non-external/undetermined resolution, uncertainty bounds, descriptive Wilson intervals, completeness gating, required counts, and denominator invariants.
+- Version updates: PIPE-07 `1.1.0`, PIPE-08 `1.1.0`, PIPE-09 `1.1.0`, and new PIPE-10 `1.0.0`.
+- D037-focused PIPE-07/08/09 tests passed 78/78. PIPE-10 focused tests passed 6/6.
+- Full suite: 316 tests run, 314 passed; the 2 failures are the previously known historical freeze tests caused by missing v2.1/v2.3 raw fixtures in this worktree.
+- No real v2.6 PHR, SHR, DFR, or RDFR was calculated. No raw/frozen data, manifests, prompts, collection state, quarantine data, or existing result outputs were modified.
+- Remaining validation item before real metrics: expand negative/fail-closed test coverage for malformed PIPE-05B provenance and guard combinations.
+
+### 2026-09-23 — FINAL-ANALYSIS-VALIDATION-01 completed; analysis pipeline passes with documented historical-fixture limitation
+
+- Completed FINAL-ANALYSIS-VALIDATION-01 using synthetic-only fixtures.
+- Expanded D037 malformed PIPE-05B fail-closed coverage and D036/PIPE-10 state, boundary, denominator, uncertainty-bound, determinism, and regression coverage.
+- Synthetic cross-pipeline reconciliation passed:
+  - PIPE-07 resolved confirmation counts reconcile with PIPE-08 primary numerators.
+  - PIPE-09 grouped totals reconcile with the primary analysis outputs.
+  - PIPE-10 package-state totals equal the D033 package denominator.
+  - PIPE-10 eligible-response totals equal the D033 SHR denominator.
+  - D037 confirmation-path counts sum to the primary numerator.
+  - historical PIPE-07/08/09 output overwrite protection was verified.
+- Focused adjudication + PIPE-07/08/09/10 suites: 126 passed.
+- PIPE-07/PIPE-10-focused subset: 44 passed.
+- Full suite: 327 passed with 2 known historical freeze-test failures caused by absent historical raw fixtures:
+  - v2.1 expected 4 `API-v2.1-*` raw directories, found 0.
+  - v2.3 expected 8 `API-v2.3-*` raw directories, found 0.
+- Readiness verdict: PASS WITH DOCUMENTED LIMITATIONS. No new D036/D037 implementation defect was identified.
+- No real v2.6 PHR, SHR, DFR, RDFR, interim adjudication metric, or final research result was calculated.
+- No raw data, frozen inputs, manifests, prompts, model configuration, pacing, collection state, quarantine data, or existing result outputs were modified.

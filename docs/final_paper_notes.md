@@ -400,3 +400,181 @@ No final experimental results belong here yet. Add results only from verified, v
 - Multiple v2.6 M4 observations failed because the upstream Nvidia provider reported temporary overload (`503 provider_overloaded`) through OpenRouter.
 - These events should be classified as provider/infrastructure failures and excluded from hallucination and truncation interpretations.
 - The predefined preservation policy was maintained: each failed observation was retained once without regeneration or substitution.
+
+### 2026-09-22 — accidental duplicate generation excluded from study data
+
+- **Affected sections:** Methodology / Data Collection Integrity, Reproducibility, Limitations.
+- One accidental duplicate live generation occurred outside the official collection workspace when the v2.6 collector was mistakenly run from the analysis repository.
+- The accidental completed run used the same request bytes as the official observation but produced a different provider response ID and response content, confirming it was a second generation rather than a copy of the official observation.
+- The accidental run and associated failed attempt were quarantined and excluded from all study datasets and downstream metrics.
+- The official v2.6 dataset remains the copy collected under `~/Dev/ai-hallucination-study/data/final/raw/`.
+- The analysis repository now contains a hard guard that blocks all collection CLI entry points before network access or data/state mutation.
+- The guard is recorded in commit `fa01ad4`.
+- This incident did not change the frozen v2.6 experimental inputs or the official observation set.
+- Avoid wording that implies the accidental duplicate contributed to sample size, SHR, PHR, validation counts, or risk-model results.
+
+### 2026-09-22 — PIPE-06 risk-scoring infrastructure implemented (no results yet)
+
+**Affected sections:** Chapter 3 / Risk Assessment; Methodology / Reproducibility.
+
+- The implemented risk model is `risk-model-1.0.0` from `docs/risk_assessment_protocol.md`: Impact (1-5) x Detectability (1-4), with bands LOW 1-4 / MODERATE 5-8 / HIGH 9-14 / CRITICAL 15-20.
+- `security_sensitive_context` is recorded as a separate boolean flag with its own rationale and does not change the numeric score.
+- The model is a deterministic, rule-based ordinal prioritization aid; it is not a probability or predictive model.
+- Only a finding whose research classification is an eligible hallucination category and whose evidence is resolved can be scored. Every other finding remains unscored, encoded as `null` risk_score/risk_band, never zero.
+- The implementation (`scripts/score_risk_findings.py`, `schemas/risk_finding_pipe06_v1.schema.json`) is currently validated only against synthetic fixtures (`tests/test_score_risk_findings.py`, 24/24 passing).
+- No real finding has been scored and no real risk result exists yet. Do not report any risk score, band, or distribution until real eligible confirmed findings exist and are scored under this implementation.
+
+### 2026-09-22 — PIPE-07 derived analysis-dataset infrastructure implemented; primary PHR/SHR unit formalized (no results yet)
+
+**Affected sections:** Chapter 3 / Analysis Pipeline; Results-method definitions.
+
+- A version-agnostic builder (`scripts/build_analysis_dataset.py`) now joins the response inventory with PIPE-03/04/05 derived evidence into two reusable datasets: package/response-level (one row per `(run_id, normalized_package)`) and response-level (one row per planned run, including pending/failed/truncated).
+- **Primary package-level unit (decision D033):** one unique normalized package per response, `(run_id, normalized_package)`. A package mentioned, imported, or installed multiple times in one response counts once in the primary PHR numerator/denominator. This resolves the "Open metric-wording check" flagged above and corrects `docs/package_hallucination_taxonomy.md`'s earlier "occurrences" PHR wording; occurrence-level provenance remains fully preserved separately.
+- **Primary response-level (SHR) unit (decision D033, confirming the existing taxonomy rule):** one completed, non-truncated evaluable response. Numerator: eligible responses with at least one confirmed package-name hallucination. Denominator: all eligible completed, non-truncated responses, including zero-package responses.
+- **Truncation eligibility:** `TRUNCATED` observations are preserved in derived datasets but excluded from primary PHR/SHR, reaffirming that `docs/analysis_specification_v1.0.md` Sections 10 and 17's earlier "may include truncated responses" wording is superseded for primary metrics (both sections now carry an inline marker to this effect).
+- The builder performs fail-safe cross-input validation (duplicate keys, metadata conflicts between the response inventory and PIPE-03/04/05 outputs, unsupported classification labels) and refuses to write output rather than silently produce an inconsistent dataset.
+- This implementation is validated only against synthetic fixtures (21/21 tests passing; verified full-suite result after this change: 200 run, 198 passed, 2 failed — the same 2 pre-existing, unrelated `test_api_freeze.py` failures caused by historical raw artifacts absent from this worktree). No PHR, SHR, prevalence, or model comparison exists yet, and none was computed here.
+- An attempted v2.2 dry-run failed cleanly and safely: this worktree no longer holds the physical v2.2 raw response files that the existing `results/*_v2.2.0.json` snapshots were built from, so a freshly built v2.2 response inventory (360/360 pending) disagreed with those snapshots. This is a worktree/provenance state issue, not a study finding, and no dataset was generated from it.
+- Final reported analyses must use provenance-consistent v2.6-derived inputs — a response inventory and PIPE-03/04/05/07 outputs all built from the same v2.6 collection snapshot — not the historical, interim v2.2 snapshots.
+
+### 2026-09-22 — DESIGN/SIGNAL-01: v2.6 prompt-to-analysis alignment audit (no final results yet)
+
+**Affected sections:** Chapter 3 / Experimental Design; Chapter 3 / Measurement Validity; Chapter 5 / Threats to Validity / Interpretation.
+
+- v2.6 prompts provide substantial external-package choice opportunity: all 30 tasks require a complete package.json with exact dependencies and documented API usage, across dependency-intensive specialized domains with no Node built-in equivalent.
+- Package names are not pre-specified in any task; selection is left entirely to the model.
+- Early v2.6 responses show dense actual package usage: all 28 completed/truncated responses audited so far contained at least one explicit external package reference (576 occurrences; 292 unique `(run_id, normalized_package)` rows; 87 distinct normalized package names).
+- Therefore, a low or zero confirmed package-name hallucination result in the final v2.6 analysis should not automatically be interpreted as a failed measurement design; the opportunity and extraction-coverage evidence available at audit time supports treating such a result as potentially a legitimate null finding.
+- Interpretation must still acknowledge documented limitations: narrative-only false package claims (never appearing in an actual import/require/install/package.json statement) are out of scope under the existing taxonomy; theoretical extractor gaps (`export ... from` re-exports, yarn/pnpm install syntax, `require.resolve`) exist but were not observed in the audited sample; and category/model coverage was incomplete at audit time (3 of 6 categories and 3 of 4 model conditions had zero eligible observations so far, reflecting collection progress rather than a design defect).
+- Do not treat the audited 28-response snapshot as final results. This audit is a design/measurement-validity check, not a hallucination-prevalence finding.
+
+### 2026-09-22 — PIPE-08 primary metric implementation completed (no results yet)
+
+**Affected sections:** Chapter 3 / Analysis Pipeline; Chapter 3 / Metric Definitions; Results methodology.
+
+- PHR unit is unique `(run_id, normalized_package)`.
+- SHR unit is one completed, non-truncated response.
+- Zero-package eligible responses remain in the SHR denominator.
+- Occurrence repetition cannot inflate primary PHR.
+- Zero denominator returns undefined/null rather than 0%.
+- PIPE-08 performs cross-input consistency validation before calculation.
+- Implementation was validated with synthetic fixtures only.
+- No real PHR/SHR exists yet.
+- Final execution must use a provenance-consistent v2.6 analysis snapshot.
+
+### 2026-09-22 — Planned secondary dependency-reliability analysis
+
+**Affected sections:** Research Questions/Objectives (pending evidence), Chapter 3 /
+Analysis Methodology, Results structure, Discussion.
+
+- The primary research outcome remains strict confirmed package-name hallucination
+  measured through PHR/SHR.
+- A secondary exploratory analysis is planned for package recommendations that require
+  manual review after registry validation/classification.
+- `REVIEW_REQUIRED` must not be treated as equivalent to hallucination or dependency
+  failure.
+- Real cases will first undergo evidence-based adjudication; only then may additional
+  failure subtypes and secondary reliability metrics be frozen.
+- Possible secondary outputs include package-level review/failure rates,
+  response-level review/failure rates, error-type distributions, and qualitative case
+  studies.
+- No secondary reliability result should be written as a study finding until the
+  adjudication taxonomy and metrics are formally defined and applied to real v2.6 data.
+
+### 2026-09-22 — PIPE-05B secondary dependency-reliability adjudication infrastructure implemented
+
+**Affected sections:** Chapter 3 / Secondary Analysis Method; Results methodology; Discussion / Dependency Reliability.
+
+- To characterize `AMBIGUOUS` / `REVIEW_REQUIRED` package references without weakening the primary conservative hallucination definition, a separate manual adjudication layer was implemented.
+- PIPE-05B distinguishes confirmed package-name hallucination from other evidence-backed dependency-reliability outcomes: legacy/removed package, namespace confusion, package-name confusion, invalid/redundant types package, ecosystem confusion, other dependency error, and unresolved cases.
+- `dependency_failure` is tracked independently from `confirmed_package_hallucination`.
+- PIPE-05B is additive and does not feed back into the frozen primary PHR/SHR definitions.
+- The implementation was validated with synthetic fixtures only; no real review-required package had been adjudicated at this milestone.
+
+### 2026-09-22 — Self-referential package names and external-dependency sensitivity eligibility (D034; no results yet)
+
+**Affected sections:** Chapter 3 / Metric Definitions; Chapter 3 / Secondary Analysis Method; Results methodology; Threats to Validity.
+
+- Self-referential generated-project names (the generated project's own package name, or a generated local/workspace package) are distinct from external npm dependencies. PIPE-05B.1 records them as `SELF_REFERENCE_OR_LOCAL_PACKAGE` only on response-internal evidence.
+- A registry 404 for such a name is not evidence of dependency failure or package-name hallucination.
+- Primary PHR remains frozen under D033 (unique `(run_id, normalized_package)` rows); it is not retroactively changed by adjudication, because doing so after self-reference cases were observed would risk outcome-dependent methodology. Primary SHR is also unchanged.
+- Secondary external-dependency sensitivity metrics, labelled secondary/exploratory, exclude adjudicated local/self references (`external_dependency_eligible=false`) from both numerator and denominator.
+- Unresolved external/local status (`external_dependency_eligible=null`) is reported separately and does not silently enter any denominator.
+- No real result is claimed at this stage: no real package has been adjudicated and no primary or secondary rate has been calculated.
+
+### 2026-09-22 — provider error finish reasons classified as failed (D035)
+
+- **Affected sections:** Data Collection (outcome classification), Dataset Completion, Limitations.
+- One v2.6 M4 observation received HTTP 200 with partial assistant content but a provider-declared `finish_reason: "error"`, far below its output ceiling. The collector originally recorded it as completed.
+- Under D035, only `stop` is a completed generation and only `length` is a truncation. Any other provider finish reason, including `error`, is a failed observation even when partial text was returned.
+- Report it as a provider/infrastructure failure, not as a truncation or a hallucination result. It is excluded from primary SHR/PHR, preserved once, and was not regenerated.
+- Methods text should state that the correction was applied as a derived, documented status overlay without editing raw data, and that the rule depends only on the provider's termination status, not on response content.
+
+### 2026-09-22 — PIPE-09 grouped comparison infrastructure implemented (no final inference yet)
+
+**Affected sections:** Chapter 3 / Statistical Methods; Results methodology.
+
+- Grouped descriptive analysis is implemented for model condition, task category, repetition, and model-condition × category views.
+- Statistical infrastructure supports Fisher's exact testing for 2×2 comparisons, assumption-gated chi-square or deterministic Monte Carlo handling for sparse multi-group tables, Holm-Bonferroni correction for pairwise comparisons, and odds-ratio/risk-difference effect sizes with 95% confidence intervals.
+- Sparse, zero-event, and insufficient-group situations are handled explicitly rather than forcing a significance result.
+- No ranking or best/worst model label is produced.
+- PIPE-09 has been validated with synthetic fixtures only; no final v2.6 inferential result exists yet.
+
+### 2026-09-23 — First real PIPE-05B adjudication reproducibly archived
+
+**Affected sections:** Chapter 3 / Dependency Adjudication; Results / Secondary Dependency Reliability; Threats to Validity.
+
+- A real interim v2.6 `REVIEW_REQUIRED` case, `mtls-pfx-loader`, was adjudicated as `SELF_REFERENCE_OR_LOCAL_PACKAGE`.
+- The generated response declared `mtls-pfx-loader` as its own project name and used that name in documentation examples referring to symbols implemented by the generated project itself.
+- Therefore the npm registry 404 did not indicate an external dependency failure or confirmed package hallucination.
+- The adjudication was reproduced from a permanent derived evidence snapshot with verified source and response hashes.
+- This observation supports the methodological requirement that registry non-existence alone is insufficient to establish package hallucination.
+- The row remains part of the frozen D033 primary metric definition but is excluded from the D034 secondary external-dependency sensitivity denominator.
+- This is an interim adjudication and does not constitute a final research result or final PHR/SHR value.
+
+### 2026-09-23 — Remaining interim PIPE-05B cases: confusion rather than confirmed package hallucination
+
+**Affected sections:** Results / Secondary Dependency Reliability; Discussion; Threats to Validity.
+
+- Three interim v2.6 package references returning npm 404 were traceable to legitimate package/module concepts:
+  - `@xmldom/xpath` → namespace confusion involving the real `xpath` package and `@xmldom` scope.
+  - `pkcs12` → package-name confusion; the generated implementation actually uses `node-forge` / `forge.pkcs12`.
+  - `mime-node` → package-name confusion involving Nodemailer's `lib/mime-node` / `MimeNode` implementation.
+- All three are adjudicated as dependency failures because the generated dependency declaration would fail installation, but none is classified as a confirmed package-name hallucination.
+- No evidence of historical existence was found with the sources checked; the paper must not state that these packages definitively "never existed".
+- Registry absence alone did not determine the classification. Positive evidence identifying the intended legitimate package/module was used.
+- Together with the separately adjudicated `mtls-pfx-loader` self-reference, all four metric-eligible interim REVIEW_REQUIRED rows have now been resolved.
+- These remain interim checkpoint observations and must not be reported as final rates or final v2.6 findings.
+- An additional `node-forge` API-use anomaly (`forge.pkcs12.load`) was observed during review. It is outside the current dependency/package-reference adjudication scope and should not be promoted into a new measured category without a separately defined and validated method.
+
+### 2026-09-23 — Confirmed hallucinations counted regardless of adjudication path (D037; no results yet)
+
+**Affected sections:** Chapter 3 / Classification and Adjudication; Chapter 3 / Metric Definitions; Threats to Validity.
+
+- Registry-404 package names can be confirmed as package-name hallucinations through either the original PIPE-05 review or the later, stricter PIPE-05B adjudication. Methods text should state that a confirmation from either path counts once in primary PHR and SHR, with the confirming path recorded for every counted row.
+- PIPE-05B confirmation requires every PIPE-05 conservative check plus namespace, ecosystem, and types-package exclusion, so no weaker evidence enters the primary metrics.
+- Confusion outcomes (namespace, package-name, ecosystem, types-package), legacy/removed, other dependency errors, self/local references, and unresolved cases never enter the primary numerators.
+- Units, denominators, and eligibility are unchanged from D033. This is a routing correction adopted before any PIPE-05B confirmation existed, and it changed no interim figure.
+- Report how many eligible review-required rows were left unadjudicated or unresolved, because they stay in the PHR denominator without being able to enter its numerator.
+- No final PHR/SHR exists at this stage.
+
+### 2026-09-23 — Secondary dependency-reliability metrics defined (D036; no results yet)
+
+**Affected sections:** Chapter 3 / Secondary Analysis Method; Results / Secondary Dependency Reliability; Threats to Validity.
+
+- DFR and RDFR are secondary/exploratory and must be labelled as such. They are not hallucination rates and never replace PHR/SHR.
+- Methods text: "DFR measures exact-name npm dependency-resolution failures under the defined adjudication rules. It does not capture all forms of dependency unreliability, including wrong-but-existing packages, version-resolution errors, API errors, capability mismatches, or functional-unsuitability errors." Do not describe DFR as a lower bound on all dependency unreliability.
+- VALID packages count as non-failures. Self/local references are excluded. Unresolved or unadjudicated rows are excluded from point estimates but reported with lower/upper bounds and counts by reason. Zero-package responses remain RDFR negatives.
+- Report the DFR numerator by adjudication outcome, so that confusion cases (namespace, package-name) are never presented as confirmed hallucinations. Confirmed hallucinations inside the failure breakdown follow D037 routing.
+- Threats to validity: semantic review is asymmetric (registry-404 names receive deeper adjudication than registry-valid names); wrong-but-existing packages, version failures, and API/capability errors are outside DFR; registry state is time-sensitive; adjudication relies on researcher review; grouped estimates may be sparse and clustered; the metrics were defined after four interim adjudications were seen, but before any rate was computed and before v2.6 collection completed.
+- No DFR/RDFR result exists at this stage.
+
+### 2026-09-23 — D037 routing and D036 secondary metric infrastructure implemented
+
+**Affected sections:** Chapter 3 / Classification and Adjudication; Metric Definitions; Secondary Analysis Method; Threats to Validity.
+
+- D037 is implemented at PIPE-07 as the single primary-confirmation resolution point. Guarded confirmations from either the PIPE-05 reviewed path or PIPE-05B can enter primary PHR/SHR exactly once, while D033 units and denominators remain unchanged.
+- PIPE-08 and PIPE-09 consume the resolved confirmation fields produced by PIPE-07.
+- D036 is implemented separately as PIPE-10 for secondary/exploratory DFR and RDFR. These metrics measure exact-name npm dependency-resolution failures under the defined adjudication rules and must not be described as hallucination rates.
+- PIPE-10 explicitly represents external failures, external non-failures, self/local exclusions, and undetermined cases, and reports uncertainty bounds and completeness status.
+- Synthetic validation passed for the new routing and secondary-metric infrastructure. No real v2.6 PHR, SHR, DFR, or RDFR result had been calculated at this milestone.

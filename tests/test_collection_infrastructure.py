@@ -102,7 +102,14 @@ class CollectionInfrastructureTests(unittest.TestCase):
         before_hash = hashlib.sha256(manifest_path.read_bytes()).hexdigest()
         with tempfile.TemporaryDirectory() as temporary:
             directory = Path(temporary) / run_id
-            with patch.object(sys, "argv", ["init_collection_run.py", run_id]), patch.object(init_collection_run, "run_directory", return_value=directory):
+            # This test exercises the init/finalize/verify round trip entirely
+            # against a directory outside the repository (see run_directory
+            # patched below); it is not a real in-repository collection run,
+            # so the repository-safety guard (scripts/repository_guard.py,
+            # tests/test_repository_guard.py) is bypassed here deliberately.
+            with patch.object(sys, "argv", ["init_collection_run.py", run_id]), \
+                    patch.object(init_collection_run, "assert_live_collection_allowed"), \
+                    patch.object(init_collection_run, "run_directory", return_value=directory):
                 self.assertEqual(init_collection_run.main(), 0)
             (directory / "response.md").write_text("Temporary synthetic capture.\n", encoding="utf-8")
             with patch.object(sys, "argv", ["finalize_collection_run.py", run_id]), patch.object(finalize_collection_run, "run_directory", return_value=directory):

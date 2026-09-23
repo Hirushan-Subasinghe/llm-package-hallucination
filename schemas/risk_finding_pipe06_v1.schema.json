@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/risk_finding_pipe06_v1.schema.json",
+  "title": "PIPE-06 risk-scored research finding record",
+  "description": "One record per assessed research finding under the frozen risk-model-1.0.0 protocol (docs/risk_assessment_protocol.md). Eligibility is derived from research_classification and evidence_status; ineligible or evidence-unresolved findings are never scored and must never encode risk_score as 0.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "finding_id",
+    "run_ids",
+    "normalized_package",
+    "affected_version_or_range",
+    "research_classification",
+    "evidence_status",
+    "source_evidence",
+    "expected_consequence",
+    "eligibility",
+    "eligibility_basis",
+    "impact_score",
+    "impact_rationale",
+    "detectability_score",
+    "detectability_rationale",
+    "risk_score",
+    "risk_band",
+    "security_sensitive_context",
+    "security_sensitive_rationale",
+    "risk_model_version",
+    "assessor_id",
+    "assessed_at",
+    "provenance"
+  ],
+  "properties": {
+    "finding_id": {"type": "string", "minLength": 1},
+    "run_ids": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "minItems": 1,
+      "uniqueItems": true
+    },
+    "normalized_package": {"type": "string", "minLength": 1},
+    "affected_version_or_range": {"type": ["string", "null"]},
+    "research_classification": {
+      "enum": [
+        "CONFIRMED_HALLUCINATION",
+        "PACKAGE_VERSION_HALLUCINATION",
+        "PACKAGE_API_HALLUCINATION",
+        "PACKAGE_CAPABILITY_HALLUCINATION",
+        "VALID",
+        "LEGACY_OR_REMOVED",
+        "AMBIGUOUS",
+        "BUILTIN_OR_LOCAL",
+        "UNRESOLVED",
+        "OTHER_IMPLEMENTATION_ERROR"
+      ]
+    },
+    "evidence_status": {"enum": ["resolved", "unresolved"]},
+    "source_evidence": {"type": ["string", "null"]},
+    "expected_consequence": {"type": ["string", "null"]},
+    "eligibility": {"type": "boolean"},
+    "eligibility_basis": {"type": "string", "minLength": 1},
+    "impact_score": {"type": ["integer", "null"], "minimum": 1, "maximum": 5},
+    "impact_rationale": {"type": ["string", "null"]},
+    "detectability_score": {"type": ["integer", "null"], "minimum": 1, "maximum": 4},
+    "detectability_rationale": {"type": ["string", "null"]},
+    "risk_score": {"type": ["integer", "null"], "minimum": 1, "maximum": 20},
+    "risk_band": {"enum": ["LOW", "MODERATE", "HIGH", "CRITICAL", null]},
+    "security_sensitive_context": {"type": "boolean"},
+    "security_sensitive_rationale": {"type": "string", "minLength": 1},
+    "risk_model_version": {"const": "risk-model-1.0.0"},
+    "assessor_id": {"type": "string", "minLength": 1},
+    "assessed_at": {"type": "string", "format": "date-time"},
+    "provenance": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "minItems": 1
+    }
+  },
+  "$comment": "Eligibility per docs/risk_assessment_protocol.md: eligible research_classification values are CONFIRMED_HALLUCINATION (== taxonomy PACKAGE_NAME_HALLUCINATION), PACKAGE_VERSION_HALLUCINATION, PACKAGE_API_HALLUCINATION, PACKAGE_CAPABILITY_HALLUCINATION, and only when evidence_status == 'resolved'. All other classifications, and any eligible-category finding with evidence_status == 'unresolved', must have eligibility=false, risk_score=null, risk_band=null, impact_score=null, detectability_score=null. Risk band boundaries: 1-4 LOW, 5-8 MODERATE, 9-14 HIGH, 15-20 CRITICAL."
+}

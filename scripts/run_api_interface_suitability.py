@@ -26,6 +26,7 @@ from collect_api_run import (
     write_exclusive,
     write_json,
 )
+from repository_guard import assert_live_collection_allowed
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -306,6 +307,7 @@ def run_one(config: dict, model: dict, prompt: bytes) -> dict:
 
 def main() -> int:
     try:
+        assert_live_collection_allowed()
         _, _, prompt = load_and_validate_inputs()
         config = load_config(DEFAULT_CONFIG)
         expected_models = [

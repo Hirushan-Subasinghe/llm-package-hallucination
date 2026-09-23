@@ -23,6 +23,7 @@ from collection_common import (
 )
 from finalize_collection_run import finalize_run
 from init_collection_run import initialize_run
+from repository_guard import assert_live_collection_allowed
 
 
 EXPECTED_CODEX_VERSION = "codex-cli 0.154.0"
@@ -345,6 +346,7 @@ def main() -> int:
     parser.add_argument("--timeout-seconds", type=int)
     args = parser.parse_args()
     try:
+        assert_live_collection_allowed()
         codex_home = validate_codex_home(args.codex_home)
         rows, manifest_path = select_rows(args.phase, args.run_id, args.limit)
         preflight_codex(args.codex_binary, codex_home)

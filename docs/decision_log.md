@@ -552,11 +552,207 @@ Each decision record contains the following standardized fields:
 
 ---
 
-### D032 — Finalize Stranded v2.6 Active Request as a Preserved Failure
+### D032 — Confirm risk-model-1.0.0 as Controlling Risk Methodology and Supersede D007/D012
 
 - **decision_id:** D032
 - **date:** 2026-09-22
+- **status:** FINALIZED
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **superseded_design:** D007 and D012 (2026-09-11) specify an earlier lightweight risk model with four 0-3 dimensions (Namespace Claimability, Within-Tool Persistence, Functional Criticality, Cross-Tool Consistency), totaling 0-12 across bands Low[0-3]/Moderate[4-6]/High[7-9]/Critical[10-12].
+- **controlling_design:** The frozen, currently implemented risk methodology is `risk-model-1.0.0` in `docs/risk_assessment_protocol.md`: Impact (1-5) x Detectability (1-4), risk score = Impact x Detectability, bands LOW 1-4 / MODERATE 5-8 / HIGH 9-14 / CRITICAL 15-20, with a separate non-scored `security_sensitive_context` flag. This design was already treated as current and frozen no later than the 2026-09-17 final-paper synchronization audit (`docs/research_progress_log.md`) and D015/D017 (`docs/decision_log.md`), which reference `risk-model-1.0.0` as preserved methodology, but no prior decision entry explicitly recorded the D007/D012 supersession.
+- **rationale:** D007/D012's four-dimension 0-12 model and the current Impact x Detectability model are mutually incompatible scoring rubrics; leaving both undifferentiated in the decision log risks the final dissertation citing the wrong, superseded model as performed methodology.
+- **methodological_justification:** Explicitly and prospectively documenting which rubric controls avoids post-hoc ambiguity about which risk model produced any eventual score, and keeps the decision log traceable to the actually implemented pipeline (PIPE-06, `scripts/score_risk_findings.py`, `schemas/risk_finding_pipe06_v1.schema.json`).
+- **impact_on_data_collection:** None; this decision does not change any collection artifact, task set, model condition, or manifest.
+- **impact_on_analysis:** Final analysis and reporting must use only the frozen Impact x Detectability `risk-model-1.0.0` model. The older D007/D012 four-dimension model must not be reported as performed methodology, must not be applied to any finding, and must not be blended with `risk-model-1.0.0` scores.
+- **historical_preservation:** D007 and D012 remain unmodified in this log as historical decisions describing an earlier design stage; they are not rewritten or deleted.
+- **affected_research_questions:** RQ4 (or the current equivalent practical-risk question per the controlling methodology update).
+- **scope_effect:** Clarifies which risk model is controlling; does not introduce a new risk factor, threshold, or scoring dimension beyond what `docs/risk_assessment_protocol.md` already specifies.
+
+---
+
+### D033 — Formalize Primary PHR Unit as Unique Normalized Package per Response and Confirm SHR Unit
+
+- **decision_id:** D033
+- **date:** 2026-09-22
+- **status:** FINALIZED
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **conflict_resolved:** `docs/package_hallucination_taxonomy.md`'s PHR formula (Metric Boundaries) described both the numerator and denominator as "occurrences," while `docs/final_paper_notes.md`'s Analysis definitions section and the implemented PIPE-07 builder (`schemas/package_response_analysis_pipe07_v1.schema.json`, `scripts/build_analysis_dataset.py`) already use one unique normalized package per response, `(run_id, normalized_package)`, as the primary counting unit. `final_paper_notes.md` itself flagged this as an "Open metric-wording check before final analysis."
+- **controlling_rule_phr_unit:** The primary PHR unit is one unique normalized package per response: `(run_id, normalized_package)`. Repeated mentions, imports, install lines, or other occurrences of the same normalized package within one response count once in the primary PHR denominator. If that unique package is classified `CONFIRMED_HALLUCINATION`, it contributes once to the primary PHR numerator for that response, regardless of how many times it was mentioned.
+- **occurrence_provenance:** Occurrence-level extraction and provenance (PIPE-03 occurrence records, `occurrence_count`, `source_types`, `first_occurrence_index`) remain preserved in full. They are retained for extraction auditing, qualitative analysis, and any later, separately defined sensitivity analysis. Occurrence counts must never silently inflate the primary PHR denominator or numerator.
+- **controlling_rule_shr_unit:** The primary SHR unit is one completed, non-truncated evaluable response. Numerator: eligible responses containing at least one `CONFIRMED_HALLUCINATION` (confirmed package-name hallucination). Denominator: all eligible completed, non-truncated responses, including responses with zero external package references (such responses contribute zero to the PHR numerator/denominator but remain in the SHR denominator). This matches the existing, uncontradicted `docs/package_hallucination_taxonomy.md` SHR formula and its explicit statement that a completed, non-truncated generation with no external package references remains in the SHR denominator; no repository evidence contradicts this rule, so it is confirmed here rather than changed.
+- **truncation_rule_reaffirmed:** `TRUNCATED` observations are preserved in all derived datasets but excluded from primary PHR and SHR eligibility. The older `docs/analysis_specification_v1.0.md` Sections 10 and 17 wording, which allowed truncated observations directly into the principal analysis, remains superseded for the primary metrics by the frozen truncation-exclusion rule already established in `docs/experiment_freeze_v2.2.0.md`, `config/experiment_freeze_v2.2.0.json`, decision D021, and `docs/package_hallucination_taxonomy.md`'s Metric Boundaries section.
+- **documentation_effect:** `docs/package_hallucination_taxonomy.md`'s PHR formula wording is corrected in place to state the unique-per-response unit, with an explicit note that this supersedes the prior "occurrences" phrasing under this decision. `docs/analysis_specification_v1.0.md` Sections 10 and 17 receive an inline superseded-wording marker pointing to this decision and to the existing `docs/final_paper_notes.md` "Truncation precedence" note; their surrounding historical text is not rewritten. `docs/current_research_status.md` is updated to state that PIPE-07 dataset-construction infrastructure is ready, that v2.2 derived snapshots remain historical/interim only, and that no PHR/SHR calculator exists yet.
+- **rationale:** A dissertation-facing PHR/SHR calculator must not be built against an unresolved unit-of-analysis conflict. Formalizing the unit now, before any calculator exists, prevents a later silent or post-hoc choice between two incompatible countable quantities.
+- **methodological_justification:** Unique-per-response counting avoids inflating PHR merely because a hallucinated package name is imported multiple times or repeated across an install line and an import statement in the same response; it keeps the primary denominator interpretable as "how many distinct nonexistent-package claims were evaluable," while full occurrence provenance remains available for secondary/qualitative reporting.
+- **impact_on_data_collection:** None; this decision does not change any collection artifact, task set, model condition, or manifest.
+- **impact_on_analysis:** Any future PHR/SHR calculator must implement the unique-per-response primary unit exactly as specified here and must not aggregate PHR from raw occurrence counts. Occurrence-level secondary/sensitivity reporting remains permitted if separately labeled and never merged into the primary metric.
+- **historical_preservation:** No prior decision is deleted or rewritten. This decision resolves wording that existed only in `docs/package_hallucination_taxonomy.md` and `docs/analysis_specification_v1.0.md`, neither of which is itself a numbered decision-log entry.
+- **affected_research_questions:** RQ1 (Prevalence), or its current equivalent per the controlling methodology update.
+- **scope_effect:** Fixes the unit of analysis for PHR/SHR before any calculator is implemented. Does not itself calculate PHR, SHR, prevalence, or perform any model comparison.
+
+---
+
+### D034 — Preserve D033 Primary PHR; Introduce External-Dependency Sensitivity Eligibility
+
+- **decision_id:** D034
+- **date:** 2026-09-22
+- **status:** FINALIZED
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **issue_resolved:** PIPE-05B.1 (`scripts/adjudicate_review_required_packages.py`, adjudicator/schema version `pipe-05b-adjudicator-1.1.0`) added the `SELF_REFERENCE_OR_LOCAL_PACKAGE` adjudication outcome for extracted names that response-internal evidence shows to be the generated project's own package name or a generated local/workspace package rather than an external npm dependency. Such rows are already inside the D033 primary PHR denominator as metric-eligible unique `(run_id, normalized_package)` rows. This decision resolves whether adjudicated self/local references change the primary denominator or only a secondary one.
+- **controlling_rule_primary_phr:** D033 primary PHR is unchanged. Numerator: metric-eligible unique `(run_id, normalized_package)` rows classified `CONFIRMED_HALLUCINATION`. Denominator: all metric-eligible unique `(run_id, normalized_package)` rows. The primary denominator must not be retroactively changed on the basis of PIPE-05B adjudication.
+- **controlling_rule_primary_shr:** Primary SHR is unchanged. A completed, non-truncated response remains in the primary SHR denominator even if one or more of its package references is later adjudicated `SELF_REFERENCE_OR_LOCAL_PACKAGE`.
+- **self_reference_semantics:** `SELF_REFERENCE_OR_LOCAL_PACKAGE` requires response-internal evidence and always carries `dependency_failure = false`, `confirmed_package_hallucination = false`, and `external_dependency_eligible = false`. A registry 404 for such a name is not evidence of dependency failure or package hallucination.
+- **secondary_external_dependency_sensitivity_analysis:** A separate, clearly labelled SECONDARY / SENSITIVITY (exploratory) external-dependency analysis is defined:
+  - a package row is eligible only when PIPE-05B establishes `external_dependency_eligible == true`;
+  - rows with `external_dependency_eligible == false`, including `SELF_REFERENCE_OR_LOCAL_PACKAGE`, are excluded from both the numerator and the denominator of secondary external-dependency rates;
+  - rows with `external_dependency_eligible == null`, including unresolved external/local status, must not silently enter the denominator and must be reported separately as a count.
+- **reporting_boundary:** The secondary external-dependency sensitivity analysis must be labelled secondary/exploratory wherever reported and must never replace, overwrite, or be presented as primary PHR or SHR.
+- **rationale:** The primary PHR unit and denominator were frozen by D033 before any real adjudication evidence revealed self-referential package-name cases. Changing the primary denominator now, in response to observed case types, could introduce outcome-dependent methodology.
+- **methodological_justification:** Keeping the pre-specified primary metric fixed preserves its confirmatory status (`docs/analysis_specification_v1.0.md` Section 20: definitions should not be altered merely because resulting measurements are unexpected; later analyses must be identified as exploratory). A separately labelled external-dependency sensitivity rate still lets the report show whether self/local references materially affect interpretation, while explicit separate reporting of `null` eligibility prevents silent denominator inflation.
+- **impact_on_data_collection:** None; this decision does not change any collection artifact, task set, model condition, prompt, manifest, or raw response.
+- **impact_on_analysis:** PIPE-08 primary PHR/SHR computation is unchanged. Any future secondary external-dependency calculator must implement the eligibility rules above exactly, report `external_dependency_eligible == null` rows as a separate count, and keep its outputs distinct from primary metric outputs. No such secondary calculator exists at this decision date, and no real package has been adjudicated.
+- **historical_preservation:** D033 is not modified; this decision confirms and extends it.
+- **affected_research_questions:** RQ1 (Prevalence), or its current equivalent, for the primary/secondary boundary; the planned secondary dependency-reliability analysis.
+- **scope_effect:** Documentation-only. Defines secondary sensitivity eligibility; does not calculate PHR, SHR, or any secondary rate.
+
+---
+
+### D035 — Provider Error Finish Reasons Are Failed, Metric-Ineligible Observations
+
+- **decision_id:** D035
+- **date:** 2026-09-22
+- **status:** FINALIZED
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **issue_resolved:** STATUS-AUDIT-01 found that `API-v2.6-AUTH-FED-04-M4-R01` (M4, OpenRouter → Nvidia; single attempt, HTTP 200) was recorded as `collection_status: completed` / `response_completion_status: COMPLETED` and was therefore `metric_eligible = true`, although the provider response declared `finish_reason: "error"` (`native_finish_reason: null`). It used 7,599 of 65,536 permitted completion tokens, so this was not an output-ceiling event, and the preserved `response.md` (28,142 characters) ends mid-identifier inside an unclosed code block. Cause: the collector mapped `finish_reason == "length"` to truncated and every other value to completed. The frozen protocol gave an explicit status only to `"length"` (D021) and did not address `"error"`.
+- **controlling_rule:**
+  1. `finish_reason == "stop"` → `completed` / `COMPLETED`.
+  2. `finish_reason == "length"` → `truncated` / `TRUNCATED` (D021 unchanged).
+  3. A `finish_reason` indicating a provider-side error or abnormal termination, including `"error"`, → `failed` / `FAILED`. Implemented conservatively: on an API chat completion, any `finish_reason` other than `"stop"` or `"length"` (e.g. `"error"`, `"content_filter"`, `"tool_calls"` under the frozen no-tools interface, or a null value) is an abnormal termination.
+  - A partial, non-empty response does not override a provider-declared error termination.
+- **failed_observation_handling:** Failed observations are preserved once. They are never retried, regenerated, or substituted, and they are not eligible for primary metrics (they are excluded from both the numerator and the denominator of primary SHR and PHR). They are counted as failed in dataset-completeness/quality reporting and remain available for operational and qualitative audit. Raw response artifacts remain append-only and are not edited.
+- **correction_mechanism (existing observations):** A deterministic, derived status overlay in `scripts/build_response_inventory.py`. When raw `metadata.json` records `collection_status` `completed` or `truncated`, contains a `finish_reason` field, and that value is neither `"stop"` nor `"length"`, the inventory row is derived as `collection_status: failed`, `completion_status: FAILED`, `truncated: false`, and carries `status_correction: "D035"`, `raw_collection_status` (unchanged raw value), and `provider_finish_reason` (unchanged raw value). Raw `metadata.json`, `response.md`, and `provider_response.json` are never rewritten. Records with no `finish_reason` field (non-API pilot collections) are outside this rule. `schemas/response_inventory_item.schema.json` declares the three provenance fields.
+- **downstream_handling (approach A):** PIPE-03 already extracts package references only from `completed`/`truncated` inventory rows, so a D035-failed response contributes no package rows to analytical outputs. PIPE-07 keeps the failed response's response-level row with `metric_eligible = false` and zero package counts. PIPE-07 continues to reject, rather than silently drop, any package row whose run the inventory marks failed. This means PIPE-03/04/05 outputs built from a pre-D035 inventory cannot be mixed with a D035-corrected inventory. The raw response remains the preserved evidence for audit.
+- **collection_protection:** `scripts/collect_api_run.py` `completion_status()` implements the rule above. For a failed mapping, the collector preserves `provider_response.json` and `response.md`, records `failure_reason: provider_finish_reason_<value>`, and raises so that the batch records `temporarily_blocked_or_failed`. Later invocations skip the observation as a preserved failure without retry. The official collection repository (`~/Dev/ai-hallucination-study`) was not modified by this decision; the identical collector patch must be applied there before further v2.6 collection so that new observations are recorded correctly at source. Until then, the inventory overlay corrects them at analysis time.
+- **known_affected_observations:** v2.6: `API-v2.6-AUTH-FED-04-M4-R01` only (read-only scan of all 60 live v2.6 run directories on 2026-09-22 UTC). Outside v2.6 and already excluded from v2.6 analysis: `API-v2.4-AUTH-FED-05-M4-R01` (`finish_reason: "error"`) and v2.0 `API-AUTH-FED-01-M1-R01` (`finish_reason: "tool_calls"`). Any rebuilt inventory for those historical versions would now show them as D035 failures; their raw artifacts are unchanged.
+- **rationale:** The protocol already marks a malformed successful HTTP response as failed, and the primary denominator is completed generations. A provider-declared error means the generation did not complete. Treating it as `TRUNCATED` would misrepresent D021, which defines truncation as right-censoring at the frozen output ceiling. The rule also aligns this observation with the other M4 upstream-error observations that were already preserved as failed only because they returned no content.
+- **methodological_justification:** The rule depends only on the provider's declared termination status, never on the observation's package or hallucination content. It is applied uniformly and deterministically to every observation and preserves all raw evidence.
+- **impact_on_data_collection:** No frozen manifest, prompt, task set, model set, sampling parameter, retry rule, freeze record, or raw observation was changed. No observation was regenerated.
+- **impact_on_analysis:** One previously metric-eligible v2.6 response and its 18 unique package rows (26 occurrences) leave primary eligibility. Interim screening counts before and after the correction are recorded in `docs/research_progress_log.md` and are not final results.
+- **affected_research_questions:** RQ1 (Prevalence) denominators; dataset-completeness reporting.
+- **scope_effect:** Status-classification correction and collector hardening only; does not redefine SHR, PHR, truncation, or the hallucination taxonomy.
+
+---
+
+### D036 — Secondary Dependency-Reliability Metrics: DFR and RDFR
+
+- **decision_id:** D036
+- **date:** 2026-09-23
+- **status:** FINALIZED
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **status_history:** Proposed 2026-09-23 and reserved while D037 was finalized. D037's `numbering_note` records D036's proposed status at the time D037 was adopted; this entry finalizes D036 and does not alter D037.
+- **analysis_tier:** SECONDARY / EXPLORATORY. The Dependency Failure Rate (DFR) and Response Dependency Failure Rate (RDFR) do not replace primary PHR/SHR, do not change D033, and do not change D037. They must never be described as hallucination rates.
+- **issue_resolved:** D034 defined secondary external-dependency eligibility but no metric, unit, numerator, denominator, or treatment of rows outside PIPE-05B. `docs/package_hallucination_taxonomy.md` requires an explicit decision before any quantitative secondary measure.
+- **construct:** `dependency_failure` means that the exact normalized package name, as declared or recommended by the generated response, would fail to resolve from the npm registry under the evidence and adjudication rules. DFR measures exact-name npm dependency-resolution failures under the defined adjudication rules. It does not capture all forms of dependency unreliability, including wrong-but-existing packages, version-resolution errors, API errors, capability mismatches, or functional-unsuitability errors.
+- **dfr_unit:** One unique metric-eligible `(run_id, normalized_package)` package-response row (the D033 unit), with metric eligibility exactly as in PIPE-07 (`collection_status == "completed"`).
+- **package_row_resolution (fixed order; metric-eligible rows only):**
+  - **A. PIPE-05 `AUTO_VALID` / `VALID`:** derived `external_dependency_eligible = true`, derived `dependency_failure = false`, status `EXTERNAL_NON_FAILURE`, basis `D036_AUTO_VALID`.
+  - **B. PIPE-05 `REVIEW_REQUIRED` with exactly one PIPE-05B record:** `external_dependency_eligible = true` and `dependency_failure = true` → `EXTERNAL_FAILURE`; `external_dependency_eligible = true` and `dependency_failure = false` → `EXTERNAL_NON_FAILURE`; `external_dependency_eligible = false` → `NOT_EXTERNAL`; `external_dependency_eligible = null` → `UNDETERMINED` (reason `PIPE05B_UNRESOLVED`).
+  - **C. PIPE-05 `REVIEW_REQUIRED` with no PIPE-05B record:** `UNDETERMINED` (reason `UNADJUDICATED`).
+  - **D. PIPE-05 `VALIDATION_UNRESOLVED`:** `UNDETERMINED` (reason `REGISTRY_UNRESOLVED`). Never automatically a failure.
+  - **E. PIPE-05 `REVIEWED`:** `CONFIRMED_HALLUCINATION` or `LEGACY_OR_REMOVED` → `EXTERNAL_FAILURE`; `BUILTIN_OR_LOCAL` → `NOT_EXTERNAL`; `AMBIGUOUS` → `UNDETERMINED` (reason `PIPE05_REVIEWED_AMBIGUOUS`).
+  - Any unsupported combination fails closed.
+- **dfr:** Let F = `EXTERNAL_FAILURE` rows, N = `EXTERNAL_NON_FAILURE` rows, U = `UNDETERMINED` rows. Point estimate DFR = F / (F + N). `NOT_EXTERNAL` and `UNDETERMINED` rows are excluded from the point-estimate numerator and denominator. When F + N = 0, DFR = null.
+- **dfr_bounds:** When U > 0, report lower = F / (F + N + U) and upper = (F + U) / (F + N + U), and report U broken down by reason.
+- **rdfr_unit:** One metric-eligible completed response, using the same response eligibility as D033 SHR.
+- **response_status:** POSITIVE if the response has at least one `EXTERNAL_FAILURE` row; otherwise INDETERMINATE if it has at least one `UNDETERMINED` row; otherwise NEGATIVE. NEGATIVE explicitly includes all-valid responses, zero-package responses, self/local-only responses, and responses containing only external non-failure rows. If a response has both failure and undetermined rows, POSITIVE wins.
+- **rdfr:** Let P = POSITIVE responses, I = INDETERMINATE responses, R = all metric-eligible completed responses. Point estimate RDFR = P / (R − I), equivalently P / (P + NEGATIVE). When the denominator is 0, RDFR = null.
+- **rdfr_bounds:** When I > 0, report lower = P / R and upper = (P + I) / R.
+- **zero_package_responses:** Completed zero-package responses remain NEGATIVE and are included in the RDFR denominator. They contribute nothing to DFR.
+- **self_local_references:** `SELF_REFERENCE_OR_LOCAL_PACKAGE` rows are excluded from the DFR numerator and denominator and do not make a response INDETERMINATE. An eligible response whose only package rows are self/local references is NEGATIVE for RDFR.
+- **failed_and_truncated:** D035 failed responses and D021 truncated responses are excluded from DFR and RDFR. Any PIPE-05B adjudication associated with them may be preserved for audit but does not enter these rates.
+- **completeness_gate:** DFR/RDFR may be labelled FINAL only when `UNADJUDICATED` = 0 and `REGISTRY_UNRESOLVED` = 0. Otherwise outputs are labelled INTERIM/INCOMPLETE. PIPE-05B `UNRESOLVED` may remain as a legitimate terminal state, but it is counted as `UNDETERMINED` and included in the uncertainty bounds.
+- **required_counts:**
+  - Package level: total metric-eligible package rows; `EXTERNAL_FAILURE`; `EXTERNAL_NON_FAILURE`; `NOT_EXTERNAL`; `UNDETERMINED` total; `UNDETERMINED` by reason; confirmed hallucinations among failures; failure count broken down by adjudication outcome.
+  - Response level: eligible completed responses; POSITIVE; NEGATIVE; INDETERMINATE; zero-package responses; responses with at least one externally eligible package row.
+- **intervals_and_groups:** Wilson 95% intervals may be reported descriptively for point rates. Grouped descriptive rates may be shown by `model_condition_id` and by `category`. No confirmatory claim is implied solely by D036.
+- **d034_clarification:** D034's requirement that eligibility come from PIPE-05B `external_dependency_eligible` applies to adjudicated `REVIEW_REQUIRED` rows. D036 explicitly establishes that PIPE-05 `AUTO_VALID` rows are deterministic external non-failures for this secondary exact-name-resolution construct. This resolves the literal D034 denominator ambiguity without altering D034's treatment of adjudicated rows.
+- **d037_relationship:** D037 controls confirmed-hallucination routing for primary PHR/SHR. D036 may use D037-resolved information where relevant to identify confirmed hallucinations inside the dependency-failure breakdown, but D036 never modifies D037 or the primary metrics.
+- **invariant:** For the same eligible package-row snapshot, `EXTERNAL_FAILURE` + `EXTERNAL_NON_FAILURE` + `NOT_EXTERNAL` + `UNDETERMINED` must equal the D033 primary PHR denominator.
+- **prohibitions:** `REVIEW_REQUIRED` is never counted as a failure without adjudication. Confusion outcomes are never relabelled as confirmed hallucinations. DFR/RDFR are never merged with, substituted for, or presented as PHR/SHR. The four interim PIPE-05B adjudications are never used as a denominator.
+- **timing_disclosure:** D036 was defined after four interim PIPE-05B adjudications had been observed, but before any DFR/RDFR was calculated and before final v2.6 collection completed. DFR/RDFR are therefore explicitly secondary/exploratory rather than pre-specified primary outcomes.
+- **methodological_limitations:**
+  - Semantic review is asymmetric: registry-404 / `REVIEW_REQUIRED` names receive deeper adjudication than `AUTO_VALID` names.
+  - Wrong-but-existing packages are outside DFR.
+  - Version-resolution failures are outside DFR.
+  - API and capability errors are outside DFR.
+  - Registry state is time-sensitive (evaluated at the recorded validation time).
+  - Adjudication currently relies on researcher review.
+  - Grouped estimates may be sparse and clustered (rows within responses, responses within task × model cells).
+- **rationale:** A registry-resolvable exact name is by definition not an exact-name resolution failure, so `AUTO_VALID` rows belong in the denominator. Excluding them would reduce the metric to a rate among registry-404 names selected for review.
+- **methodological_justification:** Deterministic, outcome-independent row and response rules. Undetermined rows are never silently counted as non-failures (consistent with D034) and are bounded explicitly. Truncation (D021) and failure (D035) handling are unchanged.
+- **impact_on_data_collection:** None.
+- **impact_on_analysis:** Adds a separate secondary calculator and output, to be implemented later. PIPE-05, PIPE-05B, PIPE-07, and PIPE-08 primary computation are not changed by this decision. No DFR/RDFR calculator exists at this decision date.
+- **historical_preservation:** D033, D034, and D037 are not modified.
+- **affected_research_questions:** Secondary dependency-reliability analysis; RQ1 only for the primary/secondary boundary.
+- **scope_effect:** Definition only. No DFR, RDFR, PHR, or SHR is calculated.
+
+---
+
+### D037 — Route Every Confirmed Package Hallucination to the Primary PHR/SHR Numerators Exactly Once
+
+- **decision_id:** D037
+- **date:** 2026-09-23
+- **status:** FINALIZED
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **numbering_note:** D036 is reserved for the proposed secondary dependency-reliability metrics (DFR/RDFR). D036 is PROPOSED, not finalized, and is not a controlling decision.
+- **decision_type:** Consistency / routing correction. Not a new hallucination definition. Does not change any unit, denominator, or eligibility rule.
+- **issue_resolved:** PIPE-08 (`scripts/calculate_primary_metrics.py`) counts a row as a confirmed package hallucination only when the PIPE-05 `research_classification == CONFIRMED_HALLUCINATION`, which arises only through the PIPE-05 `REVIEWED` path (`scripts/classify_npm_packages.py --adjudications`). PIPE-05B (`scripts/adjudicate_review_required_packages.py`) adjudicates PIPE-05 `REVIEW_REQUIRED` rows, and its `CONFIRMED_HALLUCINATION` outcome is written to a separate envelope that never reaches PIPE-07, PIPE-08, or PIPE-09. Whether a confirmed hallucination entered the primary numerators therefore depended on the adjudication tool used, not on the substantive confirmation.
+- **single_resolution_point:** PIPE-07 (`scripts/build_analysis_dataset.py`) is the single place where primary confirmation is resolved. PIPE-08 and PIPE-09 consume the resolved result and do not re-derive it from either path independently.
+- **controlling_rule_confirmation:** A metric-eligible unique `(run_id, normalized_package)` row is primary-confirmed if and only if exactly one authorized path establishes `CONFIRMED_HALLUCINATION`:
+  - **PIPE05_REVIEWED:** PIPE-05 `adjudication_status == "REVIEWED"` and `classification == "CONFIRMED_HALLUCINATION"`.
+  - **PIPE05B:** the source PIPE-05 row is `adjudication_status == "REVIEW_REQUIRED"` / `classification == "AMBIGUOUS"`, and the matching PIPE-05B record has `adjudication_outcome == "CONFIRMED_HALLUCINATION"`, `confirmed_package_hallucination == true`, `dependency_failure == true`, `external_dependency_eligible == true`, `evidence_status == "resolved"`, all six conservative checks satisfying the PIPE-05B confirmation guard (historical `no_prior_evidence`; normalization `external_npm_reference`; ambiguity, namespace, ecosystem, and types_package `cleared`), non-empty dated `evidence_sources`, a UTC `reviewed_at`, and a supported format and adjudication version (currently `pipe-05b-adjudication-1.1.0` / `pipe-05b-adjudicator-1.1.0`).
+- **evidence_bar:** A PIPE-05B confirmation must meet or exceed the PIPE-05 confirmation evidence bar. The PIPE-05B guard includes all three PIPE-05 conservative checks (historical, normalization, ambiguity) and additionally requires namespace, ecosystem, and types-package confusion to be ruled out, so no weaker evidence is admitted to the primary numerators.
+- **excluded_outcomes:** Every other PIPE-05B outcome stays outside the primary PHR/SHR numerators: `LEGACY_OR_REMOVED`, `NAMESPACE_CONFUSION`, `PACKAGE_NAME_CONFUSION`, `INVALID_OR_REDUNDANT_TYPES_PACKAGE`, `ECOSYSTEM_CONFUSION`, `OTHER_DEPENDENCY_ERROR`, `SELF_REFERENCE_OR_LOCAL_PACKAGE`, and `UNRESOLVED`.
+- **non_override:** PIPE-05 `research_classification` is never rewritten. A PIPE-05B-confirmed row remains `AMBIGUOUS` at the PIPE-05 layer and gains a separate, derived primary-confirmation field in PIPE-07.
+- **path_exclusivity:** Against one PIPE-05 snapshot, a row cannot legitimately use both PIPE05_REVIEWED and PIPE05B, because PIPE-05B accepts only `REVIEW_REQUIRED` source rows. A key present on both paths fails closed, even if the outcomes agree. Each row therefore counts at most once.
+- **phr_numerator:** All metric-eligible package rows primary-confirmed under this decision.
+- **shr_numerator:** All metric-eligible completed responses containing at least one primary-confirmed row.
+- **unchanged:** D033 PHR unit and denominator (all metric-eligible unique `(run_id, normalized_package)` rows); D033 SHR unit and denominator (all metric-eligible completed, non-truncated responses); zero-package response handling (such responses stay in the SHR denominator); metric eligibility (`collection_status == "completed"`); D021 truncation exclusion; D035 failed-observation handling; D034 secondary external-dependency eligibility; and the proposed, non-finalized D036.
+- **provenance_requirement:** Every primary-confirmed numerator row exposes `primary_confirmation_path` (`PIPE05_REVIEWED` or `PIPE05B`), the confirming tool or adjudication version (PIPE-05 `classifier_version` or PIPE-05B `adjudication_version`), the SHA-256 of the confirming envelope, and, for PIPE05B, the envelope's `adjudication_input_hash`.
+- **fail_closed_conditions:** Final primary PHR/SHR must not be produced if any of these occurs:
+  - a PIPE-05B record cannot be matched to a PIPE-07 row;
+  - a PIPE-05B record's source row is not `REVIEW_REQUIRED` / `AMBIGUOUS`;
+  - PIPE-05B `source_input_hash` does not equal the PIPE-05 classification hash used by PIPE-07 (`classification_joined_input_hash`);
+  - duplicate PIPE-05B keys;
+  - a key present on both paths;
+  - a record claiming confirmation that fails the confirmation guards;
+  - an unsupported PIPE-05B format or adjudication version;
+  - PIPE-05B `source_truncated` disagreeing with the PIPE-07 `truncated` value.
+- **explicit_input:** The PIPE-05B envelope is supplied either by explicit path or by an explicit declaration that no PIPE-05B envelope was supplied. It is never auto-discovered. The choice is recorded in the output.
+- **pipe05b_rebuild_rule:** PIPE-05B outputs are bound to the PIPE-05 snapshot they were built from. When PIPE-05 is rebuilt, PIPE-05B must be rerun deterministically from the preserved adjudication evidence and input against the new PIPE-05 source. An old PIPE-05B envelope must never be rebased by hand.
+- **reporting:** Primary metric outputs report the confirmed numerator count by path, the number of eligible `REVIEW_REQUIRED` rows without a PIPE-05B adjudication, and the number of PIPE-05B `UNRESOLVED` rows. Those rows remain in the PHR denominator and outside the numerator, exactly as under D033.
+- **historical_compatibility:** Historical outputs remain historical and are not rewritten. This includes existing PIPE-07/PIPE-08 outputs, the PIPE-05B envelopes under `results/`, and all earlier interim figures such as checkpoint-b PHR `0/309` / SHR `0/31`. Any rerun under this rule must identify D037 as the controlling numerator-routing decision.
+- **timing_disclosure:** Adopted after four real PIPE-05B adjudications had been observed: `mtls-pfx-loader` → `SELF_REFERENCE_OR_LOCAL_PACKAGE`; `@xmldom/xpath` → `NAMESPACE_CONFUSION`; `pkcs12` and `mime-node` → `PACKAGE_NAME_CONFUSION`. None is `CONFIRMED_HALLUCINATION`, and the archived checkpoint PIPE-05 envelopes contain no `REVIEWED` rows (350 `AUTO_VALID`, 7 `REVIEW_REQUIRED`). Accepting D037 therefore changes no observed interim numerator, and the rule was not motivated by any observed confirmation.
+- **supersession:** Prospectively supersedes, for `CONFIRMED_HALLUCINATION` only, earlier statements that PIPE-05B can never contribute to PHR/SHR. Those statements appear in the PIPE-05B code docstring and schema description, the PIPE-05B entries of `docs/research_progress_log.md`, and the 2026-09-22 PIPE-05B entry of `docs/final_paper_notes.md`. Historical log and note entries are preserved unchanged. Current methodology and status documents are updated. The code and schema descriptions are to be updated when D037 is implemented.
+- **rationale:** A route-dependent numerator would make primary PHR/SHR depend on tooling choice rather than on evidence.
+- **methodological_justification:** Same construct, an equal or stricter evidence bar, unchanged units and denominators, deterministic and outcome-independent rules, and full per-row traceability.
+- **impact_on_data_collection:** None.
+- **impact_on_analysis:** When implemented, PIPE-07 resolves primary confirmation once, and PIPE-08 and PIPE-09 read the resolved field. Not yet implemented at this decision date: current PIPE-07/PIPE-08 code still counts only the PIPE05_REVIEWED path.
+- **affected_research_questions:** RQ1 (Prevalence), or its current equivalent.
+- **scope_effect:** Documentation of a routing rule only. No code is changed and no PHR/SHR is calculated by this decision.
+
+---
+
+### D038 — Finalize Stranded v2.6 Active Request as a Preserved Failure
+
+- **decision_id:** D038
+- **date:** 2026-09-22
 - **status:** IMPLEMENTED
+- **integration_reconciliation:** This decision was originally recorded as `D032` on `feature/data-collection`. During 2026-09-23 integration, a branch-local decision-ID collision was found because `analysis/pipeline` had independently assigned `D032` to the finalized risk-model decision. The recovery decision itself is unchanged; only its integrated decision identifier is renumbered to `D038` to preserve unique decision IDs.
+- **original_branch_decision_id:** D032
 - **decision:** When `API-v2.6-PKI-CRYPTO-04-M4-R01` was interrupted by the researcher during the active HTTP response read, do not retry or regenerate it. Finalize the already-sent request once as failed with `failure_reason: researcher_interrupted_active_request`.
 - **integrity_controls:** The offline-only recovery utility verifies the frozen manifest identity and prompt hash, preserved request hash, original start timestamp, and `requesting` status. It refuses completed, truncated, failed, or response-bearing directories; writes an immutable pre-recovery hash audit before the sole metadata update; and makes no network call.
 - **analysis_effect:** This failed observation is retained as failure evidence and excluded from primary v2.6 SHR/PHR denominators under the frozen failed-observation policy. No experimental input, manifest row, model configuration, token ceiling, retry policy, or other raw observation is changed.
+- **historical_preservation:** The original `feature/data-collection` history remains unchanged and still records this branch-local decision as D032. The integrated branch uses D038 only to eliminate the duplicate identifier.
+- **impact_on_data_collection:** No new request is sent. The already-interrupted request is finalized once as a preserved failed observation.
+- **impact_on_analysis:** The observation remains failed and metric-ineligible. D033, D035, D036, and D037 metric and eligibility rules are unchanged.
