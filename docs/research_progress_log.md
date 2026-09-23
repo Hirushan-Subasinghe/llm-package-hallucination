@@ -821,3 +821,24 @@
 - The approved reference set now acts as the citation gate for final dissertation drafting.
 - No experimental or frozen research artifacts were modified.
 - Next step: conduct the Chapter 1 evidence/reconciliation audit before drafting final prose.
+
+### 2026-09-23 — v2.6 hybrid API allocation corrected from 62 to 61 remaining rows
+
+- Re-audited current v2.6 raw API observations before continuing hybrid allocation.
+- Verified 119 existing API-assigned raw observations: M1=16, M2=6, M3=38, M4=59.
+- The additional M1 observation is `API-v2.6-ENT-INT-01-M1-R01` (collection order 62), preserved with `collection_status: failed`.
+- Because every existing raw API observation must retain its original interface assignment, the failed M1 observation remains API-assigned and must not be reclassified as manual.
+- Correct remaining API allocation is therefore M1=24, M2=34, M3=3, M4=0, for 61 additional API rows.
+- This preserves the intended final hybrid assignment of exactly 180 API rows and 180 Manual rows across the 360-row v2.6 manifest.
+- Failed observations remain preserved and metric-ineligible; no failed observation is regenerated, substituted, or reassigned.
+- The earlier estimate of 62 additional API rows was based on the previous M1 started count of 15 and is superseded by this raw-state audit.
+
+### 2026-09-23 — Chapter 1 support-document milestone completed
+
+- Completed `CHAPTER-1-EVIDENCE-AUDIT-01`, `CHAPTER-1-DRAFT-RECONCILIATION-01`, and `CHAPTER-1-LITERATURE-RECONCILIATION-01`.
+- Created `docs/final_report_support/chapter1_evidence_audit.md`, `docs/final_report_support/chapter1_draft_reconciliation.md`, and `docs/final_report_support/chapter1_literature_reconciliation.md`.
+- Preserved the existing research title unchanged. Aligned the working aim, O1–O4, and RQ1–RQ4 to the implemented Node.js/npm study; identified the baseline SLR-oriented framing for replacement.
+- The literature reconciliation reviewed 22 claims: `SUPPORTED` 8; `PARTIALLY_SUPPORTED` 5; `UNVERIFIED` 8; `CONTRADICTED` 1.
+- The strongest approved Chapter 1 sources identified were Spracklen et al. (2025), Al-Zofi (2025), Gao et al. (2025), Ladisa et al. (2023), Wang et al. (2025), Williams et al. (2025), Duan et al. (2020), and Ohm and Stuke (2023).
+- Unsupported percentages and broad novelty claims must not be reused. Final empirical results remain pending.
+- No frozen or experimental files were modified.

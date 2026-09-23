@@ -578,3 +578,24 @@ Analysis Methodology, Results structure, Discussion.
 - D036 is implemented separately as PIPE-10 for secondary/exploratory DFR and RDFR. These metrics measure exact-name npm dependency-resolution failures under the defined adjudication rules and must not be described as hallucination rates.
 - PIPE-10 explicitly represents external failures, external non-failures, self/local exclusions, and undetermined cases, and reports uncertainty bounds and completeness status.
 - Synthetic validation passed for the new routing and secondary-metric infrastructure. No real v2.6 PHR, SHR, DFR, or RDFR result had been calculated at this milestone.
+
+### 2026-09-23 — v2.6 hybrid interface-allocation clarification
+
+- **Affected section:** Methodology / Experimental Design / Data Collection.
+- The final v2.6 hybrid interface assignment is 180 API rows and 180 Manual rows across the 360-row manifest.
+- Preserved failed API observations remain classified as API-assigned for interface-allocation accounting even though they are excluded from metric eligibility.
+- `API-v2.6-ENT-INT-01-M1-R01` is one such preserved failed API observation and must not be reassigned or regenerated.
+- Final reporting should distinguish interface assignment from analytical eligibility so failed API observations are not mistaken for completed metric-eligible runs.
+
+### 2026-09-23 — Chapter 1 support-document synchronization
+
+**Affected sections:** Chapter 1 Research Problem, Research Gap, Aim, Objectives, Research Questions, Scope/Delimitations, Contributions, and Dissertation Structure.
+
+- The existing title remains unchanged.
+- Chapter 1 must explicitly delimit the empirical study to direct Node.js/npm dependency references and replace SLR-as-final-study framing.
+- Replace the old root-cause, slopsquatting, and mitigation research questions with the repository-grounded empirical RQ1–RQ4.
+- PHR/SHR are primary; DFR/RDFR remain secondary/exploratory. Grouped comparisons are descriptive and, where estimable, compared.
+- Risk statements apply only to eligible confirmed package-hallucination findings.
+- Unsupported baseline percentages and literature-wide novelty claims must not appear.
+- Slopsquatting, autonomy, and mitigation remain background/literature topics only unless discussing future work or implications.
+- Final empirical contribution wording remains pending final v2.6 results.
