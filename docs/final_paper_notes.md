@@ -578,3 +578,54 @@ Analysis Methodology, Results structure, Discussion.
 - D036 is implemented separately as PIPE-10 for secondary/exploratory DFR and RDFR. These metrics measure exact-name npm dependency-resolution failures under the defined adjudication rules and must not be described as hallucination rates.
 - PIPE-10 explicitly represents external failures, external non-failures, self/local exclusions, and undetermined cases, and reports uncertainty bounds and completeness status.
 - Synthetic validation passed for the new routing and secondary-metric infrastructure. No real v2.6 PHR, SHR, DFR, or RDFR result had been calculated at this milestone.
+
+### 2026-09-24 — Verified distinction between dependency failures and confirmed hallucinations
+
+**Affected sections:** Methodology — Adjudication and Classification; Primary Metrics; Secondary Dependency Reliability Metrics; Discussion; Threats to Validity.
+
+- Fourteen high-confidence npm `not_found` findings were formally adjudicated under the existing PIPE-05B protocol without changing frozen experimental evidence.
+- The approved findings were explained by `SELF_REFERENCE_OR_LOCAL_PACKAGE`, `PACKAGE_NAME_CONFUSION`, `NAMESPACE_CONFUSION`, or `INVALID_OR_REDUNDANT_TYPES_PACKAGE`; none satisfied D037 confirmation requirements for `CONFIRMED_HALLUCINATION`.
+- This provides concrete evidence that npm registry absence is not equivalent to package hallucination and supports retaining adjudication between registry validation and hallucination-metric computation.
+- The temporary incomplete-collection PHR and SHR remained zero because no legitimate package has yet received D037 confirmation.
+- In contrast, approved external namespace/package/type-reference errors produced non-zero temporary dependency-reliability metrics, illustrating that DFR/RDFR capture a broader dependency-resolution construct than PHR/SHR.
+- Current temporary values (`DFR ≈ 0.8145%`, `RDFR ≈ 5.05%`) are incomplete-collection previews only and must not be reported as final empirical results.
+- Six metric-eligible rows remain undetermined, two medium-confidence cases remain unapproved, and five package names remain unresolved.
+- The final paper must maintain the distinction between confirmed package hallucination and other forms of exact-name dependency-resolution failure.
+- The final analysis must regenerate/rebind adjudication artifacts to the authoritative final PIPE-05 source rather than manually rebasing the temporary preview envelope.
+
+### 2026-09-24 — Statistical edge-case correction in grouped comparison pipeline
+
+**Affected sections:** Methodology — Statistical Analysis; Results reporting controls; Threats to Validity / Reproducibility.
+
+- A PIPE-09 Fisher exact-test implementation defect was identified during temporary incomplete-collection analysis before final inferential results were produced.
+- The defect could generate misleading `p = 0` values when both compared groups contained no outcome events.
+- The underlying Fisher table-feasibility calculation was corrected, and pairwise comparisons with no outcome variation are now explicitly treated as non-testable.
+- Non-testable comparisons are excluded from Holm multiple-testing correction and do not emit inferential effect-size or confidence-interval outputs.
+- Valid Fisher comparisons, including comparisons where one group has zero events and the other has non-zero events, remain supported.
+- Regression validation passed across narrow and broader analysis suites; two unrelated historical fixture failures remain outside this correction.
+- This issue was detected and corrected before final v2.6 statistical analysis, so the final dissertation must use only outputs produced by the corrected PIPE-09 implementation.
+- Temporary pre-fix inferential outputs must not be reported as research findings.
+
+### 2026-09-24 — Statistical edge-case correction in grouped comparison pipeline
+
+**Affected sections:** Methodology — Statistical Analysis; Results reporting controls; Threats to Validity / Reproducibility.
+
+- A PIPE-09 Fisher exact-test implementation defect was identified during temporary incomplete-collection analysis before final inferential results were produced.
+- The defect could generate misleading `p = 0` values when both compared groups contained no outcome events.
+- The underlying Fisher table-feasibility calculation was corrected, and pairwise comparisons with no outcome variation are now explicitly treated as non-testable.
+- Non-testable comparisons are excluded from Holm multiple-testing correction and do not emit inferential effect-size or confidence-interval outputs.
+- Valid Fisher comparisons, including comparisons where one group has zero events and the other has non-zero events, remain supported.
+- Regression validation passed across narrow and broader analysis suites; two unrelated historical fixture failures remain outside this correction.
+- This issue was detected and corrected before final v2.6 statistical analysis, so the final dissertation must use only outputs produced by the corrected PIPE-09 implementation.
+- Temporary pre-fix inferential outputs must not be reported as research findings.
+
+### 2026-09-24 — PIPE-09 statistical correction independently revalidated on current preview
+
+**Affected sections:** Methodology — Statistical Analysis; Results reporting controls; Reproducibility.
+
+- The corrected PIPE-09 implementation was re-run against the existing incomplete v2.6 temporary-preview data.
+- All 424 current pairwise comparisons contain no outcome variation and were therefore correctly classified as non-testable.
+- The 148 misleading zero p-values present in the pre-fix temporary analysis were completely eliminated.
+- Non-testable comparisons emit no p-value, odds ratio, risk difference, confidence interval, or Holm-adjusted p-value.
+- This confirms that the final dissertation must not interpret all-zero outcome group comparisons as evidence of between-model, between-category, model×category, or repetition differences.
+- The correction and verification occurred before final v2.6 inferential analysis; only outputs from the corrected PIPE-09 implementation may be used for final reporting.
