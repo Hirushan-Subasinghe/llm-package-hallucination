@@ -743,3 +743,17 @@ The Chapter 3 visual plan is fixed as:
 - Figure 3-5: `risk-model-1.0.0` Impact × Detectability framework.
 
 Baseline `IM2021101.pdf` visuals were reviewed. Outdated conceptual, workflow, survey, and exploitability constructs must not be reused. The old dependency-classification flow may inspire layout only; substantive content must follow the implemented npm-only pipeline. Old risk, severity, and exploitability graphics must not reintroduce the superseded risk model. Current Chapter 3 tables remain Tables 3-1 through 3-14. Chapter 3 prose contains zero em dashes and zero prose double hyphens. Final empirical results remain excluded.
+
+### 2026-09-25 — Compact verified Chapter 3 promoted
+
+The authoritative Chapter 3 is now the compact verified version at `docs/report_drafts/chapter3_complete_draft.md`. Use the 7,501-word, 9-table version for final dissertation assembly. Do not use the older approximately 12.3k-word, 14-table version except as Git history. The condensation was verified not to alter the implemented methodology.
+
+The five approved figure slots remain unchanged:
+
+- Figure 3-1: task-condition-repetition design.
+- Figure 3-2: experimental workflow and preservation boundary.
+- Figure 3-3: extraction/registry/adjudication pipeline.
+- Figure 3-4: metric derivation.
+- Figure 3-5: Impact × Detectability framework.
+
+Six appendix references remain unresolved and must be assigned during final dissertation assembly. Check the final Word page count after inserting the figures. If further shortening is required, use actual Word pagination rather than deleting methodology speculatively.

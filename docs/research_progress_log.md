@@ -999,3 +999,19 @@ Next:
 Next:
 - create publication-quality Chapter 3 figures from the five approved placeholders;
 - preserve the implemented v2.6 methodology while drawing them.
+
+### 2026-09-25 — Compact verified Chapter 3 promoted as authoritative
+
+- Promoted the compact verified Chapter 3 as the authoritative methodology chapter at `docs/report_drafts/chapter3_complete_draft.md`.
+- Compact-equivalence verification: `docs/final_report_support/chapter3_compact_equivalence_verification.md`.
+- The final chapter contains 7,501 Markdown words, reduced from the approximately 12.3k-word previous verified version by approximately 39%.
+- The final structure contains 9 tables, 5 approved figure placeholders, and 6 unresolved appendix-reference placeholders.
+- The compact-equivalence review found no material methodology loss. PHR/SHR, DFR/RDFR, the PIPE-09 statistical procedure, the risk model, safety controls, and limitations remained equivalent.
+- Final-result leakage: NO. Obsolete-methodology leakage: NO. Em-dash count: 0. Prose double-hyphen count: 0.
+- Final status: `READY_FOR_WORD`.
+- Compact-promotion commit: `0c82c82ef3207706529f9ea92da0351ebeba0925` (`docs: promote compact verified Chapter 3`).
+
+Next:
+- create the five approved Chapter 3 figures;
+- transfer the verified compact Chapter 3 to Word;
+- check actual pagination after the figures and university formatting are applied.
