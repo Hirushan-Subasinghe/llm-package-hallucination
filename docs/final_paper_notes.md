@@ -711,3 +711,23 @@ Evidence:
 
 Drafting status:
 READY WITH RESTRICTIONS — final collection/results remain pending, and manual-interface operational details must not exceed what is supported by authoritative collection records.
+
+### 2026-09-24 — Chapter 3 final methodology and Word-transfer note
+
+Chapter 3 is `READY_FOR_WORD`. The final dissertation methodology must describe the implemented study as Node.js/npm only: 30 frozen tasks across six categories, four frozen model conditions, three planned repeated generations per task/model condition, and 360 planned observations. It must describe the hybrid 180 API / 180 manual assignment, while keeping collection assignment distinct from analytical eligibility.
+
+The methodology must state that deterministic package-reference extraction uses unique `(run_id, normalized_package)` package rows; official npm registry validation is read-only; and npm `404`/`not_found` alone does not establish a hallucination. It must preserve conservative classification and adjudication with one controlled confirmation path. PHR and SHR are the primary hallucination metrics. DFR and RDFR are secondary/exploratory exact-name dependency-reliability metrics and must not be described as hallucination rates. Grouped analysis must use the verified PIPE-09 statistical procedure.
+
+Practical risk must use `risk-model-1.0.0`: Impact 1–5 × Detectability 1–4, with LOW 1–4, MODERATE 5–8, HIGH 9–14, and CRITICAL 15–20. `security_sensitive_context` remains a separate non-scored field. No generated package installation, execution, claiming, registration, reservation, or active exploitation occurred.
+
+Validation status is `FINAL-ANALYSIS-VALIDATION-01 = PASS WITH DOCUMENTED LIMITATIONS`. The medium-difficulty designation came from pre-freeze qualitative task design; it was not externally calibrated and was not an analytical variable. Wording implying formal statistical independence of repetitions must be avoided.
+
+Potential final-paper assets are:
+
+- Figure 3-1: Frozen task-condition-repetition design.
+- Figure 3-2: Experimental workflow and preservation boundary.
+- Figure 3-3: Extraction, registry, and adjudication pipeline.
+- Figure 3-4: Primary and secondary metric derivation.
+- Figure 3-5: Impact × Detectability risk framework.
+
+Final empirical results must be added only after verified final analysis. Do not add empirical values or findings to Chapter 3.

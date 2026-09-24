@@ -969,3 +969,18 @@ Next:
 - draft Chapter 3 prose from the verified reconciliation;
 - keep final achieved sample counts and empirical findings out of Chapter 3 until final collection/analysis is complete;
 - verify the completed Chapter 3 draft against repository evidence before Word integration.
+
+### 2026-09-24 — Chapter 3 final assembly verified
+
+- Assembled Chapter 3: Research Methodology from three separately drafted and verified blocks.
+- Saved the authoritative final draft at `docs/report_drafts/chapter3_complete_draft.md` and its final verification at `docs/final_report_support/chapter3_final_verification.md`.
+- The chapter covers Sections 3.1–3.16 and contains 12,249 Markdown words.
+- It retains five planned figures and 14 methodology tables numbered consecutively from Table 3-1 through Table 3-14.
+- Three `[APPENDIX REFERENCE PENDING]` placeholders remain for later dissertation assembly.
+- The final-result leakage check passed; the obsolete-methodology leakage check passed; and the em-dash count was zero.
+- The final verification verdict is `READY_FOR_WORD`.
+- Chapter 3 contains no empirical final results. Final collection and provenance-consistent final analysis remain pending.
+- Finalized Chapter 3 assembly commit: `0bb0f1b` (`docs: finalize verified Chapter 3 methodology`).
+
+Next:
+- prepare Chapter 4 around verified final analytical outputs once they are available; do not imply that Chapter 4 results already exist.
