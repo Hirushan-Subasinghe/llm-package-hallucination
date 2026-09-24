@@ -701,3 +701,34 @@
   - manual interface configuration approval (D035) before any of the 130 manual rows can be collected;
   - an approved mechanism to update/advance the v2.7 collection state once manual capture begins;
   - collection scripts (`collect_hybrid_manual.py`, `collect_hybrid_api_batch.py`) are still v2.6-oriented and pin the v2.6 manifest and assignment.
+
+### 2026-09-25 — v2.7.0 final-study freeze established
+
+- Created annotated Git tag `v2.7.0-freeze`.
+- Freeze tag points to commit:
+  `bba890d9aa5838f06bee4b1bd0e85d9e61b444f8`
+  (`experiment: establish final v2.7 three-model study`).
+- The frozen final study contains model conditions M1, M3, and M4 only.
+- Final planned design:
+  - 30 frozen tasks
+  - 6 functional categories
+  - 3 retained model conditions
+  - 3 planned repetitions
+  - 270 planned observations
+  - 140 API-assigned observations
+  - 130 manual-assigned observations
+- M2 has zero rows in the v2.7 final-study manifest. Historical M2 evidence remains preserved under the superseded v2.6 study.
+- Verified freeze hashes:
+  - task set: `ef0aff59f8a3934f65379d34036848652b7b5593f595ffa4b449a15af021546b`
+  - prompt template: `8d3971d6f9f86dfd98a4b5c49c0c13d734b7f650744da682225195f2ea49b528`
+  - model set: `247eec71556f2908630ec8e4d34fc5ac54a29fcf5c47cb7406dafcd67991235c`
+  - v2.7 manifest: `2edf2638f08a1079aadd02c174951a912aa2797b56df36997878096b29a4ed20`
+  - freeze JSON: `f6fbb15192dee3d5744bc15890c0df81615e3c70ea76a41d9dbfbe7cb27bcfc5`
+- Freeze validation passed:
+  - v2.7 tests: 12/12
+  - existing v2.6/hybrid tests: 32/32
+  - full suite: 164/164
+- Freeze verification documented in `docs/v2.7_freeze_tag_verification.md` and committed as `1c8fd9b`.
+- No v2.6 frozen experiment input was modified by establishing the v2.7 freeze.
+- Outstanding collection-state issue: `data/final/api_batch_state_v2.6.0.json` remains an uncommitted working-tree modification and requires a separate provenance/checkpoint decision before it is staged or changed.
+- Next report task: reconcile Chapters 1–3 with the frozen v2.7 three-model methodology before final report assembly.
