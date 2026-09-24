@@ -32,12 +32,12 @@ Table 3-1 summarises the design, and Table 3-2 relates each research question to
 | Ecosystem                          | Node.js runtime and the npm package registry only                                                                  |
 | Task set                           | 30 frozen tasks, task-set version `final-2.0.0`                                                                    |
 | Functional task categories         | Six categories, five tasks each                                                                                    |
-| Model conditions                   | Four frozen conditions, M1–M4 (Section 3.5)                                                                        |
-| Repetitions                        | Three planned separate fresh requests per task-condition combination (R01–R03)                                     |
+| Model conditions                   | Four frozen conditions, M1 to M4 (Section 3.5)                                                                     |
+| Repetitions                        | Three planned separate fresh requests per task-condition combination (R01 to R03)                                  |
 | Planned observations               | 30 × 4 × 3 = 360                                                                                                   |
 | Unit of package analysis           | Unique normalised package reference per response                                                                   |
 | Unit of response analysis          | Eligible completed response                                                                                        |
-| Primary metrics                    | Package Hallucination Rate (PHR) and Sample Hallucination Rate (SHR)                                               |
+| Primary metrics                    | Package Hallucination Rate (PHR) and Session Hallucination Rate (SHR)                                              |
 | Secondary, exploratory metrics     | Dependency Failure Rate (DFR) and Response Dependency Failure Rate (RDFR)                                          |
 | Risk framework                     | `risk-model-1.0.0`, Impact × Detectability                                                                         |
 
@@ -45,7 +45,7 @@ Table 3-1 summarises the design, and Table 3-2 relates each research question to
 
 | Research question                                                     | Principal methodological components                                                                                    | Sections  |
 | --------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | --------- |
-| RQ1: Prevalence of confirmed npm package-name hallucinations          | Extraction and normalisation; read-only registry validation; conservative classification and adjudication; PHR and SHR | 3.7–3.10  |
+| RQ1: Prevalence of confirmed npm package-name hallucinations          | Extraction and normalisation; read-only registry validation; conservative classification and adjudication; PHR and SHR | 3.7 to 3.10 |
 | RQ2: Secondary exact-name dependency-resolution failure patterns      | Adjudication taxonomy; DFR and RDFR                                                                                    | 3.9, 3.11 |
 | RQ3: Variation across model conditions and functional task categories | Frozen factorial structure; grouped descriptive summaries; assumption-gated statistical comparisons where estimable    | 3.3, 3.12 |
 | RQ4: Practical risk of eligible confirmed findings                    | Rule-based Impact × Detectability scoring after classification                                                         | 3.13      |
@@ -68,7 +68,7 @@ The study did not install, execute, or functionally test any generated code or n
 
 ### 3.3.3 Study variables
 
-The design contained three structural factors. The first, *model condition*, had four levels (M1–M4). Each model condition was defined as a frozen combination of an exact model identifier, an API provider, an underlying-provider routing constraint where applicable, and a model-specific output-token ceiling, applied under shared generation settings. Model conditions were compared as experimental conditions. Because differences in training data, architecture, alignment, and serving infrastructure were neither controlled nor observable, the design did not permit differences in outcomes to be attributed to specific internal model characteristics. The second factor, *functional task category*, had six levels, each containing five tasks (Section 3.4). Task category was a design factor used for grouping; it was not a manipulated treatment, and the design did not presuppose that any category would produce a particular outcome. The third factor, *repetition*, had three levels (R01–R03). Repetitions were not intended as a substantive comparison; they provided separate fresh requests under otherwise identical frozen inputs and permitted the stability of outcomes to be examined. They did not establish statistical independence.
+The design contained three structural factors. The first, *model condition*, had four levels (M1 to M4). Each model condition was defined as a frozen combination of an exact model identifier, an API provider, an underlying-provider routing constraint where applicable, and a model-specific output-token ceiling, applied under shared generation settings. Model conditions were compared as experimental conditions. Because differences in training data, architecture, alignment, and serving infrastructure were neither controlled nor observable, the design did not permit differences in outcomes to be attributed to specific internal model characteristics. The second factor, *functional task category*, had six levels, each containing five tasks (Section 3.4). Task category was a design factor used for grouping; it was not a manipulated treatment, and the design did not presuppose that any category would produce a particular outcome. The third factor, *repetition*, had three levels (R01 to R03). Repetitions were not intended as a substantive comparison; they provided separate fresh requests under otherwise identical frozen inputs and permitted the stability of outcomes to be examined. They did not establish statistical independence.
 
 Several factors were held constant across all observations. These included the task wording, the outer prompt template, and the resulting rendered prompt text, which was byte-identical across model conditions for a given task. Every request consisted of a single user message with no previous conversational context. No tools, browsing, retrieval, code execution, or function calling were made available. The sampling temperature was fixed at 0.6 and nucleus sampling (top-p) at 0.95 for all conditions. Other factors were recorded rather than controlled. The generation seed was not controlled, and provider-side model versions and serving behaviour were outside the researcher's control. The output-token ceiling differed between model conditions and is therefore part of the definition of each condition rather than a shared setting.
 
@@ -142,8 +142,19 @@ The 360 planned observations were enumerated in advance in a frozen experimental
 
 The manifest also fixed the collection order. Observations were ordered by repetition, so that all 120 observations of the first repetition preceded those of the second, and within each repetition by task. Within each task, the order of the four model conditions was rotated cyclically from one task to the next, and the starting position was also shifted between repetitions. As a result, no single model condition was always collected first within a task. Recording the expected prompt digest in each row allowed the collection process to confirm that the exact frozen prompt was submitted for every observation. Figure 3-1 illustrates the frozen task-condition-repetition structure.
 
-> **[Figure 3-1 placeholder] Frozen task-condition-repetition design.**
-> Six functional task categories × five tasks = 30 tasks; each task × four model conditions (M1–M4) × three repetitions (R01–R03) = 360 planned observations. The figure should show the planned structure only and must not imply an achieved or eligible sample size.
+[FIGURE 3-1 TO BE DRAWN]
+
+Title:
+Figure 3-1. Frozen task-condition-repetition design.
+
+Purpose:
+Show the fixed design structure and planned, rather than achieved, observation total. The layout must not imply formal statistical independence.
+
+Required content:
+- Six functional task categories, each containing five frozen tasks, leading to 30 frozen tasks.
+- A factorial sequence: 30 frozen tasks × four model conditions (M1 to M4) × three planned repetitions (R01 to R03) = 360 planned observations.
+- A note that repetitions are separate fresh requests and do not establish statistical independence.
+- A note that 360 is a planned design total, not an achieved or analytically eligible count.
 
 The task and prompt construction described in this section fixed the inputs of the experiment. Section 3.5 describes the model conditions to which these inputs were submitted and the procedure through which the responses were collected.
 
@@ -188,8 +199,20 @@ Two decisions adopted during collection governed abnormal outcomes. Under D035, 
 
 Figure 3-2 summarises the workflow and the boundary between preserved evidence and derived analysis.
 
-> **[Figure 3-2 placeholder] Final v2.6 experimental workflow and preservation boundary.**
-> Frozen inputs (task set, template, rendered prompts, model configuration, manifest) → sequential collection through the assigned route (API or manual) → preserved raw evidence (prompt, request, raw provider response, assistant content, metadata, attempt history) → **preservation boundary** → derived stages (response inventory and status derivation, extraction, registry validation, classification, adjudication, analysis datasets). Arrows cross the boundary in one direction only. The figure must not imply collection completion, package installation or execution, or any result.
+[FIGURE 3-2 TO BE DRAWN]
+
+Title:
+Figure 3-2. Final v2.6 experimental workflow and preservation boundary.
+
+Purpose:
+Show how frozen inputs become preserved response evidence and how later analysis reads, but never rewrites, that evidence.
+
+Required content:
+- Frozen inputs: task set, template, rendered prompts, model configuration, and manifest.
+- Assigned collection route: API or manual, followed by preserved response evidence: prompt, request, raw provider response, assistant content, metadata, and attempt history.
+- A clearly labelled preservation boundary after the preserved evidence; arrows must cross it in one direction only.
+- Derived response inventory and status, extraction, registry evidence, classification/adjudication, analytical dataset, metrics/statistics, and risk assessment after the boundary.
+- A note that raw evidence is not rewritten by later stages; do not depict installation, execution, collection completion, or results.
 
 ---
 
@@ -219,7 +242,7 @@ Four attributes were kept distinct. The **collection route** recorded API or man
 
 Eligibility followed a single rule: a response, and every package row derived from it, was eligible only when its derived collection status was completed. Package-level eligibility was inherited from the response and never assessed independently. Truncated and failed responses kept a response-level row marked ineligible, so that they remained visible in completeness reporting. Failed responses were not passed to extraction, and the analysis-dataset builder rejected, rather than silently discarded, any package record attributed to a failed response. This prevented outputs built from an uncorrected inventory from being combined with a corrected one.
 
-A completed response with no extractable external npm reference remained eligible. It contributed nothing to the package-level denominator but remained in the denominator of the Sample Hallucination Rate (SHR) as a response without a confirmed hallucination. Excluding such responses would have limited the denominator to responses that happened to name packages and overstated the proportion containing a confirmed hallucination. The metrics are defined in Sections 3.10 and 3.11. Table 3-6 summarises the rules.
+A completed response with no extractable external npm reference remained eligible. It contributed nothing to the package-level denominator but remained in the denominator of the Session Hallucination Rate (SHR) as a response without a confirmed hallucination. Excluding such responses would have limited the denominator to responses that happened to name packages and overstated the proportion containing a confirmed hallucination. The metrics are defined in Sections 3.10 and 3.11. Table 3-6 summarises the rules.
 
 **Table 3-6. Response states and analytical eligibility**
 
@@ -303,7 +326,7 @@ Validation could resume from an earlier evidence file only if its format version
 
 Registry evidence describes the registry at the time of the query. A package that existed when a response was generated may have been removed before validation, and an absent name may have existed earlier, so registry outcomes are reported as evidence at the time of registry validation, not as permanent properties of names.
 
-Critically, an npm 404 response or `not_found` state was treated as registry evidence only and was not, by itself, a confirmed hallucination. A name can be absent because the model invented it, but also because the package was removed or renamed, placed under the wrong scope, confused with a module inside another package, taken from another ecosystem, or used as the name of the project the response was itself generating. Distinguishing these explanations was the task of the procedure described in Section 3.9.
+An npm 404 response or `not_found` state was treated as registry evidence only and was not, by itself, a confirmed hallucination. A name can be absent because the model invented it, but also because the package was removed or renamed, placed under the wrong scope, confused with a module inside another package, taken from another ecosystem, or used as the name of the project the response was itself generating. The procedure in Section 3.9 distinguishes these explanations.
 
 ---
 
@@ -313,8 +336,20 @@ Critically, an npm 404 response or `not_found` state was treated as registry evi
 
 Counting every `not_found` result as a hallucination would have merged the explanations listed in Section 3.8.4 and overstated the construct under study. The classification procedure therefore separated three questions for each package reference: whether it denoted an external npm dependency at all, whether the dependency as named would fail to resolve from the registry, and whether the name was a confirmed package-name hallucination. These were answered by a deterministic classification stage (PIPE-05) and a separate, evidence-based adjudication stage for cases the first could not decide (PIPE-05B). The analysis-dataset builder (PIPE-07) then combined their outputs under a single controlled rule. Figure 3-3 shows the sequence.
 
-> **[Figure 3-3 placeholder] Direct npm extraction, registry evidence, and conservative adjudication pipeline.**
-> Preserved response → PIPE-03 extraction and normalisation (unique `(run_id, normalized_package)` rows) → PIPE-04 read-only registry evidence (`exists` / `not_found` / `unresolved`) → PIPE-05 deterministic classification (`AUTO_VALID`; `VALIDATION_UNRESOLVED`; `REVIEW_REQUIRED`; `REVIEWED`) → PIPE-05B guarded adjudication of `REVIEW_REQUIRED` rows (separate output) → PIPE-07 single confirmation-resolution point → analysis datasets. The figure must show that `not_found` leads to review, not directly to a hallucination outcome, and must not depict package installation or execution.
+[FIGURE 3-3 TO BE DRAWN]
+
+Title:
+Figure 3-3. Direct npm extraction, registry evidence, and conservative adjudication pipeline.
+
+Purpose:
+Show the evidence-based route from a preserved eligible response to analysis fields without treating registry absence as a final classification.
+
+Required content:
+- Preserved eligible response → PIPE-03 explicit package-reference extraction and normalisation → unique `(run_id, normalized_package)`.
+- PIPE-04 official npm registry evidence with three branches: `exists`, `not_found`, and `unresolved`.
+- PIPE-05 classification, with `not_found` routed to `AMBIGUOUS` and `REVIEW_REQUIRED`, never directly to `CONFIRMED_HALLUCINATION`.
+- PIPE-05B adjudication where required → PIPE-07 controlled confirmation resolution → final analysis fields.
+- No installation, execution, package claiming, attack execution, or exploit testing.
 
 ### 3.9.2 Deterministic classification (PIPE-05)
 
@@ -373,14 +408,6 @@ PIPE-07 was designed to fail closed: it produced no dataset from which primary m
 
 These rules changed neither the unit nor the denominators of the primary metrics. Rows left `REVIEW_REQUIRED` without adjudication, and rows adjudicated `UNRESOLVED`, remained in the package-level denominator and outside its numerator, and are reported as separate counts. The confirmation status resolved here is the input to the primary metrics defined in Section 3.10.
 
-The primary analysis measured confirmed package-name hallucination at two complementary levels. The Package Hallucination Rate (PHR) was a package-level measure, whereas the Session Hallucination Rate (SHR) was a response-level measure. Both measures were calculated only after extraction, registry validation, classification, adjudication where required, and the controlled confirmation-resolution stage described in Sections 3.7 to 3.9. This ordering ensured that registry absence alone could not determine a primary outcome.
-
-PHR used the following definition:
-
-$$
-\mathrm{PHR}=\frac{\text{confirmed hallucinated metric-eligible unique }(run\_id,\ normalized\_package)\text{ rows}}{\text{all metric-eligible unique package rows}}
-$$
-
 ## 3.10 Primary Package-Hallucination Metrics
 
 The primary analysis measured confirmed package-name hallucination at two complementary levels. The Package Hallucination Rate (PHR) was a package-level measure, whereas the Session Hallucination Rate (SHR) was a response-level measure. Both measures were calculated only after extraction, registry validation, classification, adjudication where required, and the controlled confirmation-resolution stage described in Sections 3.7 to 3.9. This ordering ensured that registry absence alone could not determine a primary outcome.
@@ -416,8 +443,19 @@ All metric-eligible unique package rows remained in the PHR denominator, includi
 
 Primary confirmation was resolved once, in the analysis-dataset construction stage. A row entered the PHR numerator, and caused its response to enter the SHR numerator, only when exactly one authorised route established `CONFIRMED_HALLUCINATION`: a supported reviewed classification from PIPE-05 or a guarded PIPE-05B confirmation originating from an ambiguous, review-required PIPE-05 row. The latter route required the prescribed resolved evidence, all confirmation checks, dated sources, provenance agreement, and route exclusivity. Duplicate, malformed, unmatched, or dual-route records failed closed. Outcomes such as legacy or removed packages, namespace or package-name confusion, ecosystem confusion, self or local references, other dependency errors, and unresolved cases were not primary confirmations.
 
-> **[Figure 3-4 placeholder] Derivation of primary and secondary metrics.**
-> Preserved response inventory and PIPE-07 eligibility → unique metric-eligible package rows and eligible completed response rows → controlled confirmed-hallucination field → PHR and SHR; separately, external failure, non-failure, and undetermined states → DFR and RDFR. The figure must show that DFR and RDFR are secondary dependency-reliability measures rather than hallucination rates.
+[FIGURE 3-4 TO BE DRAWN]
+
+Title:
+Figure 3-4. Derivation of primary and secondary metrics.
+
+Purpose:
+Distinguish the controlled primary hallucination measures from the secondary dependency-reliability measures.
+
+Required content:
+- Primary branch: eligible completed responses and metric-eligible package rows → controlled confirmed-hallucination resolution → PHR and SHR.
+- Secondary branch: eligible exact-name external dependency evidence → `dependency_failure` true, false, or undetermined → DFR; eligible completed responses → `POSITIVE`, `NEGATIVE`, or `INDETERMINATE` → RDFR.
+- A clear visual label that DFR and RDFR are secondary dependency-reliability metrics, not hallucination rates.
+- Eligibility and controlled resolution must be shown before the respective metric outputs.
 
 ## 3.11 Secondary Dependency-Reliability Metrics
 
@@ -505,10 +543,22 @@ Scores of 1 to 4 were classified `LOW`, 5 to 8 `MODERATE`, 9 to 14 `HIGH`, and 1
 
 `security_sensitive_context` was retained as a separate, non-scored Boolean field with a written rationale. It identified whether the confirmed finding affected security-relevant behaviour, such as authentication, authorisation, cryptography, secret handling, integrity enforcement, access control, or software-supply-chain trust. It did not change the numerical score unless an implementation rule expressly required that change; the implemented framework contained no such adjustment.
 
-> **[Figure 3-5 placeholder] `risk-model-1.0.0` Impact × Detectability framework.**
-> Eligible confirmed package-hallucination finding → documented impact (1–5) and detectability (1–4) rationales → deterministic product → LOW, MODERATE, HIGH, or CRITICAL band. `security_sensitive_context` is recorded alongside, but outside, the calculation.
+[FIGURE 3-5 TO BE DRAWN]
 
-The framework was an ordinal prioritisation aid, not a probability model. It did not estimate exploitation probability, installation probability, malicious-registration probability, financial loss, or real-world incident probability. It likewise did not use the superseded four-factor, 0–12 scoring approach. The assessment was confined to the practical consequence supported by the preserved response and evidence available under the study's non-execution boundary.
+Title:
+Figure 3-5. `risk-model-1.0.0` Impact × Detectability framework.
+
+Purpose:
+Show the rule-based prioritisation framework applied after confirmation, without representing risk as a probability.
+
+Required content:
+- Eligible confirmed package-hallucination finding → Impact (1 to 5) and Detectability (1 to 4) with documented rationales.
+- Risk score = Impact × Detectability.
+- Bands: LOW 1 to 4; MODERATE 5 to 8; HIGH 9 to 14; CRITICAL 15 to 20.
+- `security_sensitive_context` as a separate non-scored attribute with a rationale.
+- Do not depict exploit probability, installation probability, attack probability, or financial-loss probability.
+
+The framework was an ordinal prioritisation aid, not a probability model. It did not estimate exploitation probability, installation probability, malicious-registration probability, financial loss, or real-world incident probability. It likewise did not use the superseded four-factor, 0 to 12 scoring approach. The assessment was confined to the practical consequence supported by the preserved response and evidence available under the study's non-execution boundary.
 
 ## 3.14 Validation and Quality Assurance
 
