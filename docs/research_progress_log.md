@@ -636,3 +636,13 @@
 - Added `scripts/create_hybrid_assignment_v1_0.py` and `tests/test_hybrid_assignment.py`. The utility verifies unique IDs, unchanged order, target counts, raw-observation preservation, earliest eligible selection, no M4 addition, and the frozen-manifest hash. `python3 scripts/create_hybrid_assignment_v1_0.py --verify` passed; `python3 -m unittest tests/test_hybrid_assignment.py` passed (2 tests).
 - The frozen manifest SHA-256 was `b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f` before derivation and after verification. The derived assignment SHA-256 is `e4b9295b2efc0fe639092161561e915c1d0c47f9a545df2699f7fe12595dd54f`.
 - No API request and no manual collection was started by this allocation task. M3 remains paused; the allocation does not alter the frozen M3 configuration or retry policy.
+
+### 2026-09-25 — M3 manual collection completed
+
+- Completed the manual-assigned portion of the frozen v2.6 M3 condition: 49/49 manual observations are now captured under `data/final/manual_raw/v2.6.0/`.
+- The recorded model is `openai/gpt-oss-120b`, and all 49 M3 manual metadata files record the actual interface as `Groq Playground web UI`.
+- Verified that all 49 M3 manual `response.md` files are non-empty.
+- `scripts/collect_hybrid_manual.py --model M3 --show-next --dry-run` reports `FAIL: no unobserved manual-assigned rows remain`, confirming that the M3 manual allocation is exhausted.
+- The completed M3 manual collection is recorded on branch `collection/m3-manual-v2.6`; completion commit: `4ae8344` (`data: complete M3 manual collection`).
+- Frozen experiment inputs and the HYBRID assignment were not modified during manual capture. Raw responses remain preserved as captured without whitespace normalization or response-content editing.
+- Next step: validate and integrate the completed M3 collection with the broader v2.6 experiment state without modifying frozen prompts, manifests, assignments, or raw observations.
