@@ -731,3 +731,15 @@ Potential final-paper assets are:
 - Figure 3-5: Impact × Detectability risk framework.
 
 Final empirical results must be added only after verified final analysis. Do not add empirical values or findings to Chapter 3.
+
+### 2026-09-25 — Chapter 3 visual plan fixed
+
+The Chapter 3 visual plan is fixed as:
+
+- Figure 3-1: Frozen task-condition-repetition design.
+- Figure 3-2: Final v2.6 experimental workflow and preservation boundary.
+- Figure 3-3: Direct npm extraction, registry evidence, and conservative adjudication pipeline.
+- Figure 3-4: Derivation of primary and secondary metrics.
+- Figure 3-5: `risk-model-1.0.0` Impact × Detectability framework.
+
+Baseline `IM2021101.pdf` visuals were reviewed. Outdated conceptual, workflow, survey, and exploitability constructs must not be reused. The old dependency-classification flow may inspire layout only; substantive content must follow the implemented npm-only pipeline. Old risk, severity, and exploitability graphics must not reintroduce the superseded risk model. Current Chapter 3 tables remain Tables 3-1 through 3-14. Chapter 3 prose contains zero em dashes and zero prose double hyphens. Final empirical results remain excluded.

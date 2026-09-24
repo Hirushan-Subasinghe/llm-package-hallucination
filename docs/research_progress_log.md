@@ -984,3 +984,18 @@ Next:
 
 Next:
 - prepare Chapter 4 around verified final analytical outputs once they are available; do not imply that Chapter 4 results already exist.
+
+### 2026-09-25 — Chapter 3 visual, table, and style refinement completed
+
+- Completed the Chapter 3 visual, table, and style refinement; the authoritative chapter remains `docs/report_drafts/chapter3_complete_draft.md`.
+- Reviewed six baseline Chapter 3 figures/tables from `IM2021101.pdf` as design references only, not as methodology authority.
+- Retained five planned Chapter 3 figures; all five remain detailed production placeholders.
+- Retained Tables 3-1 through 3-14; no table was removed or merged. Five tables were flagged/revised in the presentation audit, including the terminology correction in Table 3-1.
+- Applied 13 targeted academic-style edits. Prose double-hyphen count = 0; em-dash count = 0; final-result leakage = NO; obsolete-methodology leakage = NO.
+- Review evidence: `docs/final_report_support/chapter3_visual_table_style_review.md`.
+- `git diff --check` passed.
+- Refinement commit: `1fd19b1` (`docs: refine Chapter 3 visuals tables and style`).
+
+Next:
+- create publication-quality Chapter 3 figures from the five approved placeholders;
+- preserve the implemented v2.6 methodology while drawing them.
