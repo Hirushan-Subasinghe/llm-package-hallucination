@@ -1,6 +1,6 @@
-# Chapter 2 — Literature Review (continued)
+# Chapter 2: Literature Review (continued)
 
-**Draft status:** WORKING DRAFT — second block, Sections 2.5–2.7 only. Sections 2.8–2.10 are not yet drafted.
+**Draft status:** WORKING DRAFT, second block, Sections 2.5–2.7 only. Sections 2.8–2.10 are not yet drafted.
 **Controlling support documents:** `docs/final_report_support/chapter2_literature_synthesis.md`; `docs/final_report_support/chapter2_source_verification.md`; `docs/final_report_support/chapter2_reference_coverage_plan.md`; `docs/final_report_support/chapter2_block1_verification.md`; `docs/references/approved_references.md`.
 **Results status:** No experimental result of this dissertation is stated in this block. Final v2.6 findings remain `[FINAL RESULT PENDING]`.
 
