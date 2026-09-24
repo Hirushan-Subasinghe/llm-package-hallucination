@@ -470,3 +470,42 @@ Discussion / Dependency Reliability.
 - Remaining API quotas were filled deterministically from never-attempted rows in each model condition's ascending frozen manifest order: 24 M1, 34 M2, 3 M3, and 0 M4 rows. Final model allocations are M1 40 API / 50 manual, M2 40 / 50, M3 41 / 49, and M4 59 / 31.
 - The allocation is documented in `manifests/hybrid_assignment_v1.0.0.csv`; reproducibility checks and row lists are in `reports/hybrid_assignment_v1.0.0_report.md`. The verified original-manifest SHA-256 before and after is `b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f`.
 - This formalization did not send API requests or start manual collection. M3 remains paused because of the documented Groq TPM/HTTP 413 incompatibility; no retry or frozen-configuration change is implied.
+
+### 2026-09-23 — M1 hybrid API collection remained productive despite censoring/failures
+
+- Sections affected: Experimental Execution / Data Availability / Threats to Validity.
+- During the hybrid automatic phase, seven newly attempted M1 API-assigned observations produced five completed responses, one truncated response, and one provider/model error.
+- The provider-error observation was preserved as failed and was not regenerated.
+- This provides further evidence that M1 collection contained a mixture of usable completions, output truncation, and provider/model failure rather than a single uniform failure mechanism.
+
+### 2026-09-24 — Final M1 API collection outcome
+
+- Sections affected: Experimental Execution / Data Availability / Threats to Validity.
+- The M1 automatic portion of the hybrid experiment completed all 40 assigned API observations.
+- Final M1 API outcomes were 27 completed responses, 10 truncated responses, and 3 failed responses.
+- Truncated and failed responses were preserved without retry in accordance with the frozen collection protocol.
+- The final report should distinguish finalized API attempts from usable completed responses when reporting model-level data availability.
+
+### 2026-09-25 — Final study is v2.7.0 (three models); M2 excluded before final analysis
+
+- Sections affected:
+  - Chapter 1: change four model conditions to three and 360 to 270 planned observations; update the scope, contribution, and limitation wording. Do not imply any inference about M2.
+  - Chapter 2: minor wording updates wherever four selected conditions or Qwen/M2 appear as part of the final comparison.
+  - Chapter 3: major methodology revision covering the final design, model table, denominator, interface totals, manifest/freeze provenance, collection flow, exclusion rationale, evidence-reuse mapping, and threats to validity.
+  - Chapters 4–6: final results, discussion, and conclusions must be computed from the v2.7 cohort only. Do not hide an M2 series from a four-model calculation.
+  - Appendices, tables, and figures: use v2.7 counts. Keep v2.6 and M2 material only as labeled historical appendices.
+- Verified facts (sources: `docs/experiment_freeze_v2.7.0.md`, `docs/final_study_v2.7_migration_verification.md`, D036):
+  - 270 planned observations (30 tasks × 3 models × 3 repetitions; 90 per model).
+  - Retained model conditions M1, M3, and M4, with original IDs that are not renumbered.
+  - Interface assignment of 140 API / 130 manual (M1 40/50, M3 41/49, M4 59/31), inherited and not rebalanced. Interface is unevenly associated with model condition.
+  - M2 was excluded for operational reasons: its intended automatic API route could not complete the protocol consistently. The exclusion occurred after partial M2 collection and before final analysis.
+  - Historical M2 evidence (11 raw directories and all v2.6 M2 records) is preserved unchanged and is excluded from every v2.7 metric and denominator.
+  - Existing retained M1/M3/M4 evidence is reused in place without regeneration.
+- Required disclosure: the dissertation must state transparently that M2 was removed after partial collection (11 of 90 rows attempted: 2 completed, 9 failed). It must also state that the whole condition, including completed outputs, was excluded uniformly, and that no extraction or classification results existed at the time. This addresses potential selection-bias concerns. Do not describe the removal as wholly prospective. See audit section 11.3 for the full disclosure checklist.
+- Outdated statements to replace wherever they describe the current/final study (historical v2.x accounts may keep them if clearly labeled):
+  - "four model conditions" / "M1–M4" as final comparators;
+  - "360 planned observations" (`30 × 4 × 3`);
+  - "180 API / 180 manual";
+  - M2 (`qwen/qwen3.8-27b`, Darkbloom) as a final analyzed condition, including the 2026-09-22 notes saying deferred M2 rows would be collected later.
+- In this file, the "Current methodology facts" section (v2.3 active, 360 runs, four conditions) and the 2026-09-22/23 v2.6 entries predate v2.7. Treat them as superseded where they conflict with this entry.
+- No final empirical findings are recorded here. The v2.7 collection counts are collection-state data only.

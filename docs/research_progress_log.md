@@ -636,3 +636,68 @@
 - Added `scripts/create_hybrid_assignment_v1_0.py` and `tests/test_hybrid_assignment.py`. The utility verifies unique IDs, unchanged order, target counts, raw-observation preservation, earliest eligible selection, no M4 addition, and the frozen-manifest hash. `python3 scripts/create_hybrid_assignment_v1_0.py --verify` passed; `python3 -m unittest tests/test_hybrid_assignment.py` passed (2 tests).
 - The frozen manifest SHA-256 was `b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f` before derivation and after verification. The derived assignment SHA-256 is `e4b9295b2efc0fe639092161561e915c1d0c47f9a545df2699f7fe12595dd54f`.
 - No API request and no manual collection was started by this allocation task. M3 remains paused; the allocation does not alter the frozen M3 configuration or retry policy.
+
+### 2026-09-23 — M1 hybrid automatic collection advanced through seven API-assigned rows
+
+- Continued v2.6 collection through `scripts/collect_hybrid_api_batch.py`, which restricts automatic collection to rows assigned to the API side of the hybrid allocation.
+- Seven additional M1 API-assigned observations were finalized:
+  - order 72: completed
+  - order 75: completed
+  - order 78: completed
+  - order 81: completed
+  - order 88: completed
+  - order 91: truncated
+  - order 94: failed with `provider_finish_reason_error`
+- Outcome for these seven observations:
+  - completed: 5
+  - truncated: 1
+  - failed: 1
+- Order 94 remains preserved as failed and will not be retried.
+- The M1 hybrid API queue now contains 16 unstarted API-assigned observations, beginning at order 97.
+- Decision: continue M1 automatic collection in smaller batches of three because provider/model failures can terminate a larger batch early.
+
+### 2026-09-23 — M3 hybrid automatic allocation fully finalized
+
+- Completed the remaining three M3 API-assigned observations through `scripts/collect_hybrid_api_batch.py`.
+- Final outcomes:
+  - order 154 `API-v2.6-PKI-CRYPTO-04-M3-R02`: completed
+  - order 157 `API-v2.6-PKI-CRYPTO-05-M3-R02`: completed
+  - order 164 `API-v2.6-DOC-BINARY-01-M3-R02`: failed with HTTP 413
+- The M3 hybrid API queue is now empty.
+- M3 has therefore reached its hybrid automatic target of 41 finalized API-assigned positions.
+- Order 164 remains preserved as failed and will not be retried.
+- Next automatic collection priority: finish the remaining M1 API-assigned observations, followed by M2.
+
+### 2026-09-24 — M1 hybrid automatic allocation fully finalized
+
+- Completed all M1 positions assigned to automatic API collection under the hybrid v2.6 workflow.
+- Final M1 API outcomes:
+  - completed: 27
+  - truncated: 10
+  - failed: 3
+  - finalized total: 40
+- The M1 hybrid API queue is empty.
+- All truncated and failed observations remain preserved and were not regenerated.
+- M1 has therefore reached its hybrid automatic target of 40 finalized API-assigned observations.
+- Next automatic collection target: M2.
+
+### 2026-09-25 — M2 removed; v2.7.0 three-model final study frozen and verified
+
+- Supersedes the "Next automatic collection target: M2" note in the 2026-09-24 entry. No further M2 collection is planned for the final study.
+- Completed the M2 removal impact audit (`docs/m2_removal_final_study_impact_audit.md`) and recorded decision D036 in `docs/decision_log.md`.
+- Created v2.7.0 (freeze timestamp `2026-09-24T23:22:58.369305Z`; commit `bba890d`; `v2.7.0-freeze` tag pending researcher review). v2.7.0 is now the active final study.
+- Final design: the v2.6 manifest minus every M2 row, giving 30 tasks × 3 model conditions (M1, M3, M4) × 3 repetitions = 270 planned observations, 90 per retained model. M2 rows in the v2.7 manifest: 0. Condition IDs are not renumbered.
+- Interface assignment is inherited unchanged from `hybrid_assignment_v1.0.0.csv`: 140 API / 130 manual (M1 40/50, M3 41/49, M4 59/31). No row was reassigned or rebalanced.
+- Exclusion rationale is operational: the M2 automatic API route (`qwen/qwen3.8-27b` via Darkbloom-only OpenRouter) could not complete the intended protocol consistently. The exclusion occurred after partial M2 collection (11 of 90 rows attempted) and before final analysis. No extraction/classification output existed that could have motivated it.
+- Provenance reuse: the 140 retained M1/M3/M4 API observations are mapped in place to their existing v2.6 raw evidence by run ID and SHA-256 in `data/final/collection_state_v2.7.0.json`. Nothing was copied, renamed, or regenerated.
+- Preservation: all v2.6 inputs, the v2.6 state, the HYBRID assignment, and all 11 M2 raw directories remain unchanged as historical evidence. The 11 M2 directories are hash-listed in the v2.7 freeze.
+- Initial v2.7 collection-state snapshot (collection state only, not results):
+  - M1: 27 completed / 10 truncated / 3 failed; 50 manual pending
+  - M3: 36 completed / 0 truncated / 5 failed; 49 manual pending
+  - M4: 42 completed / 6 truncated / 11 failed; 31 manual pending
+  - 130 manual rows pending in total
+- Validation: full suite `python3 -m unittest discover -s tests` passed 164 tests, 0 failed. The v2.7 and v2.6 freeze `--check` runs and the HYBRID `--verify` run passed. Details are in `docs/final_study_v2.7_migration_verification.md`.
+- Remaining blockers:
+  - manual interface configuration approval (D035) before any of the 130 manual rows can be collected;
+  - an approved mechanism to update/advance the v2.7 collection state once manual capture begins;
+  - collection scripts (`collect_hybrid_manual.py`, `collect_hybrid_api_batch.py`) are still v2.6-oriented and pin the v2.6 manifest and assignment.
