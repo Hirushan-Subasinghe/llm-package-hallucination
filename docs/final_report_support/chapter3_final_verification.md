@@ -96,3 +96,19 @@ The assembled Markdown word count is **12,249**. The approximate prose word coun
 ## 17. Word-Readiness Decision
 
 READY_FOR_WORD
+
+## Compact authoritative revision
+
+The originally assembled Chapter 3 contained approximately 12.3k Markdown words and 14 tables. A subsequent presentation-focused condensation produced a compact draft, which was independently checked against the verified full methodology in `docs/final_report_support/chapter3_compact_equivalence_verification.md`.
+
+The equivalence verification found no material methodology loss. All core methodology, including eligibility, metric denominators, classification and adjudication semantics, PIPE-09 selection, risk scoring, safety boundaries, and limitations, remained equivalent. One evidence-backed PHR-denominator clarification and one duplicate appendix-placeholder removal were completed before promotion.
+
+The compact draft was promoted as the authoritative Chapter 3 under `CHAPTER-3-COMPACT-PROMOTION-01`. The authoritative chapter now contains 7,501 Markdown words, nine consecutively numbered tables, and all five approved detailed figure placeholders. Final-result leakage remains **NO**; obsolete-methodology leakage remains **NO**; and the em-dash count remains zero. The promotion recommendation was `REPLACE_FULL_WITH_COMPACT`.
+
+Six `[APPENDIX REFERENCE PENDING]` placeholders remain, covering the full task list, frozen digests/template metadata, manual-route operational detail, request/recovery mechanics, registry timing/storage detail, and detailed adjudication records/checks. These retain audit-level material only; no core methodological definition is deferred to an appendix.
+
+The current Word-readiness state remains:
+
+READY_FOR_WORD
+
+The existing restriction remains unchanged: final empirical results belong in Chapter 4 only after verified final analysis.

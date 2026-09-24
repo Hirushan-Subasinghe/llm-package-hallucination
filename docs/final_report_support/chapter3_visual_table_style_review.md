@@ -65,3 +65,9 @@ All narrative uses of en dashes were replaced with ordinary wording. No em dash 
 - Progress-log update needed: NO.
 - Final-paper note needed: NO.
 - Draft reconciliation needed: NO. This review record provides the requested visual, table, and style reconciliation.
+
+## Compact authoritative revision
+
+The later verified condensation, documented in `docs/final_report_support/chapter3_compact_equivalence_verification.md`, supersedes the earlier 14-table presentation plan. It reduced the Chapter 3 table set from 14 to nine by merging or removing five table slots only after methodological-equivalence checking. No essential methodology was removed.
+
+All five approved detailed figure placeholders remain. The current authoritative table sequence is consecutive: Tables 3-1, 3-2, 3-3, 3-4, 3-5, 3-6, 3-7, 3-8, and 3-9. The compact authoritative chapter remains the current visual and table presentation basis.
