@@ -944,3 +944,28 @@
 - Table 2.1 and Table 2.2 were not modified.
 - Chapter 2 citation coverage remains 34/34 approved references.
 - No verified Chapter 2 claim, citation, experimental artifact, or result was changed.
+
+### 2026-09-24 — Chapter 3 methodology reconciliation completed
+
+- Completed evidence-grounded reconciliation of the baseline dissertation methodology against the implemented frozen v2.6 study.
+- Created `docs/final_report_support/chapter3_methodology_reconciliation.md`.
+- Reviewed 36 baseline methodology items:
+  - KEEP: 1
+  - KEEP_WITH_REVISION: 8
+  - REWRITE: 4
+  - REMOVE: 17
+  - MOVE_TO_LIMITATIONS: 3
+  - MOVE_TO_FUTURE_WORK: 3
+- Confirmed the final methodology as a Node.js/npm-only study with 30 frozen tasks, six categories, four frozen model conditions, three planned repetitions, and 360 planned observations.
+- Reconciled the implemented analysis pipeline from PIPE-03 through PIPE-10, including conservative adjudication under D037, primary PHR/SHR metrics, secondary DFR/RDFR metrics, grouped statistical analysis, and `risk-model-1.0.0`.
+- Removed or reclassified unsupported baseline methodology including Java/Maven/PyPI experimentation, surveys/human participants, autonomy comparisons, mitigation experiments, predictive ML, 70/30 train-test modelling, Cohen’s Kappa, expert validation, temporal holdout, package execution/installation, and the superseded 0–12 risk model.
+- Final Chapter 3 structure, figure plan, table plan, methodological limitations, and prohibited/outdated statements were established.
+- Chapter 3 drafting status: READY WITH RESTRICTIONS.
+- Restrictions: final collection/results remain pending; detailed manual-interface operational prose must remain limited to verified collection records; no expert/inter-rater validation may be claimed.
+- `git diff --check` passed.
+- Frozen experiment inputs and raw evidence were not modified.
+
+Next:
+- draft Chapter 3 prose from the verified reconciliation;
+- keep final achieved sample counts and empirical findings out of Chapter 3 until final collection/analysis is complete;
+- verify the completed Chapter 3 draft against repository evidence before Word integration.

@@ -653,3 +653,61 @@ Analysis Methodology, Results structure, Discussion.
 - Final Figure 2-2 should summarize the literature progression from LLM-assisted software development and code hallucination through dependency reliability and supply-chain implications to the bounded Node.js/npm research rationale.
 - Table 2.2 already covers comparative methodological dimensions, so no Figure 2-3 is currently required.
 - Detailed experimental workflow, extraction/validation/adjudication pipeline, metric derivation, and practical-risk framework figures should be placed in Chapter 3 rather than Chapter 2.
+
+### 2026-09-24 — Chapter 3 methodology reconciliation
+
+**Affected section:** Chapter 3 — Methodology
+
+The final dissertation methodology must describe the implemented frozen v2.6 Node.js/npm study rather than the methodology proposed in the original draft.
+
+Verified methodology to report:
+- Node.js/npm empirical scope only.
+- 30 final coding tasks across six categories.
+- Four frozen model conditions.
+- Three planned repetitions.
+- 360 planned observations.
+- Frozen task/template/rendered-prompt and manifest provenance.
+- Hybrid API/manual collection assignment where supported by authoritative records.
+- Explicit response-status and analytical-eligibility rules.
+- PIPE-03 package-reference extraction and normalisation.
+- PIPE-04 read-only npm registry validation.
+- PIPE-05/PIPE-05B classification and adjudication.
+- D037 single hallucination-resolution path.
+- PHR and SHR as primary hallucination measures.
+- DFR and RDFR as secondary/exploratory dependency-resolution measures, not hallucination rates.
+- PIPE-09 grouped/statistical analysis.
+- `risk-model-1.0.0`: Impact 1–5 × Detectability 1–4, with LOW/MODERATE/HIGH/CRITICAL bands and separate `security_sensitive_context`.
+- No generated dependency installation/execution or package claiming/registration.
+- Validation evidence must be described as infrastructure/pipeline validation, not expert or inter-rater validation.
+
+The final Chapter 3 must remove or avoid:
+- Java/Maven or PyPI as performed experiments;
+- multi-ecosystem empirical claims;
+- surveys/human participants;
+- autonomy/agentic comparison;
+- mitigation experiments;
+- predictive ML or 70/30 validation;
+- Cohen’s Kappa or expert review;
+- temporal holdout;
+- static/dynamic execution comparison;
+- package installation/execution;
+- superseded 0–12 risk scoring;
+- claims that npm 404/not_found automatically means hallucination;
+- claims that DFR/RDFR are hallucination rates.
+
+Methodological limitations to include:
+- single ecosystem;
+- bounded 30-task/four-condition/three-repetition design;
+- medium difficulty is study metadata, not externally calibrated;
+- direct explicit package references only;
+- no transitive-dependency analysis;
+- no functional execution/correctness testing;
+- time-bounded registry/provider evidence;
+- unresolved adjudications;
+- rule-based study-specific risk model.
+
+Evidence:
+`docs/final_report_support/chapter3_methodology_reconciliation.md`
+
+Drafting status:
+READY WITH RESTRICTIONS — final collection/results remain pending, and manual-interface operational details must not exceed what is supported by authoritative collection records.
