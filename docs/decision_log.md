@@ -602,3 +602,20 @@ Each decision record contains the following standardized fields:
 - **manual-interface boundary:** D033 assigns rows to the manual interface but does not name or approve a particular manual product/UI or alter the frozen M4 model condition. The scaffold therefore records actual model/interface labels verbatim and does not infer them. A researcher-approved manual interface configuration is required before any manual generation is performed.
 - **failure handling:** A failed, interrupted, or truncated manual attempt is preserved once with its exact available response bytes (including a valid zero-byte capture) and an operator-supplied failure/interruption note. It is not cleaned, replaced, regenerated, or automatically retried.
 - **data boundary:** This implementation creates no observation and does not modify the frozen manifest, HYBRID assignment, API batch state, existing API raw artifacts, prompts, model configuration, or collection order.
+
+---
+
+### D036 — Remove M2 Before Final Analysis and Freeze the Three-Condition v2.7 Final Study
+
+- **decision_id:** D036
+- **date:** 2026-09-25
+- **status:** IMPLEMENTED; commit and `v2.7.0-freeze` tag pending researcher review
+- **approved_by:** researcher, via migration instruction FINAL-STUDY-V2.7-MIGRATION-01 (formal supervisor approval: not_recorded)
+- **original_design:** v2.6.0 (tag `v2.6.0-freeze`): 30 tasks × 4 model conditions (M1–M4) × 3 repetitions = 360 planned observations; derived HYBRID assignment 180 API / 180 manual.
+- **final_design:** v2.7.0: the v2.6 manifest minus every M2 row, giving 30 × 3 × 3 = 270 planned observations for M1 `cohere/north-mini-code:free`, M3 `openai/gpt-oss-120b`, and M4 `nvidia/nemotron-3-ultra-550b-a55b:free`. Condition IDs are not renumbered. Model set `api-model-set-1.5.0` is `api-model-set-1.4.0` with M2 removed and no other change. The manifest `manifests/api_final_v2.7.0_manifest.csv` keeps v2.6 run IDs, task/category/repetition identities, prompt paths and SHA-256 values, source collection order, and inherited interface assignment (M1 40/50, M3 41/49, M4 59/31; total 140 API / 130 manual, not rebalanced).
+- **rationale:** Operational. The intended automatic API route for M2 (`qwen/qwen3.8-27b` via Darkbloom-only OpenRouter) could not complete the required collection protocol consistently: at the decision snapshot, 11 of 90 M2 rows had been attempted, with 3 `http_status_402` failures, 6 HTTP-200 responses with no non-empty assistant content, and 2 completions; 79 rows were pending.
+- **methodological_justification:** Exclusion is of the whole condition, including completed M2 outputs, and membership is a mechanical set difference that uses no outcome field. No v2.6 package-extraction, registry-validation, classification, metric, or risk output exists in the repository, so no M2 result value was available to or used for the decision. The decision is recorded before final analysis but after partial M2 collection; it is not wholly prospective and must be disclosed as such.
+- **impact_on_data_collection:** No v2.6 input, manifest, assignment, state, prompt, raw observation, or record is modified. All 11 M2 artifact directories remain preserved as historical v2.6 evidence. The 140 retained API observations are mapped in place by run ID and SHA-256 in `data/final/collection_state_v2.7.0.json`; nothing is copied, renamed, or regenerated. The 130 retained manual rows remain pending; manual generation still requires a researcher-approved manual interface (D035).
+- **impact_on_analysis:** v2.7 final-study metrics and denominators use only the 270-row v2.7 cohort; M2 is excluded from all primary and secondary final-study metrics. Interface is unevenly associated with model condition and must be handled as recorded provenance, not claimed as balanced. No inference about M2 is possible.
+- **affected_research_questions:** RQ1, RQ2, RQ3, RQ4.
+- **scope_effect:** Implementation record: `config/experiment_freeze_v2.7.0.json`, `docs/experiment_freeze_v2.7.0.md`, and `docs/final_study_v2.7_migration_verification.md`. Source audit: `docs/m2_removal_final_study_impact_audit.md`.

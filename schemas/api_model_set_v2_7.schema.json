@@ -1,0 +1,283 @@
+{
+  "$id": "https://example.org/schemas/api_model_set_v2_7.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "batch_pacing": {
+      "additionalProperties": false,
+      "properties": {
+        "minimum_seconds_between_groq_requests": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "minimum_seconds_between_openrouter_requests": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "obey_retry_after": {
+          "const": true
+        },
+        "sampling_parameters_may_change_for_rate_limits": {
+          "const": false
+        },
+        "sequential_requests_only": {
+          "const": true
+        }
+      },
+      "required": [
+        "sequential_requests_only",
+        "minimum_seconds_between_openrouter_requests",
+        "minimum_seconds_between_groq_requests",
+        "obey_retry_after",
+        "sampling_parameters_may_change_for_rate_limits"
+      ],
+      "type": "object"
+    },
+    "candidate_common_parameters": {
+      "additionalProperties": false,
+      "properties": {
+        "compatibility_status": {
+          "enum": [
+            "requires_preflight_confirmation",
+            "confirmed",
+            "incompatible"
+          ]
+        },
+        "seed": {
+          "const": "not_controlled"
+        },
+        "temperature": {
+          "const": 0.6
+        },
+        "top_p": {
+          "const": 0.95
+        }
+      },
+      "required": [
+        "temperature",
+        "top_p",
+        "seed",
+        "compatibility_status"
+      ],
+      "type": "object"
+    },
+    "comparison_unit": {
+      "const": "frozen_model_api_condition"
+    },
+    "final_preflight_timestamp_utc": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "frozen_at_utc": {
+      "format": "date-time",
+      "type": "string"
+    },
+    "interaction_protocol": {
+      "required": [
+        "messages",
+        "fresh_request_per_generation",
+        "previous_context",
+        "tools_exposed",
+        "browsing",
+        "retrieval_augmentation",
+        "code_execution",
+        "external_files"
+      ],
+      "type": "object"
+    },
+    "model_set_version": {
+      "const": "api-model-set-1.5.0"
+    },
+    "models": {
+      "items": {
+        "properties": {
+          "api_base_url": {
+            "format": "uri",
+            "type": "string"
+          },
+          "api_key_environment_variable": {
+            "enum": [
+              "OPENROUTER_API_KEY",
+              "GROQ_API_KEY"
+            ]
+          },
+          "api_provider": {
+            "enum": [
+              "OpenRouter",
+              "Groq"
+            ]
+          },
+          "condition_id": {
+            "enum": [
+              "M1",
+              "M3",
+              "M4"
+            ]
+          },
+          "max_output_tokens": {
+            "minimum": 1,
+            "type": "integer"
+          },
+          "model_family": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "model_id": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "no_tools_request_mode": {
+            "enum": [
+              "pending_preflight",
+              "explicit_tool_choice_none",
+              "omit_tools_only"
+            ]
+          },
+          "openrouter_routing": {
+            "properties": {
+              "allow_fallbacks": {
+                "const": false
+              },
+              "allow_unpinned_after_documented_decision": {
+                "type": "boolean"
+              },
+              "only_pinned_provider": {
+                "type": "boolean"
+              },
+              "pinning_status": {
+                "enum": [
+                  "pending_preflight",
+                  "proposed",
+                  "pinned",
+                  "unavailable"
+                ]
+              },
+              "require_parameters": {
+                "const": true
+              },
+              "underlying_provider_name": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "underlying_provider_slug": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "pinning_status",
+              "underlying_provider_slug",
+              "underlying_provider_name",
+              "allow_fallbacks",
+              "require_parameters",
+              "allow_unpinned_after_documented_decision"
+            ],
+            "type": "object"
+          },
+          "output_token_parameter": {
+            "enum": [
+              "max_tokens",
+              "max_completion_tokens"
+            ]
+          }
+        },
+        "required": [
+          "condition_id",
+          "api_provider",
+          "api_base_url",
+          "api_key_environment_variable",
+          "model_id",
+          "model_family",
+          "output_token_parameter",
+          "no_tools_request_mode",
+          "max_output_tokens"
+        ],
+        "type": "object"
+      },
+      "maxItems": 3,
+      "minItems": 3,
+      "type": "array"
+    },
+    "retry_policy": {
+      "type": "object"
+    },
+    "source_model_set": {
+      "additionalProperties": false,
+      "properties": {
+        "excluded_condition_ids": {
+          "const": [
+            "M2"
+          ]
+        },
+        "path": {
+          "const": "config/api_model_set_1.4.0.json"
+        },
+        "retained_condition_definitions": {
+          "const": "identical_to_source_model_set"
+        },
+        "retained_condition_ids": {
+          "const": [
+            "M1",
+            "M3",
+            "M4"
+          ]
+        },
+        "sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "version": {
+          "const": "api-model-set-1.4.0"
+        }
+      },
+      "required": [
+        "version",
+        "path",
+        "sha256",
+        "retained_condition_ids",
+        "excluded_condition_ids",
+        "retained_condition_definitions"
+      ],
+      "type": "object"
+    },
+    "status": {
+      "enum": [
+        "candidate_pending_preflight",
+        "candidate_pending_researcher_review",
+        "frozen_for_collection",
+        "suspended"
+      ]
+    },
+    "task_set_sha256": {
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "task_set_version": {
+      "const": "final-2.0.0"
+    }
+  },
+  "required": [
+    "model_set_version",
+    "status",
+    "frozen_at_utc",
+    "final_preflight_timestamp_utc",
+    "task_set_sha256",
+    "comparison_unit",
+    "task_set_version",
+    "interaction_protocol",
+    "candidate_common_parameters",
+    "retry_policy",
+    "batch_pacing",
+    "models",
+    "source_model_set"
+  ],
+  "title": "API Model Set v2.7",
+  "type": "object"
+}

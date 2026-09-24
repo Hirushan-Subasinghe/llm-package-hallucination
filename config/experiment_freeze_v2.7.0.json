@@ -1,0 +1,507 @@
+{
+  "approval": {
+    "commit_and_tag": "pending researcher review; not performed by this script",
+    "decision_log_entry": "D036",
+    "instruction": "FINAL-STUDY-V2.7-MIGRATION-01"
+  },
+  "batch_pacing": {
+    "minimum_artificial_interval_seconds": 0,
+    "provider_enforced_throttling": "HTTP 429 Retry-After and configured HTTP 5xx/transport retries remain unchanged from v2.5.",
+    "sequential_requests_only": true
+  },
+  "dataset_strategy": "three_condition_cohort_derived_from_frozen_v2_6_by_whole_condition_exclusion",
+  "design_change": {
+    "condition_ids_renumbered": false,
+    "membership_rule": "v2.6 manifest run IDs minus every M2 run ID; no outcome, status or response field participates.",
+    "model_conditions": {
+      "v2.6.0": [
+        "M1",
+        "M2",
+        "M3",
+        "M4"
+      ],
+      "v2.7.0": [
+        "M1",
+        "M3",
+        "M4"
+      ]
+    },
+    "other_protocol_changes": "none",
+    "planned_observations": {
+      "v2.6.0": 360,
+      "v2.7.0": 270
+    }
+  },
+  "evidence_reuse": {
+    "condition_equivalence": "Mapped API observations were generated under api-model-set-1.4.0; their M1/M3/M4 definitions are identical in api-model-set-1.5.0.",
+    "mapped_rows": 140,
+    "mechanism": "in-place provenance mapping by run ID and SHA-256; no copy, rename, rewrite or regeneration",
+    "source_model_set_version_of_mapped_api_rows": [
+      "api-model-set-1.4.0"
+    ],
+    "verified_fields": [
+      "run_id",
+      "task_id",
+      "category",
+      "model_condition_id",
+      "requested_model_id",
+      "run_repetition",
+      "source_collection_order",
+      "prompt_bytes_sha256",
+      "collection_interface",
+      "response_sha256"
+    ]
+  },
+  "failure_policy": {
+    "continue_after_preserved_failure": true,
+    "exclude_from_primary_shr_phr_denominators": true,
+    "preserve_failed_observation_once": true,
+    "regenerate_for_success": false,
+    "retry_failed_observation": false,
+    "substitute_model_or_provider": false
+  },
+  "final_protocol_intent": true,
+  "freeze_record_created_at_utc": "2026-09-24T23:22:58.369305Z",
+  "freeze_record_version": "experiment-freeze-v2.7.0",
+  "initial_collection_state": {
+    "path": "data/final/collection_state_v2.7.0.json",
+    "sha256": "55a32c0d4a7c6ae493ca701be2dea11995792a09bdb4a9fb8f3024ca073709a6",
+    "status_counts": {
+      "completed": 105,
+      "failed": 19,
+      "pending": 130,
+      "truncated": 16
+    },
+    "status_counts_by_model": {
+      "M1": {
+        "api_completed": 27,
+        "api_failed": 3,
+        "api_truncated": 10,
+        "manual_pending": 50
+      },
+      "M3": {
+        "api_completed": 36,
+        "api_failed": 5,
+        "manual_pending": 49
+      },
+      "M4": {
+        "api_completed": 42,
+        "api_failed": 11,
+        "api_truncated": 6,
+        "manual_pending": 31
+      }
+    }
+  },
+  "interface_assignment": {
+    "analysis_note": "Interface is unevenly associated with model condition; analyses must not claim interface balance.",
+    "api": 140,
+    "balanced": false,
+    "manual": 130,
+    "source": "inherited unchanged from hybrid_assignment_v1.0.0 by filtering; no retained row reassigned"
+  },
+  "m2_exclusion": {
+    "api_provider": "OpenRouter",
+    "condition_id": "M2",
+    "excluded_planned_rows": 90,
+    "final_study_metric_inclusion": false,
+    "model_id": "qwen/qwen3.8-27b",
+    "operational_evidence_at_freeze": {
+      "completed": 2,
+      "failed": 9,
+      "failure_reasons": {
+        "HTTP 200 response contains no non-empty assistant content": 6,
+        "http_status_402": 3
+      },
+      "planned_rows_without_artifact": 79,
+      "preserved_artifact_directories": 11,
+      "truncated": 0
+    },
+    "preserved_evidence": [
+      {
+        "failure_reason": "http_status_402",
+        "metadata_sha256": "cc686b6f9e6fe4df2c2d10aa300ede1adaae4182ac2fd0b5a5b6edfb6e0bf2e7",
+        "path": "data/final/raw/API-v2.6-AUTH-FED-01-M2-R01",
+        "response_sha256": null,
+        "status": "failed"
+      },
+      {
+        "failure_reason": "http_status_402",
+        "metadata_sha256": "dde90033f11447a730c8f3a8ab57e2aaf8bde9dfe60f0c2b0f81f1b2fe7b16b2",
+        "path": "data/final/raw/API-v2.6-AUTH-FED-02-M2-R01",
+        "response_sha256": null,
+        "status": "failed"
+      },
+      {
+        "failure_reason": "http_status_402",
+        "metadata_sha256": "5438ef6d9e1f48523f362bda8ceec7e83c9c70ce3b5f91d91c6aa9517afe518c",
+        "path": "data/final/raw/API-v2.6-AUTH-FED-03-M2-R01",
+        "response_sha256": null,
+        "status": "failed"
+      },
+      {
+        "failure_reason": "HTTP 200 response contains no non-empty assistant content",
+        "metadata_sha256": "aa3cdaa5e28a6846c132b5de2434005779fda6471e5daeafdb6216eda6881b32",
+        "path": "data/final/raw/API-v2.6-AUTH-FED-04-M2-R01",
+        "response_sha256": null,
+        "status": "failed"
+      },
+      {
+        "failure_reason": null,
+        "metadata_sha256": "af1e2632387ce53967f73e4feff66c871d5878bcbbaf4c6e639adebb8a7a16b7",
+        "path": "data/final/raw/API-v2.6-AUTH-FED-05-M2-R01",
+        "response_sha256": "ca20837ce5ea8390868bb495018dc875d63b906fb1802e2dbbfeaf803ee7a11f",
+        "status": "completed"
+      },
+      {
+        "failure_reason": "HTTP 200 response contains no non-empty assistant content",
+        "metadata_sha256": "8410895f9da0b60ec0d7d270bd63e501559d932c3a589fda9c5317385771789c",
+        "path": "data/final/raw/API-v2.6-DOC-BINARY-01-M2-R01",
+        "response_sha256": null,
+        "status": "failed"
+      },
+      {
+        "failure_reason": "HTTP 200 response contains no non-empty assistant content",
+        "metadata_sha256": "eb5eedb09fe7f2c9ec4a7fb45abe3c3913073f5209a2b3e0671165537807e11d",
+        "path": "data/final/raw/API-v2.6-PKI-CRYPTO-01-M2-R01",
+        "response_sha256": null,
+        "status": "failed"
+      },
+      {
+        "failure_reason": "HTTP 200 response contains no non-empty assistant content",
+        "metadata_sha256": "28f35a5a90e4499d243ed6a0953fd91a1c80e8c42895e9bd69310e20ff5b3abd",
+        "path": "data/final/raw/API-v2.6-PKI-CRYPTO-02-M2-R01",
+        "response_sha256": null,
+        "status": "failed"
+      },
+      {
+        "failure_reason": "HTTP 200 response contains no non-empty assistant content",
+        "metadata_sha256": "9859655c8b80b0ae861def4d3774ce6268c9d85ef1541b6a8eaaa99b91c791ca",
+        "path": "data/final/raw/API-v2.6-PKI-CRYPTO-03-M2-R01",
+        "response_sha256": null,
+        "status": "failed"
+      },
+      {
+        "failure_reason": "HTTP 200 response contains no non-empty assistant content",
+        "metadata_sha256": "e4c697c26c0ecaf4a9ab926c14feab719d56010cadf14eeba34052c003592c2a",
+        "path": "data/final/raw/API-v2.6-PKI-CRYPTO-04-M2-R01",
+        "response_sha256": null,
+        "status": "failed"
+      },
+      {
+        "failure_reason": null,
+        "metadata_sha256": "c382103ce8d5f2c9b4fff9625a22aa557de64b6f916d9305a4c2748658f85954",
+        "path": "data/final/raw/API-v2.6-PKI-CRYPTO-05-M2-R01",
+        "response_sha256": "1c2aac1c72a5c185e4d26f08c56e6cd157158806060e908d825716ac9bc7866b",
+        "status": "completed"
+      }
+    ],
+    "provider_pin": "darkbloom",
+    "rationale": "Operational: the intended automatic API collection route for M2 (qwen/qwen3.8-27b via Darkbloom-only OpenRouter) could not complete the required collection protocol consistently.",
+    "result_values_note": "The recorded rationale uses collection outcomes only. No v2.6 package-extraction, registry-validation, classification, metric or risk output exists in the repository for M2 or any condition.",
+    "result_values_used_for_exclusion": false,
+    "scope": "whole_condition",
+    "timing": "before_final_analysis_after_partial_m2_collection"
+  },
+  "model_set": {
+    "models": [
+      {
+        "api_provider": "OpenRouter",
+        "condition_id": "M1",
+        "max_output_tokens": 64000,
+        "model_id": "cohere/north-mini-code:free",
+        "provider_pin": "cohere"
+      },
+      {
+        "api_provider": "Groq",
+        "condition_id": "M3",
+        "max_output_tokens": 65536,
+        "model_id": "openai/gpt-oss-120b",
+        "provider_pin": "not_applicable"
+      },
+      {
+        "api_provider": "OpenRouter",
+        "condition_id": "M4",
+        "max_output_tokens": 65536,
+        "model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+        "provider_pin": "nvidia"
+      }
+    ],
+    "path": "config/api_model_set_1.5.0.json",
+    "sha256": "247eec71556f2908630ec8e4d34fc5ac54a29fcf5c47cb7406dafcd67991235c",
+    "version": "api-model-set-1.5.0"
+  },
+  "official_manifest": {
+    "fields": [
+      "cohort_order",
+      "run_id",
+      "source_collection_order",
+      "phase",
+      "task_id",
+      "category",
+      "task_set_version",
+      "model_set_version",
+      "source_model_set_version",
+      "model_condition_id",
+      "model_id",
+      "api_provider",
+      "underlying_provider_pin",
+      "run_repetition",
+      "rendered_prompt_path",
+      "expected_prompt_sha256",
+      "collection_interface"
+    ],
+    "path": "manifests/api_final_v2.7.0_manifest.csv",
+    "row_count": 270,
+    "rows_per_category": {
+      "AUTH-FED": 45,
+      "DATA-ADV": 45,
+      "DIST-OBS": 45,
+      "DOC-BINARY": 45,
+      "ENT-INT": 45,
+      "PKI-CRYPTO": 45
+    },
+    "rows_per_interface": {
+      "api": 140,
+      "manual": 130
+    },
+    "rows_per_model": {
+      "M1": 90,
+      "M3": 90,
+      "M4": 90
+    },
+    "rows_per_model_interface": {
+      "M1": {
+        "api": 40,
+        "manual": 50
+      },
+      "M3": {
+        "api": 41,
+        "manual": 49
+      },
+      "M4": {
+        "api": 59,
+        "manual": 31
+      }
+    },
+    "rows_per_repetition": {
+      "R01": 90,
+      "R02": 90,
+      "R03": 90
+    },
+    "run_id_policy": "retained v2.6 run IDs unchanged; cohort_order is contiguous 1-270 and source_collection_order preserves v2.6 order",
+    "sha256": "2edf2638f08a1079aadd02c174951a912aa2797b56df36997878096b29a4ed20"
+  },
+  "prompt_template": {
+    "path": "prompts/prompt_template_v2.6.0.md",
+    "reuse": "v2.6 template referenced by unchanged hash; not copied",
+    "sha256": "8d3971d6f9f86dfd98a4b5c49c0c13d734b7f650744da682225195f2ea49b528",
+    "version": "2.6.0"
+  },
+  "rendered_prompts": [
+    {
+      "path": "data/generated_prompts/v2.6.0/AUTH-FED-01.txt",
+      "sha256": "9578dd98d4b32a7d526d6e8cb8fd1337472a6ed563e32de08994903a4642b64e"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/AUTH-FED-02.txt",
+      "sha256": "0a7587118e54282ebc15031533098e0dcf7c1b76149cbbd511eae1b339314fc2"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/AUTH-FED-03.txt",
+      "sha256": "940529e083cb5059287ec238fc2637aebd72b58e281dcd929ae81c4dae2ba889"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/AUTH-FED-04.txt",
+      "sha256": "98f5ea52de7d8df9413e82ce9c49bc4249929b09cbed959790141562a88a3422"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/AUTH-FED-05.txt",
+      "sha256": "29716f2eb9cb23e17132caf5a290ab72dea7f65faa9a1f77f980b820eb968e0c"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DATA-ADV-01.txt",
+      "sha256": "e32c759d896d42a27d4d4fc64472164455ac3edeaff87d018b740014d4dcb5b0"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DATA-ADV-02.txt",
+      "sha256": "1179c220931eae775e801f6e5c8954554e40bb988b346fe0729cce2c2ec1a865"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DATA-ADV-03.txt",
+      "sha256": "04e21ec3aa46a7465b13f1a8d3ab641e202097474720382abf14f0b180db5602"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DATA-ADV-04.txt",
+      "sha256": "81320c3da7e02c4481e23c83dd0b7ee27022d24626901ff73defa1da4a698782"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DATA-ADV-05.txt",
+      "sha256": "d97d4917892f249490765a6bb4490bbf2b1097d3131458a7a1d4f506fe8b8310"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DIST-OBS-01.txt",
+      "sha256": "93d4eab04e7b9cf3066bf7be00c92fd2b3740dc5d57ba36ca8d2804d36d14a95"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DIST-OBS-02.txt",
+      "sha256": "cfec0f17df0cef3adada4f287d8b11de8e692f4f394d1b4383eb50599104b36f"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DIST-OBS-03.txt",
+      "sha256": "eda2b937c0372df95a3b9e783550484ed00ca183aa199f481fc09e7dafde2af0"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DIST-OBS-04.txt",
+      "sha256": "6fa72b98610e51da69b3465c3d981d8b2f2bef0873c7acdb5607a0f724f66697"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DIST-OBS-05.txt",
+      "sha256": "867e590bb440b0f28099cc5c6e584cf2170f6250422ad75143f06191d5d12b72"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DOC-BINARY-01.txt",
+      "sha256": "767bc383aa87c71b76a17e551dc128950b38ad55c71d0cd35ae1aacf99c0f962"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DOC-BINARY-02.txt",
+      "sha256": "e31044746f5bbc907db563a974a29f56bcafd8a0b14e349f5f6ada1c6336e6f0"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DOC-BINARY-03.txt",
+      "sha256": "81b0a166bc2aff2ce939fd520f888a4f7d0e5314aa35c94ceb16fb82fbf8a073"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DOC-BINARY-04.txt",
+      "sha256": "28944b6ec4e91456629b9531199d07f19ed645e379188d073be6ab3c287ee6f4"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/DOC-BINARY-05.txt",
+      "sha256": "7c521b2f482a827c3280bf08f8141a4ca971b0c18d417faa3372abc91bbae0cc"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/ENT-INT-01.txt",
+      "sha256": "0c26eb4ae40bae09c47a03a0954ec00b3c4da0f89f6460d13021a1e83200aa0e"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/ENT-INT-02.txt",
+      "sha256": "bafa2d5a9cac4af23a2c771546e8f923d02ee792ee07ec6bed061c15b5f9b2d3"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/ENT-INT-03.txt",
+      "sha256": "666f44a118109ac44831cdb2076c4803e2312e242fd20f34ce933bd3f3ae5854"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/ENT-INT-04.txt",
+      "sha256": "6b85399381327aa2b62226dbd438cb95ab4aea0b2953d40cf703fe65555f43af"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/ENT-INT-05.txt",
+      "sha256": "caf93be10c7e32dcc3d565f45756a0b07122b4b6d8c80f09663c6fd3d2eb3fc1"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/PKI-CRYPTO-01.txt",
+      "sha256": "49b756d40016b603151cf5e28eb5b8371a748ab560fba83cfc6c7ef028f483e7"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/PKI-CRYPTO-02.txt",
+      "sha256": "a02f825ca658d9c5723e1ef6072e73edb58e5504ad2e4a6899287e977a39f123"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/PKI-CRYPTO-03.txt",
+      "sha256": "4af44cea218275da4ff02591088980eb855e426bbdbf71d61461231f7ee915e0"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/PKI-CRYPTO-04.txt",
+      "sha256": "3a978299b633edff0cb3a45e3c2293ce1b5ed314bc15b4d6e2f8334693831bbf"
+    },
+    {
+      "path": "data/generated_prompts/v2.6.0/PKI-CRYPTO-05.txt",
+      "sha256": "4094b932f8c5fc9265a01d3bf64db2a143efc56c8e376c071b55ab07f2b4153d"
+    }
+  ],
+  "retry_policy": {
+    "backoff_seconds": [
+      2,
+      5,
+      10
+    ],
+    "content_retries": false,
+    "maximum_infrastructure_retries": 3,
+    "retry_server_errors": true,
+    "retry_transport_errors": true,
+    "retryable_http_statuses": [
+      429
+    ]
+  },
+  "sampling_parameters": {
+    "browsing": false,
+    "compatibility_status": "confirmed",
+    "execution": false,
+    "max_output_tokens_by_model": {
+      "M1": 64000,
+      "M3": 65536,
+      "M4": 65536
+    },
+    "messages": "one_user_message_only",
+    "previous_context": false,
+    "retrieval": false,
+    "seed": "not_controlled",
+    "temperature": 0.6,
+    "tools_exposed": false,
+    "top_p": 0.95
+  },
+  "schemas": [
+    {
+      "path": "schemas/api_model_set_v2_7.schema.json",
+      "sha256": "4dd2c82954e20cbb68bef6c20f46e73145c520ae558b7efb0ff04cf05c43f41a"
+    },
+    {
+      "path": "schemas/api_manifest_row.schema.json",
+      "sha256": "7926049bbeaec5a82a2abf530accee8290e853d114061d2f26886cd3650d5594"
+    },
+    {
+      "path": "schemas/api_collection_metadata.schema.json",
+      "sha256": "c67b2cc06a775ccba4900ba71382c2d37d71d6eb79a133350c4486dd6a2391ae"
+    },
+    {
+      "path": "schemas/task_record_v2.schema.json",
+      "sha256": "b828207953d17493d90be9d781bb0e38f5c220b99fea2486b952a5482789b3f2"
+    }
+  ],
+  "source_experiment": {
+    "freeze_commit": "5247c2bccb58ecd6c86b9b7e92d800ade0378282",
+    "freeze_record": {
+      "path": "config/experiment_freeze_v2.6.0.json",
+      "sha256": "53736d8a38fb4f497fc525cff7453693cd2ed0154b0c55a14172ea39164d5719"
+    },
+    "freeze_tag": "v2.6.0-freeze",
+    "hybrid_assignment": {
+      "path": "manifests/hybrid_assignment_v1.0.0.csv",
+      "row_count": 360,
+      "sha256": "e4b9295b2efc0fe639092161561e915c1d0c47f9a545df2699f7fe12595dd54f"
+    },
+    "manifest": {
+      "path": "manifests/api_final_v2.6.0_manifest.csv",
+      "row_count": 360,
+      "sha256": "b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f"
+    },
+    "model_set": {
+      "path": "config/api_model_set_1.4.0.json",
+      "sha256": "cba4a4ec3c785132523beb860db944b5d3b0ecacc429f8d6674889f34b35ad8c",
+      "version": "api-model-set-1.4.0"
+    },
+    "preservation": "All v2.6 inputs, state, raw observations and records are preserved unchanged as historical evidence.",
+    "version": "v2.6.0"
+  },
+  "task_set": {
+    "path": "prompts/tasks/final_2.0.0.jsonl",
+    "record_count": 30,
+    "sha256": "ef0aff59f8a3934f65379d34036848652b7b5593f595ffa4b449a15af021546b",
+    "version": "final-2.0.0"
+  },
+  "truncation_policy": {
+    "exclude_from_primary_shr_phr_denominators": true,
+    "preserve_truncated_observation_once": true,
+    "regenerate_for_truncation": false
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "$schema": "../schemas/api_model_set_v2_7.schema.json",
+  "batch_pacing": {
+    "minimum_seconds_between_groq_requests": 0,
+    "minimum_seconds_between_openrouter_requests": 0,
+    "obey_retry_after": true,
+    "sampling_parameters_may_change_for_rate_limits": false,
+    "sequential_requests_only": true
+  },
+  "candidate_common_parameters": {
+    "compatibility_status": "confirmed",
+    "seed": "not_controlled",
+    "temperature": 0.6,
+    "top_p": 0.95
+  },
+  "comparison_unit": "frozen_model_api_condition",
+  "final_preflight_timestamp_utc": "2026-09-22T01:57:13.469711Z",
+  "frozen_at_utc": "2026-09-24T23:22:58.369305Z",
+  "interaction_protocol": {
+    "browsing": false,
+    "code_execution": false,
+    "external_files": false,
+    "fresh_request_per_generation": true,
+    "messages": "one_user_message_only",
+    "previous_context": false,
+    "retrieval_augmentation": false,
+    "tools_exposed": false
+  },
+  "model_set_version": "api-model-set-1.5.0",
+  "models": [
+    {
+      "api_base_url": "https://openrouter.ai/api/v1",
+      "api_key_environment_variable": "OPENROUTER_API_KEY",
+      "api_provider": "OpenRouter",
+      "condition_id": "M1",
+      "max_output_tokens": 64000,
+      "model_family": "Cohere North Mini Code",
+      "model_id": "cohere/north-mini-code:free",
+      "no_tools_request_mode": "explicit_tool_choice_none",
+      "openrouter_routing": {
+        "allow_fallbacks": false,
+        "allow_unpinned_after_documented_decision": false,
+        "pinning_status": "pinned",
+        "require_parameters": true,
+        "underlying_provider_name": "Cohere",
+        "underlying_provider_slug": "cohere"
+      },
+      "output_token_parameter": "max_tokens",
+      "provider_model_status_at_freeze": "free_endpoint",
+      "underlying_endpoint_id": "cohere/north-mini-code-20260617:free"
+    },
+    {
+      "api_base_url": "https://api.groq.com/openai/v1",
+      "api_key_environment_variable": "GROQ_API_KEY",
+      "api_provider": "Groq",
+      "condition_id": "M3",
+      "max_output_tokens": 65536,
+      "model_family": "GPT-OSS-120B",
+      "model_id": "openai/gpt-oss-120b",
+      "no_tools_request_mode": "explicit_tool_choice_none",
+      "output_token_parameter": "max_completion_tokens",
+      "provider_model_status_at_freeze": "production",
+      "provider_owner": "OpenAI"
+    },
+    {
+      "api_base_url": "https://openrouter.ai/api/v1",
+      "api_key_environment_variable": "OPENROUTER_API_KEY",
+      "api_provider": "OpenRouter",
+      "condition_id": "M4",
+      "max_output_tokens": 65536,
+      "model_family": "NVIDIA Nemotron 3 Ultra 550B A55B",
+      "model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "no_tools_request_mode": "explicit_tool_choice_none",
+      "openrouter_routing": {
+        "allow_fallbacks": false,
+        "allow_unpinned_after_documented_decision": false,
+        "pinning_status": "pinned",
+        "require_parameters": true,
+        "underlying_provider_name": "Nvidia",
+        "underlying_provider_slug": "nvidia"
+      },
+      "output_token_parameter": "max_tokens",
+      "provider_model_status_at_freeze": "free_endpoint",
+      "underlying_endpoint_id": "nvidia/nemotron-3-ultra-550b-a55b-20260604:free"
+    }
+  ],
+  "retry_policy": {
+    "backoff_seconds": [
+      2,
+      5,
+      10
+    ],
+    "content_retries": false,
+    "maximum_infrastructure_retries": 3,
+    "retry_server_errors": true,
+    "retry_transport_errors": true,
+    "retryable_http_statuses": [
+      429
+    ]
+  },
+  "source_model_set": {
+    "excluded_condition_ids": [
+      "M2"
+    ],
+    "path": "config/api_model_set_1.4.0.json",
+    "retained_condition_definitions": "identical_to_source_model_set",
+    "retained_condition_ids": [
+      "M1",
+      "M3",
+      "M4"
+    ],
+    "sha256": "cba4a4ec3c785132523beb860db944b5d3b0ecacc429f8d6674889f34b35ad8c",
+    "version": "api-model-set-1.4.0"
+  },
+  "status": "frozen_for_collection",
+  "task_set_sha256": "ef0aff59f8a3934f65379d34036848652b7b5593f595ffa4b449a15af021546b",
+  "task_set_version": "final-2.0.0"
+}
