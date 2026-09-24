@@ -1,0 +1,7 @@
+Create a self-contained Node.js TypeScript core verifier for detached CMS/PKCS#7 SignedData documents. Parse PEM or DER input, attach detached content, validate the signer signature, build an X.509 chain to a configured trust anchor, enforce key usage and extended key usage, check certificate validity at a supplied verification time, and evaluate a provided CRL plus an optional stapled OCSP response without network requests. Return a structured report separating cryptographic, chain, revocation, and policy failures. Include small local valid and tampered fixtures or concise fixture-generation steps, and focus the code on the verification functions rather than application scaffolding. Include a complete package.json with exact dependency versions and scripts, explain the exact package APIs used, and provide reproducible installation and example commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

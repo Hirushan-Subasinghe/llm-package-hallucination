@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-DIST-OBS-04-M3-R02",
+  "collection_order": 234,
+  "model_condition_id": "M3",
+  "expected_model_id": "openai/gpt-oss-120b",
+  "actual_model": "openai/gpt-oss-120b",
+  "actual_interface": "Groq Playground web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R02",
+  "task_id": "DIST-OBS-04",
+  "category": "DIST-OBS",
+  "prompt_path": "data/generated_prompts/v2.6.0/DIST-OBS-04.txt",
+  "prompt_sha256": "6fa72b98610e51da69b3465c3d981d8b2f2bef0873c7acdb5607a0f724f66697",
+  "captured_at_utc": "2026-09-24T11:36:47.404949Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-DIST-OBS-04-M3-R02/response.md",
+  "raw_response_sha256": "d3f27a47516db009d9b0f9047835d24ca2e3706a7e70d222d901e4cc754d4964",
+  "raw_response_size_bytes": 22132
+}

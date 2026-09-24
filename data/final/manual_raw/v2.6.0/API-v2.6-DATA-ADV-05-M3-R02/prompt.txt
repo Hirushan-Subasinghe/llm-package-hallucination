@@ -1,0 +1,7 @@
+Build the core of a self-contained Node.js TypeScript time-series example for local PostgreSQL with a time-series extension. Ingest a small batch of sensor readings with tags, event time, ingestion time, and quality flags using idempotent writes; provide focused hypertable, retention, compression, and continuous-aggregate definitions; and implement one parameterized gap-filled hourly query with last-observation carry-forward and time-zone-aware boundaries. Include one late-arrival example and concise synthetic-data assertions rather than a complete service. Include a complete package.json with exact dependency versions and scripts, identify exact client and time-series database APIs or SQL features used, and provide reproducible local installation and execution commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

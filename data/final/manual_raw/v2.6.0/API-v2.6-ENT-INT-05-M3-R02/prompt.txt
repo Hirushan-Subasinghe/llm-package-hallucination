@@ -1,0 +1,7 @@
+Create a self-contained Node.js TypeScript core mail-interoperability pipeline that parses one raw RFC 5322 MIME message, streams an attachment with size and type limits, verifies DKIM using an injectable DNS resolver, optionally decrypts and verifies an S/MIME body, and serializes a normalized message signed with a configured DKIM key. Preserve representative internationalized headers, multipart nesting, canonical line endings, and original authentication results in an audit record. Include compact local DNS, certificate, valid-message, and tampered-message fixtures; omit mailbox, delivery-queue, and account-management boilerplate. Include a complete package.json with exact dependency versions and scripts, document the exact MIME, DKIM, DNS, and S/MIME package APIs used, and provide reproducible installation and execution commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

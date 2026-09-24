@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-PKI-CRYPTO-03-M3-R03",
+  "collection_order": 270,
+  "model_condition_id": "M3",
+  "expected_model_id": "openai/gpt-oss-120b",
+  "actual_model": "openai/gpt-oss-120b",
+  "actual_interface": "Groq Playground web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R03",
+  "task_id": "PKI-CRYPTO-03",
+  "category": "PKI-CRYPTO",
+  "prompt_path": "data/generated_prompts/v2.6.0/PKI-CRYPTO-03.txt",
+  "prompt_sha256": "4af44cea218275da4ff02591088980eb855e426bbdbf71d61461231f7ee915e0",
+  "captured_at_utc": "2026-09-24T12:32:10.046916Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-PKI-CRYPTO-03-M3-R03/response.md",
+  "raw_response_sha256": "3b328de75d9747965bc1cadf4bcdb4b16a7bc254b727a645f44a14296f592186",
+  "raw_response_size_bytes": 23380
+}
