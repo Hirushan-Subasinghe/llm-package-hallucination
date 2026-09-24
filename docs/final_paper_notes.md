@@ -644,3 +644,12 @@ Analysis Methodology, Results structure, Discussion.
 - The final literature synthesis distinguishes package hallucination from broader dependency failure and from downstream adversarial actions such as slopsquatting.
 - Chapter 2 does not treat the study-defined PHR/SHR, DFR/RDFR, or Impact × Detectability framework as prior-literature standards.
 - Detailed execution-safety and non-installation rationale removed from Chapter 2 should be documented in Chapter 3 Methodology.
+
+### 2026-09-24 — Chapter 2 final figure plan
+
+- **Affected section:** Chapter 2 — Literature Review / List of Figures.
+- Do not retain the baseline PRISMA figure, autonomous-agent lifecycle/slopsquatting execution diagram, multi-stage defensive architecture, hybrid mitigation pipeline, or sandboxed-execution evaluation framework as figures representing the performed research.
+- Final Figure 2-1 should depict the conceptual relationship between LLM package-name hallucination, dependency resolution, and possible downstream software supply-chain risk, while explicitly showing that package hallucination itself is not an attack.
+- Final Figure 2-2 should summarize the literature progression from LLM-assisted software development and code hallucination through dependency reliability and supply-chain implications to the bounded Node.js/npm research rationale.
+- Table 2.2 already covers comparative methodological dimensions, so no Figure 2-3 is currently required.
+- Detailed experimental workflow, extraction/validation/adjudication pipeline, metric derivation, and practical-risk framework figures should be placed in Chapter 3 rather than Chapter 2.

@@ -934,3 +934,13 @@
 - No unverified numeric literature claim, dissertation empirical result, model/category ranking, statistical-significance result, risk distribution, or unsupported novelty/absence claim appears in the final Chapter 2 draft.
 - Final Word-readiness status: `READY_FOR_WORD`.
 - No frozen or experimental artifact was modified and no final study metric was calculated.
+
+### 2026-09-24 — Chapter 2 figure plan reconciled with final study
+
+- Updated `docs/report_drafts/chapter2_complete_draft.md` with two final-study-aligned figure placeholders.
+- Added Figure 2-1 after Table 2.1 and before Section 2.5: conceptual relationship between LLM package-name hallucination, dependency resolution, and downstream software supply-chain risk.
+- Added Figure 2-2 at the start of Section 2.9: literature synthesis linking LLM code generation, package hallucination, dependency reliability, and software supply-chain risk.
+- Baseline Chapter 2 figures representing PRISMA, autonomous-agent/slopsquatting execution flow, defensive architecture, hybrid mitigation architecture, and sandboxed execution were designated for removal/replacement because they reflect superseded methodology or unperformed work.
+- Table 2.1 and Table 2.2 were not modified.
+- Chapter 2 citation coverage remains 34/34 approved references.
+- No verified Chapter 2 claim, citation, experimental artifact, or result was changed.

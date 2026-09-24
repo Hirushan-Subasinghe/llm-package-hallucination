@@ -116,3 +116,14 @@ One clearly duplicated sentence was removed from the Section 2.7 agentic-develop
 **READY_FOR_WORD**
 
 Milestone assessment: progress-log update **NO**; final-paper note update **NO**; draft reconciliation update **NO**.
+
+## Figure-plan addendum — 2026-09-24
+
+- baseline Figure 2-1 PRISMA: REMOVE
+- baseline Figure 2-2 autonomous-agent/slopsquatting flow: REMOVE/REPLACE
+- baseline Figure 2-3 defensive architecture: REMOVE
+- baseline Figure 2-4 hybrid mitigation architecture: REMOVE
+- baseline Figure 2-5 sandboxed execution framework: REMOVE/REPLACE
+- final Figure 2-1: conceptual relationship between package hallucination and downstream supply-chain risk
+- final Figure 2-2: literature synthesis leading to the bounded Node.js/npm research rationale
+- no Figure 2-3 currently required because Table 2.2 covers comparative dimensions

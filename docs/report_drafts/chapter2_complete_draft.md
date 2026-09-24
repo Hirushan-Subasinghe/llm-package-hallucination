@@ -102,6 +102,16 @@ Table 2.1 summarises these distinctions.
 
 *Note.* The package-hallucination row states the definition used in the cited literature. The present study's conservative confirmation and adjudication rules, under which registry absence alone is not sufficient, are defined in Chapter 3.
 
+[SPACE RESERVED FOR FIGURE 2-1]
+
+**Figure 2-1: Conceptual relationship between LLM package-name hallucination, dependency resolution, and downstream software supply-chain risk.**
+
+*Suggested content:* LLM-generated code → explicit package/dependency reference → valid package OR invalid/confused/nonexistent reference → broader dependency-resolution failure and/or confirmed package-name hallucination → if acted upon, possible installation failure or downstream malicious registration/slopsquatting → potential software supply-chain risk.
+
+*Important conceptual boundary:* Package hallucination itself is not an attack; security risk arises only under additional downstream conditions.
+
+*Source: Developed by the researcher based on the literature reviewed in this chapter.*
+
 These distinctions have direct consequences for how empirical observations of generated dependency references should be interpreted. An observation that a generated package name does not resolve in a registry is compatible with several explanations: the name may never have been published, it may be a mis-scoped or misspelled form of a real package, it may refer to a package that existed previously, or it may denote a local module rather than an external dependency. Only the first of these corresponds straightforwardly to package hallucination as defined in the literature, and none of them, on its own, constitutes an attack. Equally, the fact that a generated name does resolve to a published package does not establish that the package is the one intended or that it is safe [Spracklen et al., 2025]. The naming-threat literature therefore reinforces the need, identified in Section 2.2.2, for explicit operational definitions and for classification procedures that separate distinct failure mechanisms rather than combining them under a single label.
 
 It should be emphasised that the concepts reviewed in this section serve an interpretive function in this dissertation. Section 2.5 turns from these naming threats to the empirical literature on package hallucination itself.
@@ -268,6 +278,16 @@ This conclusion does not diminish the value of the reviewed studies. Collectivel
 ---
 
 ## 2.9 Synthesis of Literature and Research Gap
+
+[SPACE RESERVED FOR FIGURE 2-2]
+
+**Figure 2-2: Literature synthesis linking LLM code generation, package hallucination, dependency reliability, and software supply-chain risk.**
+
+*Suggested content:* LLM-assisted software development → code hallucination and reliability limitations → external package dependencies → package-name hallucination → validation and classification / dependency reliability / software supply-chain implications → bounded research rationale → controlled Node.js/npm empirical study.
+
+*Important conceptual boundary:* The figure is a literature-synthesis diagram, not a representation of experimental results.
+
+*Source: Developed by the researcher.*
 
 ### 2.9.1 What the reviewed literature establishes
 
