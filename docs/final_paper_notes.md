@@ -470,3 +470,15 @@ Discussion / Dependency Reliability.
 - Remaining API quotas were filled deterministically from never-attempted rows in each model condition's ascending frozen manifest order: 24 M1, 34 M2, 3 M3, and 0 M4 rows. Final model allocations are M1 40 API / 50 manual, M2 40 / 50, M3 41 / 49, and M4 59 / 31.
 - The allocation is documented in `manifests/hybrid_assignment_v1.0.0.csv`; reproducibility checks and row lists are in `reports/hybrid_assignment_v1.0.0_report.md`. The verified original-manifest SHA-256 before and after is `b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f`.
 - This formalization did not send API requests or start manual collection. M3 remains paused because of the documented Groq TPM/HTTP 413 incompatibility; no retry or frozen-configuration change is implied.
+
+### 2026-09-25 — M4 manual data collection completed
+
+- **Affected sections:** Methodology / Data Collection, Experimental Execution, Reproducibility.
+- The implemented v2.6 HYBRID protocol assigned 31 M4 observations to manual collection, and all 31/31 have now been captured.
+- The M4 condition used model `nvidia/nemotron-3-ultra-550b-a55b:free`; all 31 manual metadata files record the actual interface as `OpenRouter Chatroom web UI`.
+- Manual M4 artifacts are stored under `data/final/manual_raw/v2.6.0/`; each observation preserves its exact rendered prompt, raw assistant response, and capture metadata.
+- Verification confirmed all 31 M4 manual observation directories were present, all responses were non-empty, all metadata files were present, and the recorded model/interface values matched the intended M4 manual protocol.
+- The manual collector reports no unobserved M4 manual-assigned rows remaining.
+- Completion evidence is preserved on branch `collection/m4-manual-v2.6` at commit `44d3e24b4f19b34cd68d8389dd85375ad5c1700e`.
+- No hallucination-rate, package-hallucination-rate, supply-chain-risk, or comparative model-result claim should be made from this collection milestone alone; those require downstream validated analysis.
+- The final dissertation must describe the actual HYBRID API/manual collection procedure and the OpenRouter Chatroom-based M4 manual workflow rather than any earlier all-API or planned methodology.
