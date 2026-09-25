@@ -24,6 +24,7 @@ from collect_hybrid_api_batch import (
     HYBRID_ASSIGNMENT_SHA256,
     VALID_MODEL_CONDITIONS,
 )
+from repository_guard import assert_live_collection_allowed
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -234,6 +235,9 @@ def main() -> int:
     parser.add_argument("--failure-note", default="")
     args = parser.parse_args()
     try:
+        # Final v2.7 collection is complete: only the read-only modes may run.
+        if args.capture_stdin or (args.prepare and not args.dry_run):
+            assert_live_collection_allowed()
         if args.dry_run and args.capture_stdin:
             raise ValueError("--dry-run cannot capture stdin")
         rows = select_manual_rows(args.manifest, args.assignment, include_models=args.model, manual_root=args.manual_root, include_observed=True)

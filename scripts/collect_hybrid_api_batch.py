@@ -19,6 +19,7 @@ from typing import Iterable
 
 from collect_api_batch import ordered_rows, run_batch
 from collect_api_run import DEFAULT_RAW_ROOT, load_config
+from repository_guard import assert_live_collection_allowed
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -135,6 +136,9 @@ def main() -> int:
     parser.add_argument("--exclude-model", action="append", choices=VALID_MODEL_CONDITIONS, metavar="CONDITION", help="exclude this model condition (repeatable; use M3 while TPM-paused)")
     args = parser.parse_args()
     try:
+        # Final v2.7 collection is complete: only the read-only modes may run.
+        if not (args.list or args.dry_run):
+            assert_live_collection_allowed()
         if args.limit < 1:
             raise ValueError("--limit must be at least 1")
         rows = select_pending_api_rows(

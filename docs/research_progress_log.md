@@ -1547,3 +1547,28 @@ Next:
 - Full suite: 370 run, 369 passed, 1 failed, 0 errors. The failure, `test_raw_final_contains_no_active_v2_6_run_directories`, is an obsolete analysis-worktree guard assumption, and the test was not changed. The quarantine guard test now passes.
 - Audit found stale "analysis/report worktree" wording in `AGENTS.md`, `.analysis-repository-marker` and `scripts/repository_guard.py`, and found that the `collect_hybrid_*.py` collectors are unguarded. The recommended changes are in the verification document §8 and were not applied.
 - Next: v2.7 analysis adaptation, starting with a snapshot-aware completion verifier and the documented guard-test adjustment. Then push with `git push -u origin integration/v2.7-final:integration/v2.7-final` after researcher approval.
+
+### 2026-09-25 — Canonical v2.7 worktree verification guards finalized
+
+- Task FINAL-V2.7-CANONICAL-WORKTREE-CLEANUP-01 on `integration/v2.7-final` (decision D045). Full record: `docs/final_v2.7_canonical_worktree_validation.md`. These are integrity and tooling facts only, not results.
+- Added the read-only `scripts/verify_final_collection_v2_7.py` (FINAL_COMPLETION_CHECK), with 40 deterministic tests. It reuses the frozen v2.7 helpers unchanged and verifies:
+  - the design: 270 rows, M1/M3/M4 × 90, M2 0, API 140 / manual 130;
+  - the final statuses: API 105 completed, 16 truncated, 19 failed, 0 pending; manual M1 50, M3 49, M4 31;
+  - that the only change since the freeze is manual `pending` → `completed`;
+  - the manual evidence hashes and the D043 raw inventory (1,552 files, `1f79cdec…a75634e7`);
+  - the `v2.7.0-freeze` tag → `bba890d9…`, 43/43 frozen hashes, and the derived completion record.
+  It treats truncated and failed rows as excluded by frozen policy and makes no eligibility decision. Result: PASS.
+- FROZEN_SNAPSHOT_CHECK (`create_experiment_freeze_v2_7.py --check`) still fails, as documented, because it compares the pre-completion snapshot with a live re-derivation. The frozen script and state were not edited.
+- Replaced the obsolete `test_raw_final_contains_no_active_v2_6_run_directories` with a classification test:
+  - 140 retained API directories are final-study evidence;
+  - 11 M2 directories are historical and outside the manifest;
+  - 78 earlier-version directories are historical;
+  - no unexpected v2.6 or v2.7 run IDs exist.
+  A companion test shows that preservation does not imply eligibility.
+- Canonical-worktree wording corrected in `AGENTS.md`, `.analysis-repository-marker` and `scripts/repository_guard.py`. `collect_hybrid_api_batch.py` and `collect_hybrid_manual.py` are now guarded; only their read-only modes run.
+- `docs/current_research_status.md` updated, and the D043 status corrected (raw copy done and reverified).
+- Validation:
+  - hybrid assignment verify and v2.6 freeze check: PASS;
+  - full suite: 413 run, 413 passed, 0 failed, 0 errors.
+- No frozen input, raw or manual response, collection state, or inventory was modified.
+- Next: v2.7 analysis adaptation.

@@ -1,17 +1,21 @@
-"""Tests for the hard guard against live data collection in this analysis repository.
+"""Tests for the hard guard against new data collection in the canonical final worktree.
 
-Context: a collection command was once accidentally run from this repository
-(python3 scripts/collect_api_batch_v2_6.py --exclude-model M2 --limit 1),
-creating two non-official run artifacts that have since been quarantined. See
-scripts/repository_guard.py and .analysis-repository-marker.
+Context: a collection command was once accidentally run from the former
+analysis repository (python3 scripts/collect_api_batch_v2_6.py --exclude-model
+M2 --limit 1), creating two non-official run artifacts that have since been
+quarantined. This worktree is now the canonical final v2.7 worktree, and final
+data collection is complete and frozen, so the guard refuses any new
+collection here. See scripts/repository_guard.py and .analysis-repository-marker.
 
-Every live-collection entry point's CLI main() must call
-assert_live_collection_allowed() before doing anything else, so refusal
-happens before any network call, provider call, raw-run directory creation,
-or batch-state mutation -- while leaving analysis-only scripts (verification,
-manifest/freeze-record creation) completely unaffected.
+Every collection entry point's CLI main() must call
+assert_live_collection_allowed() before it could generate or record a
+response, so refusal happens before any network call, provider call, raw-run
+directory creation, manual-capture write, or batch-state mutation -- while
+leaving analysis-only scripts (verification, manifest/freeze-record creation)
+and explicit read-only modes completely unaffected.
 """
 
+import json
 import subprocess
 import sys
 import tempfile
@@ -25,8 +29,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import repository_guard
 
 EXPECTED_MESSAGE = (
-    "Live data collection is disabled in the analysis repository. "
-    "Use ~/Dev/ai-hallucination-study."
+    "Live data collection is disabled: final v2.7 data collection is complete and frozen. "
+    "No new experimental responses may be collected."
 )
 
 # Every entry point whose CLI can drive a real provider request or state
@@ -63,6 +67,7 @@ ANALYSIS_ONLY_SCRIPTS = [
     "collection_common.py",
     "finalize_collection_run.py",
     "render_api_prompts.py",
+    "verify_final_collection_v2_7.py",
 ]
 
 ANALYSIS_ONLY_SCRIPTS_WITH_HELP = [
@@ -152,6 +157,36 @@ class CLIRefusalTests(unittest.TestCase):
             completed = run_script("collect_codex_runs.py", "--codex-home", codex_home)
         self.assertEqual(completed.returncode, 1)
         self.assertIn(EXPECTED_MESSAGE, completed.stderr)
+
+    def test_hybrid_api_batch_refuses_collection_but_allows_read_only_modes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            state, raw = Path(tmp) / "state.json", Path(tmp) / "raw"
+            paths = ["--state", str(state), "--raw-root", str(raw)]
+            refused = run_script("collect_hybrid_api_batch.py", "--limit", "1", *paths)
+            self.assertEqual(refused.returncode, 1)
+            self.assertIn(EXPECTED_MESSAGE, refused.stderr)
+            for mode in ("--list", "--dry-run"):
+                with self.subTest(mode=mode):
+                    allowed = run_script("collect_hybrid_api_batch.py", mode, *paths)
+                    self.assertEqual(allowed.returncode, 0, msg=allowed.stderr)
+                    self.assertNotIn(EXPECTED_MESSAGE, allowed.stdout + allowed.stderr)
+            self.assertFalse(state.exists())
+            self.assertFalse(raw.exists())
+
+    def test_hybrid_manual_refuses_writes_but_allows_read_only_modes(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            manual_root = Path(tmp) / "manual"
+            root = ["--manual-root", str(manual_root)]
+            for args in (["--prepare"], ["--capture-stdin", "--run-id", "API-v2.6-DOC-BINARY-01-M1-R02"]):
+                with self.subTest(args=args):
+                    refused = run_script("collect_hybrid_manual.py", *args, *root)
+                    self.assertEqual(refused.returncode, 1)
+                    self.assertIn(EXPECTED_MESSAGE, refused.stderr)
+            for args in (["--list"], ["--show-next"], ["--prepare", "--dry-run"]):
+                with self.subTest(args=args):
+                    allowed = run_script("collect_hybrid_manual.py", *args, *root)
+                    self.assertEqual(allowed.returncode, 0, msg=allowed.stderr)
+            self.assertFalse(manual_root.exists())
 
     def test_argparse_still_wins_over_the_guard_for_malformed_cli_input(self):
         # Invalid CLI syntax must still produce argparse's own usage error
@@ -337,7 +372,7 @@ class AnalysisOnlyScriptsUnaffectedTests(unittest.TestCase):
 
 
 class RepositoryStateUnchangedTests(unittest.TestCase):
-    """Proof that exercising the guard leaves frozen experiment state untouched."""
+    """Proof that exercising the guard leaves frozen experiment state and evidence untouched."""
 
     STATE_PATH = ROOT / "data/final/api_batch_state_v2.6.0.json"
     QUARANTINE_DIR = ROOT / "data/quarantine/accidental_v2.6_collection_2026-09-22"
@@ -349,10 +384,50 @@ class RepositoryStateUnchangedTests(unittest.TestCase):
         ).stdout
         self.assertEqual(self.STATE_PATH.read_bytes(), head_bytes)
 
-    def test_raw_final_contains_no_active_v2_6_run_directories(self):
-        raw_root = ROOT / "data/final/raw"
-        matches = list(raw_root.glob("API-v2.6-*"))
-        self.assertEqual(matches, [], f"unexpected active v2.6 run directories: {matches}")
+    # Replaces test_raw_final_contains_no_active_v2_6_run_directories, which
+    # asserted that data/final/raw/API-v2.6-* was empty. That held in the former
+    # analysis repository, where no raw v2.6 evidence was meant to exist, but it
+    # became invalid once D043 evidence was copied into this canonical worktree:
+    # the 140 retained v2.7 API observations keep their API-v2.6-* run IDs, and
+    # the 11 M2 directories are preserved as historical evidence. Raw evidence is
+    # never deleted or renamed to satisfy a test. See
+    # docs/final_v2.7_canonical_worktree_validation.md.
+    def test_raw_final_directories_are_exactly_final_or_historical_evidence(self):
+        import create_experiment_freeze_v2_7 as frozen
+        import verify_final_collection_v2_7 as final
+
+        rows = frozen.final_study_rows()
+        record = json.loads(final.FREEZE_RECORD.read_text(encoding="utf-8"))
+        m2_paths = {item["path"] for item in record["m2_exclusion"]["preserved_evidence"]}
+        classes = final.classify_raw_directories(ROOT / "data/final/raw", rows, m2_paths, ROOT)
+        api_rows = {row["run_id"] for row in rows if row["collection_interface"] == "api"}
+        manifest_ids = {row["run_id"] for row in rows}
+
+        # Every retained v2.7 API row has its historical v2.6 evidence directory.
+        self.assertEqual(set(classes["final_study_api"]), api_rows)
+        self.assertEqual(len(classes["final_study_api"]), 140)
+        # M2 directories are historical only and never in the v2.7 manifest.
+        self.assertEqual(len(classes["historical_m2"]), 11)
+        self.assertTrue(manifest_ids.isdisjoint(classes["historical_m2"]))
+        self.assertTrue(all("-M2-" in name for name in classes["historical_m2"]))
+        # No other raw run ID is treated as a final-study observation.
+        self.assertTrue(manifest_ids.isdisjoint(classes["historical_other_versions"]))
+        self.assertFalse(any(name.startswith(("API-v2.6-", "API-v2.7-")) for name in classes["historical_other_versions"]))
+        self.assertEqual(list((ROOT / "data/final/raw").glob("API-v2.7-*")), [])
+
+    def test_evidence_preservation_does_not_imply_analytical_eligibility(self):
+        import create_experiment_freeze_v2_7 as frozen
+        import verify_final_collection_v2_7 as final
+
+        rows = frozen.final_study_rows()
+        state = json.loads(frozen.STATE.read_text(encoding="utf-8"))
+        entries = frozen.derive_collection_state(rows, state["derived_at_utc"])["rows"]
+        candidates = set(final.primary_candidate_run_ids(entries))
+        not_candidates = {entry["run_id"] for entry in entries if entry["status"] in {"truncated", "failed"}}
+        self.assertEqual(len(not_candidates), 35)
+        self.assertTrue(candidates.isdisjoint(not_candidates))
+        # Preserved M2 evidence exists on disk but is never a candidate.
+        self.assertFalse(any("-M2-" in run_id for run_id in candidates))
 
     def test_quarantine_evidence_is_untouched(self):
         self.assertTrue(self.QUARANTINE_DIR.is_dir())

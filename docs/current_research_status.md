@@ -1,9 +1,20 @@
 # Current Research Status
 
-**Last updated:** 2026-09-25 (final v2.7 data collection complete; provenance checkpoint D043; tracked branches consolidated into `integration/v2.7-final`, raw-evidence copy pending. Earlier integration-worktree update 2026-09-25: v2.7 synchronization and v2.6 relabelled historical; 2026-09-23: integrated D036 secondary dependency-reliability metrics and D037 primary confirmed-hallucination numerator routing finalized; analysis infrastructure PIPE-05B–PIPE-09)
+**Last updated:** 2026-09-25 (canonical worktree verification guards finalized: `scripts/verify_final_collection_v2_7.py` FINAL_COMPLETION_CHECK passes; raw evidence copied and verified in the canonical worktree. Earlier the same day: final v2.7 data collection complete; provenance checkpoint D043; tracked branches consolidated into `integration/v2.7-final`. Earlier integration-worktree update 2026-09-25: v2.7 synchronization and v2.6 relabelled historical; 2026-09-23: integrated D036 secondary dependency-reliability metrics and D037 primary confirmed-hallucination numerator routing finalized; analysis infrastructure PIPE-05B–PIPE-09)
 **Project:** LLM Package Hallucination Study
 
-## Current phase: v2.7.0 is the active final study; final data collection complete (270/270 assigned rows); tracked-branch consolidation done, raw-evidence copy pending; final analysis not yet run
+## Current phase: v2.7.0 is the active final study; final data collection complete (270/270 assigned rows); evidence consolidated and verified in the canonical worktree; final analysis not yet run
+
+### Canonical worktree
+
+- Canonical worktree: `~/Dev/ai-hallucination-final`. Canonical branch: `integration/v2.7-final`. This worktree is the canonical location for the final v2.7 evidence, analysis, report drafting, and dissertation work. `~/Dev/ai-hallucination-study` is retained only as the historical collection origin.
+- Final data collection is complete and frozen. The repository guard refuses any new collection in this worktree; read-only inspection and verification remain allowed.
+- Raw API evidence has been copied byte-for-byte into this worktree and verified against the D043 inventory (1,552 files; inventory SHA-256 `1f79cdecbd573b57f5121dc04fcd5e3aadcca8d46d005cebf4628a8fa75634e7`). It remains gitignored.
+- Final derived collection record: `reports/final_collection_completion_v2.7.0.json` and `reports/final_collection_completion_v2.7.0.md`.
+- The original frozen collection state `data/final/collection_state_v2.7.0.json` is unchanged. It holds the pre-completion state, with the 130 manual rows `pending`.
+- Two separate checks:
+  - FROZEN_SNAPSHOT_CHECK, `python3 scripts/create_experiment_freeze_v2_7.py --check` (frozen script, unchanged). It fails by design after manual completion, because it compares the frozen snapshot with a live re-derivation.
+  - FINAL_COMPLETION_CHECK, `python3 scripts/verify_final_collection_v2_7.py`. It passes, and is the check for the completed state (`docs/final_v2.7_canonical_worktree_validation.md`).
 
 v2.7.0 is the active, current final study. It is the frozen v2.6.0 design with the entire M2 condition removed (integrated decision **D039**, originally recorded as D036 on `feature/data-collection`; integrated D036 is the DFR/RDFR secondary-metric decision). It was frozen at `2026-09-24T23:22:58.369305Z` and committed in `bba890d` ("experiment: establish final v2.7 three-model study"). The annotated tag `v2.7.0-freeze` points to `bba890d9aa5838f06bee4b1bd0e85d9e61b444f8`.
 
@@ -50,20 +61,20 @@ These are collection-state counts only, not research results.
 
 All 140 API-assigned rows are finalized (0 pending). Failed and truncated observations are preserved and are not retried or replaced. All 130 manual-assigned rows have completed evidence under `data/final/manual_raw/v2.6.0/` on `origin/collection/m1-manual-v2.6` (`1e06280`), `origin/collection/m3-manual-v2.6` (`ee952dc`) and `origin/collection/m4-manual-v2.6` (`fb0d56a`). These branches are verified against the frozen v2.7 manifest and are merged into `integration/v2.7-final` (see `docs/final_v2.7_tracked_branch_merge_verification.md`). No further data collection remains.
 
-The frozen `data/final/collection_state_v2.7.0.json` still records the 130 manual rows as `pending`. It is not edited. Manual completion will be recorded in a separate, append-only derived record after consolidation.
+The frozen `data/final/collection_state_v2.7.0.json` still records the 130 manual rows as `pending`. It is not edited. Manual completion is recorded in the separate, non-frozen derived record `reports/final_collection_completion_v2.7.0.{json,md}`, whose agreement with the evidence is checked by `scripts/verify_final_collection_v2_7.py`.
 
 No final PHR/SHR, DFR/RDFR, grouped comparison, or risk output exists for v2.7.0. All final findings remain `[FINAL RESULT PENDING]`.
 
 **Timing disclosure:** 85 manual captures (M1 36, M3 49) predate the v2.7 freeze timestamp. They were reused as compatible retained v2.6 evidence, not regenerated (`reports/final_v2.7_manual_timing_provenance.md`).
 
-**Raw evidence provenance (D043):** `data/final/raw/` remains gitignored. It is protected by `reports/final_v2.7_raw_evidence_inventory.sha256` (1,552 files, 229 run directories; inventory SHA-256 `1f79cdecbd573b57f5121dc04fcd5e3aadcca8d46d005cebf4628a8fa75634e7`) and will be copied byte-for-byte into the canonical final worktree and reverified there. `data/final/api_batch_state_v2.6.0.json` is committed at SHA-256 `1a3af56d138d3da1c3e67c1f04f55b27e4ab5d0ec786ab31d7c2cd17cb6b695c`, the snapshot cited by the v2.7 collection state.
+**Raw evidence provenance (D043):** `data/final/raw/` remains gitignored. It is protected by `reports/final_v2.7_raw_evidence_inventory.sha256` (1,552 files, 229 run directories; inventory SHA-256 `1f79cdecbd573b57f5121dc04fcd5e3aadcca8d46d005cebf4628a8fa75634e7`) and has been copied byte-for-byte into the canonical final worktree and reverified there (1,552 files, no file outside the inventory; `docs/final_v2.7_evidence_consolidation_verification.md` §2). `data/final/api_batch_state_v2.6.0.json` is committed at SHA-256 `1a3af56d138d3da1c3e67c1f04f55b27e4ab5d0ec786ab31d7c2cd17cb6b695c`, the snapshot cited by the v2.7 collection state.
 
 ### Open items (post-collection)
 
-- **Consolidation:** the three manual branches and the analysis/report branches are merged into `integration/v2.7-final` (tracked history only; `docs/final_v2.7_tracked_branch_merge_verification.md`). Still pending: copy `data/final/raw/` byte-for-byte and reverify it against the D043 inventory; preserve the analysis-local `data/derived_checkpoints/` and `data/quarantine/` material; reconcile `AGENTS.md` wording and the repository-guard tests with a data-bearing canonical branch (preflight §9 B3).
-- **Derived final collection-state record:** record manual completion in an append-only derived file. `collection_state_v2.7.0.json` stays frozen, and `--check` fails by design if it changes.
+- **Consolidation:** complete. The manual and analysis/report branches are merged into `integration/v2.7-final` (`docs/final_v2.7_tracked_branch_merge_verification.md`). Raw evidence is copied and verified, and the analysis-local `data/derived_checkpoints/` and `data/quarantine/` material is preserved (untracked; `docs/final_v2.7_evidence_consolidation_verification.md`). `AGENTS.md`, the repository guard, and the guard tests are reconciled with the data-bearing canonical branch (`docs/final_v2.7_canonical_worktree_validation.md`).
+- **Derived final collection-state record:** done (`reports/final_collection_completion_v2.7.0.{json,md}`). `collection_state_v2.7.0.json` stays frozen.
 - **Analysis pipeline:** not yet v2.7-aware. It must cover the 270-row cohort (140 API + 130 manual) and assert zero M2 rows.
-- **Collection scripts are still v2.6-oriented:** `collect_hybrid_manual.py` and `collect_hybrid_api_batch.py` pin the v2.6 manifest and assignment. With collection complete, no further collection runs are planned.
+- **Collection scripts are still v2.6-oriented:** `collect_hybrid_manual.py` and `collect_hybrid_api_batch.py` pin the v2.6 manifest and assignment. Collection is complete: both are now guarded, and only their read-only modes run in this worktree.
 
 Validation at migration: full test suite 164 passed, 0 failed; `create_experiment_freeze_v2_7.py --check`, `create_experiment_freeze_v2_6.py --check`, and `create_hybrid_assignment_v1_0.py --verify` all passed.
 

@@ -1,12 +1,15 @@
-This file marks this repository as the AI HALLUCINATION ANALYSIS workspace.
+This file marks this repository as the canonical FINAL v2.7 worktree
+(~/Dev/ai-hallucination-final, branch integration/v2.7-final) for final
+evidence, analysis, report drafting and dissertation work.
 
-Live data collection (API requests, provider calls, or CLI-agent generation
-runs) must never be executed from this repository. Official experimental
-data collection is performed exclusively in ~/Dev/ai-hallucination-study.
+Final v2.7 data collection is complete (270/270 assigned rows) and frozen.
+No new experimental responses may be collected here or in any other
+worktree. ~/Dev/ai-hallucination-study is retained only as the historical
+collection origin.
 
 The presence of this file is checked by scripts/repository_guard.py, which
-every live-collection entry point's CLI main() calls before doing anything
-else. Do not delete or rename this file. Do not add an equivalent file to
-the official collection repository.
+every collection entry point's CLI main() calls before it could generate or
+record a response. Read-only inspection and verification remain allowed.
+Do not delete or rename this file; the name is historical.
 
 See AGENTS.md for the full research-integrity and safety rules.

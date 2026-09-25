@@ -841,7 +841,7 @@ Each decision record contains the following standardized fields:
 
 - **decision_id:** D043
 - **date:** 2026-09-25
-- **status:** IMPLEMENTED (inventory and checkpoint); byte-for-byte copy into the canonical final worktree pending consolidation
+- **status:** IMPLEMENTED (inventory, checkpoint, and byte-for-byte copy into the canonical final worktree, reverified 2026-09-25; `docs/final_v2.7_evidence_consolidation_verification.md` §2)
 - **approved_by:** researcher, via instruction FINAL-COLLECTION-PROVENANCE-CHECKPOINT-01 (formal supervisor approval: not_recorded)
 - **numbering_note:** On this branch the previous entry is D036. D037–D042 are already allocated on `integration/final-report`, where the source D032–D036 were renumbered D038–D042. D043 is used so that no new ID collides at consolidation (`docs/final_v2.7_consolidation_preflight.md` §6, §9).
 - **decision:** Final raw API response evidence remains outside Git and keeps the existing gitignore policy (`data/final/raw/*`, with only `.gitkeep` tracked). Before final-worktree consolidation, all raw evidence is protected by a deterministic SHA-256 inventory. The evidence will be copied byte-for-byte into the canonical final worktree, and its hashes will be reverified there. This avoids rewriting or repackaging frozen evidence and avoids changing the raw-evidence repository policy after collection.
@@ -867,3 +867,22 @@ Each decision record contains the following standardized fields:
 - **impact_on_data_collection:** None. No frozen input, manifest, raw or manual response, collection state, or evidence inventory is modified.
 - **impact_on_analysis:** None. The experimental methodology and findings are unaffected, and no Chapter 3 correction is required.
 - **affected_research_questions:** none (development-environment hygiene and provenance record).
+
+---
+
+### D045 — Block New Collection in the Canonical Final Worktree and Verify Final Completion Separately from the Frozen Snapshot
+
+- **decision_id:** D045
+- **date:** 2026-09-25
+- **status:** IMPLEMENTED
+- **approved_by:** researcher, via instruction FINAL-V2.7-CANONICAL-WORKTREE-CLEANUP-01 (formal supervisor approval: not_recorded)
+- **context:** `docs/final_v2.7_evidence_consolidation_verification.md` §7–§8 found stale "analysis/report-only" wording in the repository guard, an unguarded pair of `collect_hybrid_*.py` collectors, an obsolete guard test that required `data/final/raw/API-v2.6-*` to be empty, and a frozen v2.7 `--check` that cannot pass once manual evidence is present.
+- **decision:**
+  1. `~/Dev/ai-hallucination-final` (`integration/v2.7-final`) is the canonical worktree for the final v2.7 evidence, analysis, report drafting, and dissertation work. Final data collection is complete and frozen.
+  2. The repository guard stays in force with updated wording. `collect_hybrid_api_batch.py` and `collect_hybrid_manual.py` now call it before any write, and only their read-only modes (`--list`, `--dry-run`, `--show-next`, `--prepare --dry-run`) run. There is no command-line or environment override.
+  3. The frozen `scripts/create_experiment_freeze_v2_7.py` and `data/final/collection_state_v2.7.0.json` are not edited. Its `--check` is the FROZEN_SNAPSHOT_CHECK and is expected to fail after manual completion. The completed state is verified by the new, non-frozen `scripts/verify_final_collection_v2_7.py` (FINAL_COMPLETION_CHECK).
+  4. The obsolete raw-directory guard test is replaced by a test that classifies every raw directory as a final-study API observation (140), historical M2 evidence (11), or earlier-version historical evidence. Preserved evidence is not treated as analytically eligible.
+- **impact_on_data_collection:** None. No frozen input, generation setting, raw or manual response, collection state, or inventory is modified, and no observation is generated.
+- **impact_on_analysis:** None to methodology or metrics. The final-completion verifier asserts collection status only and does not decide primary eligibility.
+- **affected_research_questions:** none (integrity and reproducibility control).
+- **record:** `docs/final_v2.7_canonical_worktree_validation.md`.

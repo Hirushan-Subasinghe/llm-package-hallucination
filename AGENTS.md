@@ -2,7 +2,7 @@
 
 ## Purpose
 
-This is the integrated final-report/research worktree, not a live data-collection worktree. Live v2.6 collection remains authoritative in `~/Dev/ai-hallucination-study`. Do not attempt live collection here.
+This is the canonical final v2.7 worktree (`~/Dev/ai-hallucination-final`, branch `integration/v2.7-final`). It is the canonical location for the final v2.7 evidence, analysis, report drafting, and final dissertation work. It holds gitignored raw API evidence verified against `reports/final_v2.7_raw_evidence_inventory.sha256` (D043) and tracked manual evidence under `data/final/manual_raw/v2.6.0/`. Final v2.7 data collection is complete (270/270 assigned rows) and frozen; no further data collection is authorised in any worktree. `~/Dev/ai-hallucination-study` is retained only as the historical collection origin. Verify the completed collection with `python3 scripts/verify_final_collection_v2_7.py`.
 
 ## Source of Truth
 
@@ -89,4 +89,4 @@ If YES, provide exact appendable Markdown, or update it only when explicitly ins
 
 Do not merge, rebase, stash, reset, clean, delete quarantine/checkpoint evidence, or commit unless explicitly requested.
 
-Do not run live collection from this worktree; the repository guard and `~/Dev/ai-hallucination-study` remain the authoritative collection boundary.
+Do not run live collection from this or any worktree; final collection is complete. The repository guard (`scripts/repository_guard.py`, `.analysis-repository-marker`) stays in force and must not be bypassed or removed. Read-only evidence inspection and verification remain allowed.
