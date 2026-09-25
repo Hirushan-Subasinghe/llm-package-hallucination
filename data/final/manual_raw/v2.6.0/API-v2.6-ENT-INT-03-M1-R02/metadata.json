@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-ENT-INT-03-M1-R02",
+  "collection_order": 191,
+  "model_condition_id": "M1",
+  "expected_model_id": "cohere/north-mini-code:free",
+  "actual_model": "cohere/north-mini-code:free",
+  "actual_interface": "OpenRouter Chatroom web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R02",
+  "task_id": "ENT-INT-03",
+  "category": "ENT-INT",
+  "prompt_path": "data/generated_prompts/v2.6.0/ENT-INT-03.txt",
+  "prompt_sha256": "666f44a118109ac44831cdb2076c4803e2312e242fd20f34ce933bd3f3ae5854",
+  "captured_at_utc": "2026-09-24T20:39:51.332596Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-ENT-INT-03-M1-R02/response.md",
+  "raw_response_sha256": "abadd8eb4d71a3e2687018fd96c5fd74e519e62010c02e2ff95f663fc59f13f8",
+  "raw_response_size_bytes": 19781
+}

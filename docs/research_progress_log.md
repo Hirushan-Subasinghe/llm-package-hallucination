@@ -762,3 +762,21 @@
 - The completed M3 manual collection is recorded on branch `collection/m3-manual-v2.6`; completion commit: `4ae8344` (`data: complete M3 manual collection`).
 - Frozen experiment inputs and the HYBRID assignment were not modified during manual capture. Raw responses remain preserved as captured without whitespace normalization or response-content editing.
 - Next step: validate and integrate the completed M3 collection with the broader v2.6 experiment state without modifying frozen prompts, manifests, assignments, or raw observations.
+
+### 2026-09-25 — M1 manual collection completed
+
+- Completed the manual-assigned portion of the frozen v2.6 M1 condition: 50/50 manual observations are now captured under `data/final/manual_raw/v2.6.0/`.
+- The recorded M1 model is `cohere/north-mini-code:free`, and all 50 M1 manual metadata files record the actual interface as `OpenRouter Chatroom web UI`.
+- Verification confirmed:
+  - 50 M1 observation directories;
+  - 0 missing `response.md` files;
+  - 0 empty `response.md` files;
+  - 0 missing `metadata.json` files;
+  - 0 incorrect `actual_model` values;
+  - 0 incorrect `actual_interface` values.
+- `scripts/collect_hybrid_manual.py --model M1 --show-next --dry-run` reports `FAIL: no unobserved manual-assigned rows remain`, confirming that the M1 manual allocation is exhausted.
+- The completed M1 manual collection is recorded on branch `collection/m1-manual-v2.6`.
+- Completion commit: `d68460e6b1ea9c4737b5a519c11113990768446a` (`data: complete M1 manual collection`).
+- Exactly 150 files were committed for the 50 observations, corresponding to the preserved `metadata.json`, `prompt.txt`, and `response.md` artifacts.
+- Frozen experiment inputs and the HYBRID assignment were not modified during M1 manual capture. Raw responses remain preserved as captured without response-content editing or whitespace normalization.
+- Next step: integrate and validate M1 alongside the other completed/finalizing v2.6 model conditions before downstream response inventory, scoring, and statistical analysis.

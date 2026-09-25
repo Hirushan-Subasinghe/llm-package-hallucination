@@ -530,3 +530,15 @@ Discussion / Dependency Reliability.
 - Completion evidence is recorded on branch `collection/m3-manual-v2.6` at commit `4ae8344`.
 - No hallucination-rate, package-hallucination-rate, risk, or comparative outcome claim should be written from this milestone alone; those require downstream validated analysis.
 - The final dissertation must describe the actual HYBRID API/manual collection procedure and this completed M3 manual workflow, rather than any earlier draft assumption that collection remained all-API or that M3 was still paused.
+
+### 2026-09-25 — M1 manual data collection completed
+
+- **Affected sections:** Methodology / Data Collection, Experimental Execution, Reproducibility.
+- The implemented v2.6 HYBRID protocol assigned 50 M1 observations to manual collection, and all 50/50 have now been captured.
+- The M1 condition used model `cohere/north-mini-code:free`; all 50 manual metadata files record the actual interface as `OpenRouter Chatroom web UI`.
+- Manual M1 artifacts are stored under `data/final/manual_raw/v2.6.0/`; each observation preserves its exact rendered prompt, raw assistant response, and capture metadata.
+- Verification confirmed all 50 M1 manual observation directories were present, all responses were non-empty, all metadata files were present, and the recorded model/interface values matched the intended M1 manual protocol.
+- The manual collector reports no unobserved M1 manual-assigned rows remaining.
+- Completion evidence is preserved on branch `collection/m1-manual-v2.6` at commit `d68460e6b1ea9c4737b5a519c11113990768446a`.
+- No hallucination-rate, package-hallucination-rate, supply-chain-risk, or comparative model-result claim should be made from this collection milestone alone; those require downstream validated analysis.
+- The final dissertation must describe the actual HYBRID API/manual collection procedure for M1 rather than any earlier assumption that all observations were collected through APIs.

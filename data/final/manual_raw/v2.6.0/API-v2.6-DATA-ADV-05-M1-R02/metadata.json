@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-DATA-ADV-05-M1-R02",
+  "collection_order": 220,
+  "model_condition_id": "M1",
+  "expected_model_id": "cohere/north-mini-code:free",
+  "actual_model": "cohere/north-mini-code:free",
+  "actual_interface": "OpenRouter Chatroom web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R02",
+  "task_id": "DATA-ADV-05",
+  "category": "DATA-ADV",
+  "prompt_path": "data/generated_prompts/v2.6.0/DATA-ADV-05.txt",
+  "prompt_sha256": "d97d4917892f249490765a6bb4490bbf2b1097d3131458a7a1d4f506fe8b8310",
+  "captured_at_utc": "2026-09-24T21:16:46.319106Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-DATA-ADV-05-M1-R02/response.md",
+  "raw_response_sha256": "d3869aae18fc6b2423af083963cb7f825a3a2417d16287e797ca8d10e0a57925",
+  "raw_response_size_bytes": 18807
+}

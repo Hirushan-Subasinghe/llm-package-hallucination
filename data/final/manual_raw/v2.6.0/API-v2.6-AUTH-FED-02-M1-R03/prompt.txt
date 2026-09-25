@@ -1,0 +1,7 @@
+Implement a self-contained Node.js TypeScript confidential web client for OpenID Connect Authorization Code flow with PKCE. Discover the issuer metadata, generate and validate state, nonce, and PKCE values, exchange the authorization code, validate ID-token issuer, audience, signature, time claims, and nonce against rotating JWKS keys, and refresh tokens without losing session binding. Include login and callback routes, a minimal encrypted server-side session representation, logout handling, and a runnable example with configurable issuer and client values. Include a complete package.json with exact dependency versions and scripts, identify the exact package APIs used, and give reproducible installation and execution commands. Use suitable npm packages where appropriate; do not hard-code a vendor-specific identity provider.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.

@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-DIST-OBS-02-M1-R02",
+  "collection_order": 226,
+  "model_condition_id": "M1",
+  "expected_model_id": "cohere/north-mini-code:free",
+  "actual_model": "cohere/north-mini-code:free",
+  "actual_interface": "OpenRouter Chatroom web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R02",
+  "task_id": "DIST-OBS-02",
+  "category": "DIST-OBS",
+  "prompt_path": "data/generated_prompts/v2.6.0/DIST-OBS-02.txt",
+  "prompt_sha256": "cfec0f17df0cef3adada4f287d8b11de8e692f4f394d1b4383eb50599104b36f",
+  "captured_at_utc": "2026-09-24T21:24:52.637082Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-DIST-OBS-02-M1-R02/response.md",
+  "raw_response_sha256": "c11b916bc2cf248884d9b54046d95b92ed4be733f41ec746d26ddb2f59bf0d54",
+  "raw_response_size_bytes": 1176
+}
