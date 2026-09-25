@@ -1066,3 +1066,11 @@ Next:
 - Added `docs/final_report_support/remaining_decision_id_collision_reconciliation.md`.
 - No chapter draft, figure asset, frozen experiment input, or empirical result was modified.
 - Future Chapter 3 references to HYBRID allocation, API row selection, or manual capture must use D040, D041, and D042 respectively.
+
+### 2026-09-25 — Chapter 3 reconciled to v2.7.0 three-condition final study
+
+- Reconciled `docs/report_drafts/chapter3_complete_draft.md` from the superseded v2.6.0 design to frozen v2.7.0 (tag `v2.7.0-freeze`, commit `bba890d9aa5838f06bee4b1bd0e85d9e61b444f8`): M1, M3, M4; 270 planned observations; 45 per category; 140 API / 130 manual (deterministic, not balanced).
+- Added M2 exclusion disclosure (Section 3.5.1; integrated D039) and retained-evidence reuse statement (Section 3.5.2).
+- Tables 3-1, 3-2, 3-3 updated; Tables 3-4 to 3-9 unchanged. Word count 7,501 to 8,055.
+- Figures 3-1 and 3-2 require regeneration; Figures 3-3 to 3-5 unaffected.
+- Verification: `docs/final_report_support/chapter3_v2.7_reconciliation_verification.md`. No empirical results added.

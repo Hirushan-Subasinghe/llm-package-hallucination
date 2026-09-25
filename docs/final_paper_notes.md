@@ -757,3 +757,7 @@ The five approved figure slots remain unchanged:
 - Figure 3-5: Impact × Detectability framework.
 
 Six appendix references remain unresolved and must be assigned during final dissertation assembly. Check the final Word page count after inserting the figures. If further shortening is required, use actual Word pagination rather than deleting methodology speculatively.
+
+### 2026-09-25 — Chapter 3 v2.7 reconciliation
+
+Chapter 3 now describes the frozen v2.7.0 final study: three retained conditions (M1, M3, M4; not renumbered), 30 tasks, 3 repetitions, 270 planned observations, 45 per category, and a deterministic, unbalanced 140 API / 130 manual assignment (M1 40/50, M3 41/49, M4 59/31). The earlier 2026-09-24 Chapter 3 note specifying four conditions, 360 observations, and 180 / 180 is superseded. Section 3.5.1 discloses that M2 was removed after partial collection and before final analysis for operational reasons, with no result outputs in existence (integrated D039). Retained M1/M3/M4 evidence is reused without regeneration where provenance matched. Figures 3-1 and 3-2 must be regenerated before Word transfer.
