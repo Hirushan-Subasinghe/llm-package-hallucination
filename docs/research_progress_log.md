@@ -732,3 +732,15 @@
 - No v2.6 frozen experiment input was modified by establishing the v2.7 freeze.
 - Outstanding collection-state issue: `data/final/api_batch_state_v2.6.0.json` remains an uncommitted working-tree modification and requires a separate provenance/checkpoint decision before it is staged or changed.
 - Next report task: reconcile Chapters 1–3 with the frozen v2.7 three-model methodology before final report assembly.
+
+### 2026-09-25 — Final v2.7 data collection complete; provenance checkpoint
+
+- Final v2.7 data collection is complete. All 270 assigned observations have terminal evidence. These are collection-state counts only, not results.
+  - API (140): 105 completed, 16 truncated, 19 failed, 0 pending. By model: M1 27/10/3, M3 36/0/5, M4 42/6/11. Failed and truncated rows are final under the freeze policy: no retry and no regeneration.
+  - Manual (130): M1 50, M3 49, M4 31, all `response_status=completed`. They are tracked on `origin/collection/m1-manual-v2.6` @ `1e06280`, `origin/collection/m3-manual-v2.6` @ `ee952dc` and `origin/collection/m4-manual-v2.6` @ `fb0d56a`, which are not yet merged. All 130 rows had already been verified against the frozen v2.7 manifest (`docs/final_v2.7_consolidation_preflight.md` §2).
+  - M2 rows among the final-study observations: 0.
+- Checkpointed `data/final/api_batch_state_v2.6.0.json` unchanged at SHA-256 `1a3af56d138d3da1c3e67c1f04f55b27e4ab5d0ec786ab31d7c2cd17cb6b695c`. This exactly matches `source_v2_6_state_snapshot.sha256` in the frozen `collection_state_v2.7.0.json`. The difference from the previous commit is append-only: 1,008 → 1,073 events, plus the collector's `updated_at_utc`/pacing fields. This resolves the outstanding collection-state issue noted in the previous entry.
+- Recorded D043: raw API evidence stays gitignored and is protected by `reports/final_v2.7_raw_evidence_inventory.sha256`, which covers 1,552 files in 229 run directories, 46,240,449 bytes, and has inventory SHA-256 `1f79cdecbd573b57f5121dc04fcd5e3aadcca8d46d005cebf4628a8fa75634e7`. The evidence is to be copied byte-for-byte into the canonical final worktree and reverified there. Breakdown: `reports/final_v2.7_raw_evidence_summary.md`.
+- Timing provenance: 85 manual captures (M1 36, M3 49) predate the v2.7 freeze timestamp `2026-09-24T23:22:58.369305Z`, and 45 (M1 14, M4 31) postdate it. The 85 were reused as compatible retained v2.6 evidence without regeneration, not produced by a new v2.7 collection event. Details: `reports/final_v2.7_manual_timing_provenance.md`.
+- Verification: `v2.7.0-freeze` → `bba890d9aa5838f06bee4b1bd0e85d9e61b444f8`. All 39 frozen v2.7 input hashes match, and `create_experiment_freeze_v2_7.py --check` passes. All 140 API evidence directories hash-match the frozen state. Raw evidence verifies against the inventory, and no raw evidence is Git-tracked.
+- Next: consolidation into the canonical final worktree (`docs/final_v2.7_consolidation_preflight.md`), an append-only derived record of manual completion, and a v2.7-aware analysis pipeline.

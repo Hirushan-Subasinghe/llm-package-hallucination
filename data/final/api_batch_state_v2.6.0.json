@@ -6435,13 +6435,475 @@
       "event": "temporarily_blocked_or_failed",
       "failure_reason": "HTTP 200 response contains no non-empty assistant content",
       "run_id": "API-v2.6-ENT-INT-01-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T14:00:41.033671Z",
+      "collection_order": 65,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T14:00:41.033122Z",
+      "run_id": "API-v2.6-ENT-INT-02-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-23T14:03:30.484267Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-ENT-INT-02-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-ENT-INT-02-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T14:09:25.099907Z",
+      "collection_order": 72,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T14:09:25.099272Z",
+      "run_id": "API-v2.6-ENT-INT-03-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-23T14:13:54.270273Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-ENT-INT-03-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-ENT-INT-03-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T14:44:07.317376Z",
+      "collection_order": 75,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T14:44:07.316795Z",
+      "run_id": "API-v2.6-ENT-INT-04-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-23T14:46:12.210434Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-ENT-INT-04-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-ENT-INT-04-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T14:46:12.214677Z",
+      "collection_order": 78,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T14:46:12.214296Z",
+      "run_id": "API-v2.6-ENT-INT-05-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-23T14:48:52.874309Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-ENT-INT-05-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-ENT-INT-05-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T14:48:52.878284Z",
+      "collection_order": 81,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T14:48:52.877973Z",
+      "run_id": "API-v2.6-DATA-ADV-01-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-23T14:52:46.975165Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-DATA-ADV-01-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-DATA-ADV-01-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T14:52:46.979167Z",
+      "collection_order": 88,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T14:52:46.978514Z",
+      "run_id": "API-v2.6-DATA-ADV-02-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-23T14:55:55.417182Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-DATA-ADV-02-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-DATA-ADV-02-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T14:55:55.420800Z",
+      "collection_order": 91,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T14:55:55.420270Z",
+      "run_id": "API-v2.6-DATA-ADV-03-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-23T15:05:50.514515Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-DATA-ADV-03-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-DATA-ADV-03-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T15:11:30.909370Z",
+      "collection_order": 94,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T15:11:30.908743Z",
+      "run_id": "API-v2.6-DATA-ADV-04-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-23T15:21:19.336321Z",
+      "error_type": "ValueError",
+      "event": "temporarily_blocked_or_failed",
+      "failure_reason": "provider_finish_reason_error",
+      "run_id": "API-v2.6-DATA-ADV-04-M1-R01"
+    },
+    {
+      "api_provider": "Groq",
+      "at_utc": "2026-09-23T17:24:34.492700Z",
+      "collection_order": 154,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T17:24:34.492047Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-04-M3-R02"
+    },
+    {
+      "at_utc": "2026-09-23T17:25:06.185107Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-04-M3-R02",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-04-M3-R02"
+    },
+    {
+      "api_provider": "Groq",
+      "at_utc": "2026-09-23T17:25:06.189372Z",
+      "collection_order": 157,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T17:25:06.189037Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-05-M3-R02"
+    },
+    {
+      "at_utc": "2026-09-23T17:25:30.863284Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-05-M3-R02",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-05-M3-R02"
+    },
+    {
+      "api_provider": "Groq",
+      "at_utc": "2026-09-23T17:25:30.867029Z",
+      "collection_order": 164,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T17:25:30.866755Z",
+      "run_id": "API-v2.6-DOC-BINARY-01-M3-R02"
+    },
+    {
+      "at_utc": "2026-09-23T17:25:52.010195Z",
+      "error_type": "ValueError",
+      "event": "temporarily_blocked_or_failed",
+      "failure_reason": "http_status_413",
+      "run_id": "API-v2.6-DOC-BINARY-01-M3-R02"
+    },
+    {
+      "action": "stopped_without_skipping_or_substitution",
+      "at_utc": "2026-09-23T17:25:52.010218Z",
+      "collection_order": 164,
+      "event": "batch_stopped_nonretryable_provider_failure",
+      "failure_reason": "http_status_413",
+      "run_id": "API-v2.6-DOC-BINARY-01-M3-R02"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T17:30:06.614900Z",
+      "collection_order": 97,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T17:30:06.614299Z",
+      "run_id": "API-v2.6-DATA-ADV-05-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-23T17:36:05.454063Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-DATA-ADV-05-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-DATA-ADV-05-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T17:36:05.459821Z",
+      "collection_order": 104,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T17:36:05.459334Z",
+      "run_id": "API-v2.6-DIST-OBS-01-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-23T17:38:10.929280Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-DIST-OBS-01-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-DIST-OBS-01-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T17:38:10.933937Z",
+      "collection_order": 107,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T17:38:10.933574Z",
+      "run_id": "API-v2.6-DIST-OBS-02-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-23T17:46:27.438838Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-DIST-OBS-02-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-DIST-OBS-02-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T18:40:09.572694Z",
+      "collection_order": 110,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T18:40:09.571816Z",
+      "run_id": "API-v2.6-DIST-OBS-03-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-23T18:44:13.232487Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-DIST-OBS-03-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-DIST-OBS-03-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T18:44:13.236914Z",
+      "collection_order": 113,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T18:44:13.236436Z",
+      "run_id": "API-v2.6-DIST-OBS-04-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-23T18:50:23.152302Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-DIST-OBS-04-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-DIST-OBS-04-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T18:50:23.156851Z",
+      "collection_order": 120,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T18:50:23.156303Z",
+      "run_id": "API-v2.6-DIST-OBS-05-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-23T18:51:45.639300Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-DIST-OBS-05-M1-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-DIST-OBS-05-M1-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T18:51:45.645238Z",
+      "collection_order": 124,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T18:51:45.644729Z",
+      "run_id": "API-v2.6-AUTH-FED-01-M1-R02"
+    },
+    {
+      "at_utc": "2026-09-23T18:53:25.317906Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-AUTH-FED-01-M1-R02",
+      "event": "completed",
+      "run_id": "API-v2.6-AUTH-FED-01-M1-R02"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T18:53:25.322084Z",
+      "collection_order": 127,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T18:53:25.321783Z",
+      "run_id": "API-v2.6-AUTH-FED-02-M1-R02"
+    },
+    {
+      "at_utc": "2026-09-23T18:54:57.143617Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-AUTH-FED-02-M1-R02",
+      "event": "completed",
+      "run_id": "API-v2.6-AUTH-FED-02-M1-R02"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T18:59:20.188039Z",
+      "collection_order": 130,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T18:59:20.187481Z",
+      "run_id": "API-v2.6-AUTH-FED-03-M1-R02"
+    },
+    {
+      "at_utc": "2026-09-23T19:08:59.901061Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-AUTH-FED-03-M1-R02",
+      "event": "completed",
+      "run_id": "API-v2.6-AUTH-FED-03-M1-R02"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T19:08:59.904662Z",
+      "collection_order": 133,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T19:08:59.904365Z",
+      "run_id": "API-v2.6-AUTH-FED-04-M1-R02"
+    },
+    {
+      "at_utc": "2026-09-23T19:10:15.204074Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-AUTH-FED-04-M1-R02",
+      "event": "completed",
+      "run_id": "API-v2.6-AUTH-FED-04-M1-R02"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T19:10:15.207490Z",
+      "collection_order": 140,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T19:10:15.207144Z",
+      "run_id": "API-v2.6-AUTH-FED-05-M1-R02"
+    },
+    {
+      "at_utc": "2026-09-23T19:17:24.812033Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-AUTH-FED-05-M1-R02",
+      "event": "completed",
+      "run_id": "API-v2.6-AUTH-FED-05-M1-R02"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T19:17:24.815756Z",
+      "collection_order": 143,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T19:17:24.815455Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-01-M1-R02"
+    },
+    {
+      "at_utc": "2026-09-23T19:25:30.646748Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-01-M1-R02",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-01-M1-R02"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T19:33:43.565101Z",
+      "collection_order": 146,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T19:33:43.564564Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-02-M1-R02"
+    },
+    {
+      "at_utc": "2026-09-23T19:40:37.280350Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-02-M1-R02",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-02-M1-R02"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T19:40:37.284687Z",
+      "collection_order": 149,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T19:40:37.284237Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-03-M1-R02"
+    },
+    {
+      "at_utc": "2026-09-23T19:44:50.576346Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-03-M1-R02",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-03-M1-R02"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T19:44:50.581738Z",
+      "collection_order": 156,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T19:44:50.581138Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-04-M1-R02"
+    },
+    {
+      "at_utc": "2026-09-23T19:46:53.022840Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-04-M1-R02",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-04-M1-R02"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T19:46:53.028511Z",
+      "collection_order": 159,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T19:46:53.028150Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-05-M1-R02"
+    },
+    {
+      "at_utc": "2026-09-23T19:50:16.927111Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-05-M1-R02",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-05-M1-R02"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-23T19:59:50.786451Z",
+      "collection_order": 28,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-23T19:59:50.785980Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-02-M2-R01"
+    },
+    {
+      "at_utc": "2026-09-23T20:39:35.464117Z",
+      "error_type": "ValueError",
+      "event": "temporarily_blocked_or_failed",
+      "failure_reason": "HTTP 200 response contains no non-empty assistant content",
+      "run_id": "API-v2.6-PKI-CRYPTO-02-M2-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-24T01:59:38.110783Z",
+      "collection_order": 31,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-24T01:59:38.110205Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-03-M2-R01"
+    },
+    {
+      "at_utc": "2026-09-24T02:11:33.706339Z",
+      "error_type": "ValueError",
+      "event": "temporarily_blocked_or_failed",
+      "failure_reason": "HTTP 200 response contains no non-empty assistant content",
+      "run_id": "API-v2.6-PKI-CRYPTO-03-M2-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-24T02:17:55.646558Z",
+      "collection_order": 34,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-24T02:17:55.645939Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-04-M2-R01"
+    },
+    {
+      "at_utc": "2026-09-24T02:33:35.748804Z",
+      "error_type": "ValueError",
+      "event": "temporarily_blocked_or_failed",
+      "failure_reason": "HTTP 200 response contains no non-empty assistant content",
+      "run_id": "API-v2.6-PKI-CRYPTO-04-M2-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-24T02:59:08.100871Z",
+      "collection_order": 37,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-24T02:59:08.100303Z",
+      "run_id": "API-v2.6-PKI-CRYPTO-05-M2-R01"
+    },
+    {
+      "at_utc": "2026-09-24T03:03:56.517087Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-v2.6-PKI-CRYPTO-05-M2-R01",
+      "event": "completed",
+      "run_id": "API-v2.6-PKI-CRYPTO-05-M2-R01"
+    },
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-24T03:07:54.556299Z",
+      "collection_order": 44,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-24T03:07:54.555547Z",
+      "run_id": "API-v2.6-DOC-BINARY-01-M2-R01"
+    },
+    {
+      "at_utc": "2026-09-24T03:17:10.643076Z",
+      "error_type": "ValueError",
+      "event": "temporarily_blocked_or_failed",
+      "failure_reason": "HTTP 200 response contains no non-empty assistant content",
+      "run_id": "API-v2.6-DOC-BINARY-01-M2-R01"
     }
   ],
   "manifest_sha256": "b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f",
   "provider_next_allowed_at_epoch": {
-    "Groq": 1790152945.8230581,
-    "OpenRouter": 1790158882.8388958
+    "Groq": 1790184330.8667545,
+    "OpenRouter": 1790219274.5555475
   },
   "state_version": "api-batch-state-1.0.0",
-  "updated_at_utc": "2026-09-23T10:21:55.499559Z"
+  "updated_at_utc": "2026-09-24T03:17:10.643089Z"
 }

@@ -619,3 +619,19 @@ Each decision record contains the following standardized fields:
 - **impact_on_analysis:** v2.7 final-study metrics and denominators use only the 270-row v2.7 cohort; M2 is excluded from all primary and secondary final-study metrics. Interface is unevenly associated with model condition and must be handled as recorded provenance, not claimed as balanced. No inference about M2 is possible.
 - **affected_research_questions:** RQ1, RQ2, RQ3, RQ4.
 - **scope_effect:** Implementation record: `config/experiment_freeze_v2.7.0.json`, `docs/experiment_freeze_v2.7.0.md`, and `docs/final_study_v2.7_migration_verification.md`. Source audit: `docs/m2_removal_final_study_impact_audit.md`.
+
+---
+
+### D043 — Keep Final Raw API Evidence Outside Git and Protect It with a Deterministic SHA-256 Inventory
+
+- **decision_id:** D043
+- **date:** 2026-09-25
+- **status:** IMPLEMENTED (inventory and checkpoint); byte-for-byte copy into the canonical final worktree pending consolidation
+- **approved_by:** researcher, via instruction FINAL-COLLECTION-PROVENANCE-CHECKPOINT-01 (formal supervisor approval: not_recorded)
+- **numbering_note:** On this branch the previous entry is D036. D037–D042 are already allocated on `integration/final-report`, where the source D032–D036 were renumbered D038–D042. D043 is used so that no new ID collides at consolidation (`docs/final_v2.7_consolidation_preflight.md` §6, §9).
+- **decision:** Final raw API response evidence remains outside Git and keeps the existing gitignore policy (`data/final/raw/*`, with only `.gitkeep` tracked). Before final-worktree consolidation, all raw evidence is protected by a deterministic SHA-256 inventory. The evidence will be copied byte-for-byte into the canonical final worktree, and its hashes will be reverified there. This avoids rewriting or repackaging frozen evidence and avoids changing the raw-evidence repository policy after collection.
+- **alternatives_rejected:** Tracking `data/final/raw/` in Git (preflight option B2-A) was rejected because it would change the raw-evidence repository policy after collection. Pointing the analysis at the original worktree (B2-B) and symlinking (B2-C) were not adopted, because the evidence would not be reverified in the canonical worktree.
+- **implementation:** `reports/final_v2.7_raw_evidence_inventory.sha256` covers 1,552 regular files (229 run directories plus `.gitkeep`; 46,240,449 bytes) and has SHA-256 `1f79cdecbd573b57f5121dc04fcd5e3aadcca8d46d005cebf4628a8fa75634e7`. The generation command and the breakdown are in `reports/final_v2.7_raw_evidence_summary.md`. In the same checkpoint, `data/final/api_batch_state_v2.6.0.json` was committed unchanged at SHA-256 `1a3af56d138d3da1c3e67c1f04f55b27e4ab5d0ec786ab31d7c2cd17cb6b695c`, the snapshot cited by the frozen v2.7 collection state.
+- **impact_on_data_collection:** None. No observation is generated, regenerated, retried, moved, renamed, or modified. Manual evidence (`data/final/manual_raw/v2.6.0/`) is already Git-tracked on the manual collection branches and is outside the scope of this decision.
+- **impact_on_analysis:** Before any final analysis in the canonical worktree, `sha256sum -c reports/final_v2.7_raw_evidence_inventory.sha256` must pass. Any mismatch blocks analysis.
+- **affected_research_questions:** none directly (provenance and reproducibility control).

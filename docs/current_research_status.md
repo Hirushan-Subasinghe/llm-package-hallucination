@@ -1,11 +1,11 @@
 # Current Research Status
 
-**Last updated:** 2026-09-25 (v2.7.0 three-model final study frozen and migration verified)
+**Last updated:** 2026-09-25 (final v2.7 data collection complete; provenance checkpoint D043)
 **Project:** LLM Package Hallucination Study
 
-## Current phase: v2.7.0 is the active final study; API collection complete for retained models; manual collection pending
+## Current phase: v2.7.0 is the active final study; final data collection complete (270/270 assigned rows); consolidation pending
 
-v2.7.0 is the active, current final study. It is the frozen v2.6.0 design with the entire M2 condition removed (decision D036). It was frozen at `2026-09-24T23:22:58.369305Z` and committed in `bba890d` ("experiment: establish final v2.7 three-model study"). The `v2.7.0-freeze` tag has not been created yet and is pending researcher review.
+v2.7.0 is the active, current final study. It is the frozen v2.6.0 design with the entire M2 condition removed (decision D036). It was frozen at `2026-09-24T23:22:58.369305Z` and committed in `bba890d` ("experiment: establish final v2.7 three-model study"). The annotated tag `v2.7.0-freeze` points to `bba890d9aa5838f06bee4b1bd0e85d9e61b444f8`.
 
 ### Current v2.7.0 three-model design
 
@@ -33,24 +33,31 @@ v2.7.0 is the active, current final study. It is the frozen v2.6.0 design with t
 
 The 140 retained API observations (M1/M3/M4) are mapped in place to their preserved v2.6 raw evidence by run ID and SHA-256. Nothing was copied, renamed, rewritten, or regenerated, and no `API-v2.7-*` raw directory exists. Mapped observations were generated under `api-model-set-1.4.0`; that provenance is not rewritten.
 
-### Current collection-state snapshot (v2.7 initial state)
+### Final collection status (verified 2026-09-25)
 
 These are collection-state counts only, not research results.
 
-| Condition | API completed | API truncated | API failed | Manual pending | Total |
+| Condition | API completed | API truncated | API failed | Manual captured | Total |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | M1 | 27 | 10 | 3 | 50 | 90 |
 | M3 | 36 | 0 | 5 | 49 | 90 |
 | M4 | 42 | 6 | 11 | 31 | 90 |
 | **Total** | **105** | **16** | **19** | **130** | **270** |
 
-All 140 API-assigned rows are finalized. Failed and truncated observations are preserved and are not retried or replaced. No v2.7 API collection remains.
+All 140 API-assigned rows are finalized (0 pending). Failed and truncated observations are preserved and are not retried or replaced. All 130 manual-assigned rows have completed evidence under `data/final/manual_raw/v2.6.0/` on `origin/collection/m1-manual-v2.6` (`1e06280`), `origin/collection/m3-manual-v2.6` (`ee952dc`) and `origin/collection/m4-manual-v2.6` (`fb0d56a`). These branches are verified against the frozen v2.7 manifest but not yet merged. No further data collection remains.
 
-### Open blockers
+The frozen `data/final/collection_state_v2.7.0.json` still records the 130 manual rows as `pending`. It is not edited. Manual completion will be recorded in a separate, append-only derived record after consolidation.
 
-- **Manual interface approval:** the 130 manual rows cannot be validly collected until a manual interface configuration is approved (D035).
-- **v2.7 collection-state update mechanism:** `collection_state_v2.7.0.json` is an initial frozen snapshot; a separately approved procedure to refresh/advance it is needed before manual collection begins (`--check` fails by design if evidence changes).
-- **Collection scripts are still v2.6-oriented:** `collect_hybrid_manual.py` and `collect_hybrid_api_batch.py` still pin the v2.6 manifest and assignment; the v2.6 HYBRID API selector can still select M2 rows (stopping M2 collection is an operational instruction, not code-enforced).
+**Timing disclosure:** 85 manual captures (M1 36, M3 49) predate the v2.7 freeze timestamp. They were reused as compatible retained v2.6 evidence, not regenerated (`reports/final_v2.7_manual_timing_provenance.md`).
+
+**Raw evidence provenance (D043):** `data/final/raw/` remains gitignored. It is protected by `reports/final_v2.7_raw_evidence_inventory.sha256` (1,552 files, 229 run directories; inventory SHA-256 `1f79cdecbd573b57f5121dc04fcd5e3aadcca8d46d005cebf4628a8fa75634e7`) and will be copied byte-for-byte into the canonical final worktree and reverified there. `data/final/api_batch_state_v2.6.0.json` is committed at SHA-256 `1a3af56d138d3da1c3e67c1f04f55b27e4ab5d0ec786ab31d7c2cd17cb6b695c`, the snapshot cited by the v2.7 collection state.
+
+### Open items (post-collection)
+
+- **Consolidation:** merge the three manual branches and the analysis/report branches into the canonical final worktree, following `docs/final_v2.7_consolidation_preflight.md`, then copy `data/final/raw/` and reverify it against the D043 inventory.
+- **Derived final collection-state record:** record manual completion in an append-only derived file. `collection_state_v2.7.0.json` stays frozen, and `--check` fails by design if it changes.
+- **Analysis pipeline:** not yet v2.7-aware. It must cover the 270-row cohort (140 API + 130 manual) and assert zero M2 rows.
+- **Collection scripts are still v2.6-oriented:** `collect_hybrid_manual.py` and `collect_hybrid_api_batch.py` pin the v2.6 manifest and assignment. With collection complete, no further collection runs are planned.
 
 Validation at migration: full test suite 164 passed, 0 failed; `create_experiment_freeze_v2_7.py --check`, `create_experiment_freeze_v2_6.py --check`, and `create_hybrid_assignment_v1_0.py --verify` all passed.
 

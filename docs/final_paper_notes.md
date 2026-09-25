@@ -509,3 +509,13 @@ Discussion / Dependency Reliability.
   - M2 (`qwen/qwen3.8-27b`, Darkbloom) as a final analyzed condition, including the 2026-09-22 notes saying deferred M2 rows would be collected later.
 - In this file, the "Current methodology facts" section (v2.3 active, 360 runs, four conditions) and the 2026-09-22/23 v2.6 entries predate v2.7. Treat them as superseded where they conflict with this entry.
 - No final empirical findings are recorded here. The v2.7 collection counts are collection-state data only.
+
+### 2026-09-25 — Final data collection complete; pre-freeze manual captures must be disclosed
+
+- Sections affected: Chapter 3 (Experimental Execution / Data Collection / Threats to Validity), Data Availability.
+- Final data collection is complete. The 270-row final v2.7 design consists of 130 manual-assigned rows (M1 50, M3 49, M4 31) and 140 API-assigned rows (M1 40, M3 41, M4 59).
+- API rows reached terminal states: 105 completed, 16 truncated, 19 failed, 0 pending. Report finalized attempts separately from usable completed responses. These are collection-state counts, not findings.
+- **Methodological disclosure required:** 85 of the 130 retained manual captures predate the formal v2.7 freeze (`2026-09-24T23:22:58.369305Z`): M1 36 and M3 49. The other 45 (M1 14, M4 31) were captured after it. The 85 pre-freeze captures were reused as compatible retained v2.6 evidence rather than regenerated. They were captured with the v2.6 HYBRID manual scaffold (D035) under their original `API-v2.6-…` run IDs and byte-identical prompts, and v2.7 membership was determined mechanically without outcome data (D036).
+- Chapter 3 must disclose this accurately. Do not describe the 85 captures as generated under a v2.7 collection event, and do not describe the manual phase as wholly post-freeze. Evidence: `reports/final_v2.7_manual_timing_provenance.md`.
+- Raw API evidence provenance (D043): the evidence remains outside Git and is protected by a SHA-256 inventory (`reports/final_v2.7_raw_evidence_inventory.sha256`). It will be copied byte-for-byte to the canonical final worktree and reverified there. This may be cited in the reproducibility/data-availability statement.
+- Chapter 3 was not edited in this task.
