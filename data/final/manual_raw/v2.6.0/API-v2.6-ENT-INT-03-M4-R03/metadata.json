@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-ENT-INT-03-M4-R03",
+  "collection_order": 309,
+  "model_condition_id": "M4",
+  "expected_model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "actual_interface": "OpenRouter Chatroom web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R03",
+  "task_id": "ENT-INT-03",
+  "category": "ENT-INT",
+  "prompt_path": "data/generated_prompts/v2.6.0/ENT-INT-03.txt",
+  "prompt_sha256": "666f44a118109ac44831cdb2076c4803e2312e242fd20f34ce933bd3f3ae5854",
+  "captured_at_utc": "2026-09-25T02:48:50.566801Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-ENT-INT-03-M4-R03/response.md",
+  "raw_response_sha256": "1f9c4f1893f6ba817d9830db0c7a9d233dcd392c5db0f23e3ddee2931e43232d",
+  "raw_response_size_bytes": 71049
+}

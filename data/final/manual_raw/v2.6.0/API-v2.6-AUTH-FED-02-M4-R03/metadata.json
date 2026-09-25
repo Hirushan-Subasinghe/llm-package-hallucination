@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-AUTH-FED-02-M4-R03",
+  "collection_order": 245,
+  "model_condition_id": "M4",
+  "expected_model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "actual_interface": "OpenRouter Chatroom web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R03",
+  "task_id": "AUTH-FED-02",
+  "category": "AUTH-FED",
+  "prompt_path": "data/generated_prompts/v2.6.0/AUTH-FED-02.txt",
+  "prompt_sha256": "0a7587118e54282ebc15031533098e0dcf7c1b76149cbbd511eae1b339314fc2",
+  "captured_at_utc": "2026-09-24T23:57:43.371723Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-AUTH-FED-02-M4-R03/response.md",
+  "raw_response_sha256": "bd6ac03204e7beb171f1a5ebaba40e1091d3963bdf67bdfb74667f05a5b80a0b",
+  "raw_response_size_bytes": 32325
+}

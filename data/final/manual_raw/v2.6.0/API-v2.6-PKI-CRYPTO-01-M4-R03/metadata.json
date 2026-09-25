@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-PKI-CRYPTO-01-M4-R03",
+  "collection_order": 261,
+  "model_condition_id": "M4",
+  "expected_model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "actual_interface": "OpenRouter Chatroom web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R03",
+  "task_id": "PKI-CRYPTO-01",
+  "category": "PKI-CRYPTO",
+  "prompt_path": "data/generated_prompts/v2.6.0/PKI-CRYPTO-01.txt",
+  "prompt_sha256": "49b756d40016b603151cf5e28eb5b8371a748ab560fba83cfc6c7ef028f483e7",
+  "captured_at_utc": "2026-09-25T00:32:53.704649Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-PKI-CRYPTO-01-M4-R03/response.md",
+  "raw_response_sha256": "f588de1a1d568378b6a2f5553f5a40fea625c1ea526fe99478e2202d7a246e86",
+  "raw_response_size_bytes": 65394
+}

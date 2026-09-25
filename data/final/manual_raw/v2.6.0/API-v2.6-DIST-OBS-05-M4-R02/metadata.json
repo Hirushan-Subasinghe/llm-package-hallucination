@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-DIST-OBS-05-M4-R02",
+  "collection_order": 238,
+  "model_condition_id": "M4",
+  "expected_model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "actual_interface": "OpenRouter Chatroom web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R02",
+  "task_id": "DIST-OBS-05",
+  "category": "DIST-OBS",
+  "prompt_path": "data/generated_prompts/v2.6.0/DIST-OBS-05.txt",
+  "prompt_sha256": "867e590bb440b0f28099cc5c6e584cf2170f6250422ad75143f06191d5d12b72",
+  "captured_at_utc": "2026-09-24T23:48:15.964966Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-DIST-OBS-05-M4-R02/response.md",
+  "raw_response_sha256": "c5d165e5fa5e1732b683b864280b7ff27e4fb999c5e9863bf3c01319454148bb",
+  "raw_response_size_bytes": 144744
+}
