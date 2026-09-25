@@ -79,17 +79,20 @@ class CollectionInfrastructureTests(unittest.TestCase):
                     self.assertEqual(init_collection_run.main(), 1)
 
     def test_renderer_resets_manifest_status_to_planned_pending(self):
-        manifest_path = ROOT / "manifests/pilot_manifest.csv"
-        original = manifest_path.read_text(encoding="utf-8")
-        try:
-            manifest_path.write_text(original.replace(",pending\n", ",completed\n", 1), encoding="utf-8")
-            import render_generation_prompts
+        import render_generation_prompts
+        tasks = render_generation_prompts.load_tasks()
+        rendered = {
+            task["prompt_id"]: (
+                f"data/generated_prompts/v1.0.0/{task['prompt_id']}.txt",
+                sha256_bytes((ROOT / f"data/generated_prompts/v1.0.0/{task['prompt_id']}.txt").read_bytes()),
+            )
+            for task in tasks
+        }
+        with patch.object(render_generation_prompts, "render_tasks", return_value=rendered), patch.object(render_generation_prompts, "write_manifest") as writer:
             self.assertEqual(render_generation_prompts.main(), 0)
-            with manifest_path.open(newline="", encoding="utf-8") as handle:
-                rows = list(csv.DictReader(handle))
-            self.assertTrue(all(row["collection_status"] == "pending" for row in rows))
-        finally:
-            manifest_path.write_text(original, encoding="utf-8")
+        written_rows = [call.args[1] for call in writer.call_args_list]
+        self.assertEqual([len(rows) for rows in written_rows], [24, 360])
+        self.assertTrue(all(row["collection_status"] == "pending" for rows in written_rows for row in rows))
 
     def test_initialize_finalize_preserves_manifest_and_verifier_uses_metadata(self):
         run_id = "PILOT-AUTH-04-chatgpt_web-R01"

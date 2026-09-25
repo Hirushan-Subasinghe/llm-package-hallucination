@@ -46,21 +46,53 @@ Normalization; dataset construction and provenance.
   reads response-inventory records and immutable raw response text. It deterministically
   extracts explicit dependency syntax, retains occurrence-level provenance, normalizes
   package roots, and produces a separate unique normalized package-per-response view.
+- Extractor v1.0.1 was manually audited against all 10 currently collected v2.2
+  responses. The initial audit found 8 missed multiline literal imports; bounded
+  multiline import scanning corrected them. The post-fix audit found 0 false
+  positives and 0 false negatives under D029, with 3 documented contract-boundary
+  cases. Describe this as validation on the audited observations, not as perfect
+  extraction accuracy for future or unaudited responses.
 - Extraction is separate from registry validation and hallucination classification.
   It excludes Node.js built-ins, `node:` references, local/relative/absolute paths,
   `file:` references, and HTTP(S) URLs; unsupported or ambiguous syntax is not guessed.
 - Truncated observations can be extracted, but retain their truncation marker for later
   exclusion from primary PHR/SHR under the frozen v2.2 rule.
-- The current 167 occurrence records and 97 unique records are intermediate processing
-  counts, not hallucination findings. Do not report them as hallucination prevalence.
+- The current 175 occurrence records and 97 unique `(run_id, normalized_package)`
+  records are intermediate processing counts, not hallucination findings. Do not
+  report them as hallucination prevalence.
 
 **Draft reconciliation:** Old university-draft Section 3.5.1.2 describes Node.js
 extraction using package.json parsing, AST parsing, and require/import scanning while
 also including Spring Boot/Maven extraction elsewhere. The final dissertation must
 remove Spring Boot/Maven extraction from performed methodology unless supported by
-final experiment evidence; describe only the grammar actually implemented; not claim
-AST parsing; document occurrence provenance and deterministic normalization; and
-describe the unique-package view separately from occurrence extraction.
+final experiment evidence; describe the implemented deterministic grammar and its
+audit; not claim AST parsing; document occurrence provenance and deterministic
+normalization; and describe the unique-package view separately from occurrence
+extraction. Mention the multiline-import repair only if useful for reproducibility
+or quality assurance, not as a headline research result.
+
+### PIPE-04 registry validation (implemented; first v2.2 snapshot)
+
+**Affected final-paper section:** Chapter 3 / Registry Validation.
+
+- The implemented validator (`scripts/validate_npm_packages.py`) deduplicates
+  normalized package names before read-only metadata GET requests to the official
+  npm registry, then joins each package-level result back to response-package rows.
+  A successful metadata response must match the exact normalized name to yield
+  `exists`; a clean authoritative npm 404 yields `not_found`. Timeouts, network
+  errors, HTTP 429/5xx, and malformed or unexpected responses remain `unresolved`.
+- Operational failures receive bounded retries. Records retain UTC check times,
+  validator version, request endpoint, status/evidence summary, and source-input
+  hashes; the joined view preserves the response-package mapping. These are
+  registry evidence states, separate from final research classifications.
+- The first snapshot covers only the 10 collected v2.2 observations: 44 distinct
+  names across 97 response-package rows yielded 43 `exists`, 1 `not_found`, and
+  0 `unresolved`. These are interim validation counts, not final study results or
+  hallucination prevalence. The `not_found` case requires later classification.
+
+**Draft reconciliation:** Final Chapter 3 should describe this implemented npm
+metadata lookup, bounded retry, provenance, and join mechanism rather than broader
+planned validation mechanisms that were not performed.
 
 ## Draft reconciliation backlog
 
@@ -75,8 +107,8 @@ describe the unique-package view separately from occurrence extraction.
 | Comparison variables | Autocomplete/agentic workflow, programming environment, and developer expertise are experimental variables | v2.2 compares four fixed model/API conditions under one stateless text-only API protocol; no expertise variable or environment comparison. | UPDATE |
 | Tools/models | GPT-3.5/GPT-4, Copilot, Gemini, Claude, or generic workflow claims | Use only the v2.2 manifest and freeze record's exact M1–M4 model/API conditions and pins. Do not map them to historical tools. | UPDATE |
 | Sample size/power | Planned 200–300 prompts and projected dependency counts/power claims | Frozen design has 360 planned runs; collection is incomplete and no final outcome counts exist. | UPDATE; REMOVE unsupported power claims |
-| Dependency extraction | Maven/Spring parsing and finalized AST/extraction mechanisms | Node.js/npm direct-dependency extraction is the only scope. PIPE-03 implements deterministic explicit-syntax extraction, occurrence provenance, normalization, and a separate unique-per-response view; it does not perform AST parsing. | UPDATE / IMPLEMENTED |
-| Registry validation | Absence inferred broadly from registry lookup | Read-only, timestamped npm validation must separate `exists`, `not_found`, and `unresolved`; 404 requires conservative classification checks. | UPDATE |
+| Dependency extraction | Maven/Spring parsing and finalized AST/extraction mechanisms | Node.js/npm direct-dependency extraction is the only scope. PIPE-03 v1.0.1 implements deterministic explicit-syntax extraction, occurrence provenance, normalization, and a separate unique-per-response view; all 10 collected v2.2 responses were audited. It does not perform AST parsing. | UPDATE / IMPLEMENTED AND AUDITED |
+| Registry validation | Absence inferred broadly from registry lookup | PIPE-04 uses read-only official npm metadata GET requests with exact-name checks, timestamped evidence, bounded retries, and a deterministic response-package join. Its 404 `not_found` state is not a final hallucination classification. | UPDATE / IMPLEMENTED; CLASSIFICATION PENDING |
 | Hallucination measure | Absolute count of nonexistent dependencies | Primary PHR/SHR, normalized-package handling, occurrence provenance, unresolved handling, and separate truncation are required. | UPDATE |
 | Risk assessment | Large composite model, naming distance, installation probability, workflow privilege, or predictive scoring | Only the specified rule-based Impact × Detectability protocol is in scope; no fitted/predictive model or risk result exists yet. | UPDATE; do not claim evaluation completed |
 | Model validation | 70/30 split, predictive accuracy, Cohen's kappa, experts, temporal holdout, cross-tool validation, sensitivity-weight fitting | No evidence these validation studies were performed. The protocol calls only for documented subset double-checks if risk scoring occurs. | REMOVE / MOVE TO FUTURE WORK |
@@ -282,3 +314,208 @@ No final experimental results belong here yet. Add results only from verified, v
 - Truncated observations remain preserved once and excluded from primary SHR/PHR denominators.
 - Do not infer hallucination prevalence or model-quality differences from these collection-completion outcomes alone.
 - Evidence: `data/final/raw/API-v2.5-PKI-CRYPTO-01-M2-R01/metadata.json`, `data/final/raw/API-v2.5-PKI-CRYPTO-01-M3-R01/metadata.json`, and `data/final/api_batch_state_v2.5.0.json`.
+
+### 2026-09-22 — final high-output v2.6 protocol selected after v2.5 truncation evidence
+
+- **Affected sections:** Methodology / Experimental Protocol, Data Collection, Dataset Completion, Limitations.
+- Verified v2.5 observations showed that increasing the output ceiling from 12,000 to 16,000 tokens reduced some censoring pressure but did not eliminate truncation. Multiple M2 and M4 observations reached exactly 16,000 completion tokens with finish reason `length`.
+- v2.5 was therefore prospectively stopped without deleting, retrying, regenerating, or modifying any preserved v2.5 observation.
+- A fresh v2.6 experiment will start from observation 1 and will use model-specific output ceilings intended to minimize avoidable right-censoring:
+  - M1: 64,000 output tokens.
+  - M2: 32,768 output tokens with the same `qwen/qwen3.8-27b` model moved from Groq to OpenRouter.
+  - M3: 65,536 output tokens.
+  - M4: 65,536 output tokens.
+- Because M2 changes provider and the output ceilings change, v2.6 is a distinct experimental version. v2.5 observations must remain methodological evidence and must not be pooled into v2.6 primary SHR/PHR results.
+- The task set, prompt content, repetitions, temperature, top-p, no-tools policy, retry semantics, failure preservation, truncation preservation, and zero researcher-imposed pacing are intended to remain unchanged unless a provider-specific request-format difference is technically required.
+- v2.6 is intended to be the final collection protocol. Any response that still reaches its supported output ceiling will be preserved as a right-censored truncated observation rather than triggering another experiment restart.
+- No v2.6 result, hallucination rate, SHR, PHR, or risk result exists yet.
+
+### 2026-09-22 — prospective v2.6 implementation provenance
+
+- **Affected sections:** Methodology / Experimental Protocol, Data Collection, Dataset Completion, Limitations.
+- The v2.6 implementation uses a fresh 360-row all-pending manifest and empty collection state, with no v2.6 raw observations. It does not reuse any v2.5 observation. v2.5 remains prospectively stopped and excluded from v2.6 primary SHR/PHR.
+- The v2.6 template and all 30 rendered prompts are byte-identical to v2.5. The same task set, four model identities, repetitions, sampling parameters other than output ceilings, and collection/failure/truncation rules are retained.
+- The experimental amendments are per-model output ceilings (M1 64,000; M2 32,768; M3 and M4 65,536) and moving M2 `qwen/qwen3.8-27b` from Groq to Darkbloom-pinned OpenRouter. The request restricts both provider order and allowlist to `darkbloom`, disables provider fallback, and supplies no model fallback.
+- v2.6 is intended as the final prospective protocol. Remaining ceiling hits will be reported as preserved right-censored truncations and excluded from primary SHR/PHR, without restarting the experiment. No v2.6 hallucination, risk, SHR, or PHR result exists yet.
+- The v2.6 freeze record contains the source URLs and hashes needed to audit these implementation facts. No live v2.6 API request was sent during implementation.
+
+### 2026-09-22 — v2.6 final prospective protocol frozen
+
+- **Affected sections:** Methodology / Experimental Setup, Data Collection, Model Configuration, Limitations, Reproducibility.
+- The final prospective experiment version is v2.6.0, frozen at commit `5247c2bccb58ecd6c86b9b7e92d800ade0378282` and annotated tag `v2.6.0-freeze`.
+- The primary v2.6 dataset contains 360 planned observations: 30 tasks × 4 model conditions × 3 repetitions.
+- Frozen model conditions are:
+  - M1: `cohere/north-mini-code:free` via OpenRouter, provider pin `cohere`, maximum output 64,000 tokens.
+  - M2: `qwen/qwen3.8-27b` via OpenRouter, provider pin `darkbloom`, maximum output 32,768 tokens, provider fallback disabled.
+  - M3: `openai/gpt-oss-120b` via Groq, maximum output 65,536 tokens.
+  - M4: `nvidia/nemotron-3-ultra-550b-a55b:free` via OpenRouter, provider pin `nvidia`, maximum output 65,536 tokens.
+- The v2.6 task set, prompt template, rendered prompt bytes, repetitions, temperature 0.6, top_p 0.95, uncontrolled seed, single-user-message interface, no-tools policy, retry semantics, failure preservation, truncation preservation, and zero researcher-imposed pacing are preserved from the prior protocol except for the explicitly documented provider/output-ceiling amendment.
+- v2.5 is retained as methodological evidence and must not be pooled into v2.6 primary SHR or PHR estimates.
+- Remaining v2.6 responses that hit their frozen output ceiling must be preserved as right-censored truncated observations and excluded from primary SHR/PHR under the predefined analysis policy; they must not trigger another experiment restart.
+- Final pre-collection validation passed: v2.5 tests 4/4, v2.6 targeted tests 5/5, shared API/freeze tests 33/33, full repository suite 118/118, v2.5 freeze verification PASS, v2.6 freeze verification PASS, and `git diff --check` PASS.
+- No live v2.6 API request had been sent when the freeze commit and tag were created.
+- The final dissertation must describe v2.6 as the performed primary protocol if collection proceeds under this freeze. Earlier v2.0-v2.5 versions should be described only as protocol-development/methodological evidence where relevant.
+
+### 2026-09-22 — official v2.6 collection began successfully
+
+- **Affected sections:** Methodology / Data Collection, Results / Dataset Completion, Limitations.
+- Official collection began under frozen v2.6 commit `5247c2bccb58ecd6c86b9b7e92d800ade0378282` and tag `v2.6.0-freeze`.
+- The first official observation, `API-v2.6-AUTH-FED-01-M1-R01`, completed normally with finish reason `stop` under M1 (`cohere/north-mini-code:free` via OpenRouter/Cohere).
+- The observation used 16,832 completion tokens under the frozen 64,000-token ceiling, with no protocol deviations.
+- This single observation provides operational evidence that the higher v2.6 ceiling can avoid a 16,000-token ceiling hit for at least some responses; it must not be generalized into a truncation-rate result until sufficient v2.6 observations are collected.
+- No v2.6 SHR, PHR, hallucination-rate, or comparative model result should be reported from this single observation.
+
+### 2026-09-22 — temporary M2 collection deferral during frozen v2.6 execution
+
+- **Affected sections:** Methodology / Data Collection Procedure, Dataset Completion, Limitations, Reproducibility.
+- During official v2.6 collection, M2 generation was temporarily deferred after three preserved pre-generation HTTP 402 failures caused by unavailable OpenRouter paid-credit authorization.
+- M1, M3, and M4 collection was allowed to continue while remaining M2 rows stayed pending.
+- This changed only execution chronology; it did not change the frozen manifest, run IDs, original collection-order values, task prompts, model identities, provider pins, output ceilings, sampling parameters, retry/failure policy, truncation policy, or primary analysis definitions.
+- The operational scheduling support was committed separately as `4bf0240` after the prospective experiment freeze. The experimental freeze remains `5247c2bccb58ecd6c86b9b7e92d800ade0378282` / `v2.6.0-freeze`.
+- Actual execution timestamps should be used to describe collection chronology, while manifest `collection_order` remains the predefined planned ordering.
+- The three already-failed M2 observations remain preserved failures and must not be regenerated. Remaining pending M2 observations will be collected later under the same frozen M2 configuration once paid access is available.
+
+### 2026-09-22 — temporary M2 collection deferral during frozen v2.6 execution
+
+- **Affected sections:** Methodology / Data Collection Procedure, Dataset Completion, Limitations, Reproducibility.
+- During official v2.6 collection, M2 generation was temporarily deferred after three preserved pre-generation HTTP 402 failures caused by unavailable OpenRouter paid-credit authorization.
+- M1, M3, and M4 collection was allowed to continue while remaining M2 rows stayed pending.
+- This changed only execution chronology; it did not change the frozen manifest, run IDs, original collection-order values, task prompts, model identities, provider pins, output ceilings, sampling parameters, retry/failure policy, truncation policy, or primary analysis definitions.
+- The operational scheduling support was committed separately as `4bf0240` after the prospective experiment freeze. The experimental freeze remains `5247c2bccb58ecd6c86b9b7e92d800ade0378282` / `v2.6.0-freeze`.
+- Actual execution timestamps should be used to describe collection chronology, while manifest `collection_order` remains the predefined planned ordering.
+- The three already-failed M2 observations remain preserved failures and must not be regenerated. Remaining pending M2 observations will be collected later under the same frozen M2 configuration once paid access is available.
+
+### 2026-09-22 — residual truncation and provider-overload evidence in v2.6
+
+- **Affected sections:** Data Collection, Results / Dataset Completion, Limitations.
+- During official v2.6 collection, an M1 observation reached the frozen 64,000-token output ceiling with finish reason `length` and was preserved as truncated.
+- Therefore, the larger model-specific v2.6 ceilings reduced ceiling-induced truncation but did not guarantee complete elimination of right-censoring.
+- A separate M4 observation failed before a valid chat completion was produced because the upstream Nvidia provider reported temporary overload (`503 provider_overloaded`) inside the OpenRouter response.
+- The M4 overload event should be reported as a provider/infrastructure failure, not as a hallucination, truncation, or malformed generated-code result.
+- Both observations remain preserved once under the predefined collection policy and are excluded from primary SHR/PHR where required by that policy.
+
+### 2026-09-22 — recurring M4 upstream availability failures
+
+- **Affected sections:** Data Collection, Dataset Completion, Limitations.
+- Multiple v2.6 M4 observations failed because the upstream Nvidia provider reported temporary overload (`503 provider_overloaded`) through OpenRouter.
+- These events should be classified as provider/infrastructure failures and excluded from hallucination and truncation interpretations.
+- The predefined preservation policy was maintained: each failed observation was retained once without regeneration or substitution.
+
+### 2026-09-22 — Interim dependency-review screening produced a non-zero signal
+
+**Affected sections:** Chapter 3 / Secondary Analysis Method; Results structure;
+Discussion / Dependency Reliability.
+
+- A current v2.6 checkpoint contained 350 metric-eligible package-response rows and 35 eligible completed responses.
+- 5 eligible package recommendations required manual review (1.43%), occurring in 5 distinct eligible responses (14.29%).
+- These are screening observations only and must not be presented as final research results.
+- `REVIEW_REQUIRED` must remain distinct from confirmed hallucination and confirmed dependency failure.
+- The next analysis stage is evidence-based PIPE-05B adjudication of the real review-required candidates.
+- Two additional review-required cases occurred in truncated responses and are excluded from primary screening rates but may be retained for qualitative or sensitivity analysis.
+
+### 2026-09-22 — PIPE-05B secondary dependency-reliability adjudication infrastructure implemented
+
+**Affected sections:** Chapter 3 / Secondary Analysis Method; Results methodology; Discussion / Dependency Reliability.
+
+- To characterize `AMBIGUOUS` / `REVIEW_REQUIRED` package references without weakening the primary conservative hallucination definition, a separate manual adjudication layer was implemented.
+- PIPE-05B distinguishes confirmed package-name hallucination from other evidence-backed dependency-reliability outcomes: legacy/removed package, namespace confusion, package-name confusion, invalid/redundant types package, ecosystem confusion, other dependency error, and unresolved cases.
+- `dependency_failure` is tracked independently from `confirmed_package_hallucination`.
+- PIPE-05B is additive and does not feed back into the frozen primary PHR/SHR definitions.
+- The implementation was validated with synthetic fixtures only; no real review-required package had been adjudicated at this milestone.
+
+### 2026-09-22 — M3 provider TPM constraint
+
+- **Affected sections:** Methodology / Provider Configuration, Data Collection Reliability, Limitations.
+- A v2.6 M3 observation was rejected by Groq before generation because the current `on_demand` service tier exposed an 8,000 TPM limit while the frozen request reserved approximately 65.8k tokens.
+- This event is a provider/account capacity constraint, not a hallucination, truncation, or generated model failure.
+- The failed observation remains excluded from primary SHR/PHR.
+- The frozen M3 generation ceiling was not reduced in response to this event.
+
+### 2026-09-23 — M3 temporarily paused after recurrent Groq rate-limit failures
+
+- Sections affected: Experimental Execution / Data Quality / Threats to Validity.
+- The M3 condition continued to experience intermittent Groq HTTP 413 failures under the account's 8,000 TPM limit.
+- A subsequent restart again produced a finalized HTTP 413 with no stranded request.
+- Collection was temporarily paused to avoid repeatedly consuming pending observations during an unstable provider/account rate-limit period.
+- Existing M3 completed and failed observations remain preserved, and finalized failures are not regenerated.
+- The paper should distinguish these provider/account failures from model-output behavior.
+
+### 2026-09-23 — M2 output budget consumed by reasoning without usable assistant content
+
+- Sections affected: Experimental Execution / Data Quality / Threats to Validity.
+- M2 order 15 reached the intended `qwen/qwen3.8-27b` Darkbloom condition after paid OpenRouter access was enabled, showing that the earlier HTTP 402 access problem was no longer the immediate blocker.
+- Provider usage reported 32,768 completion tokens against the frozen 32,768-token output ceiling, of which 32,767 were reported as reasoning tokens.
+- No non-empty assistant content was produced, so the observation was finalized as failed rather than treated as a usable generation.
+- This observation provides evidence of output-budget exhaustion dominated by provider-reported reasoning tokens.
+- The observation remains excluded from primary SHR/PHR eligibility under the frozen protocol.
+- Avoid attributing this failure to billing or credit exhaustion.
+- Evidence: preserved M2 order-15 response and metadata.
+
+### 2026-09-23 — M1 exhibited both truncation and provider/model-error failure modes
+
+- Sections affected: Experimental Execution / Data Quality / Threats to Validity.
+- M1 order 62 returned HTTP 200 but no assistant content, with provider/model `finish_reason=error`.
+- Provider usage reported only 3,603 completion/reasoning tokens, well below the frozen 64,000-token M1 ceiling.
+- Therefore this observation should not be described as output-ceiling truncation.
+- M1 missingness includes at least two distinct mechanisms:
+  1. output-ceiling truncation;
+  2. provider/model errors producing no usable assistant content.
+- Failed rows remain excluded from primary SHR/PHR eligibility and are not regenerated.
+
+### 2026-09-23 — HYBRID collection-interface allocation
+
+- **Affected sections:** Methodology / Data Collection, Dataset Completion, Reproducibility, Limitations.
+- A derived HYBRID allocation layer assigned the 360 frozen v2.6 manifest rows evenly by collection interface: 180 API and 180 manual. The frozen original manifest remains unchanged and is not replaced by the allocation artifact.
+- The assignment preserves all 119 previously API-attempted observations (M1 16, M2 6, M3 38, M4 59), including completed, truncated, and failed observations. Interface allocation must not be interpreted as a successful-response count, and failed observations are not replaced to obtain successful outputs.
+- Remaining API quotas were filled deterministically from never-attempted rows in each model condition's ascending frozen manifest order: 24 M1, 34 M2, 3 M3, and 0 M4 rows. Final model allocations are M1 40 API / 50 manual, M2 40 / 50, M3 41 / 49, and M4 59 / 31.
+- The allocation is documented in `manifests/hybrid_assignment_v1.0.0.csv`; reproducibility checks and row lists are in `reports/hybrid_assignment_v1.0.0_report.md`. The verified original-manifest SHA-256 before and after is `b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f`.
+- This formalization did not send API requests or start manual collection. M3 remains paused because of the documented Groq TPM/HTTP 413 incompatibility; no retry or frozen-configuration change is implied.
+
+### 2026-09-23 — M1 hybrid API collection remained productive despite censoring/failures
+
+- Sections affected: Experimental Execution / Data Availability / Threats to Validity.
+- During the hybrid automatic phase, seven newly attempted M1 API-assigned observations produced five completed responses, one truncated response, and one provider/model error.
+- The provider-error observation was preserved as failed and was not regenerated.
+- This provides further evidence that M1 collection contained a mixture of usable completions, output truncation, and provider/model failure rather than a single uniform failure mechanism.
+
+### 2026-09-24 — Final M1 API collection outcome
+
+- Sections affected: Experimental Execution / Data Availability / Threats to Validity.
+- The M1 automatic portion of the hybrid experiment completed all 40 assigned API observations.
+- Final M1 API outcomes were 27 completed responses, 10 truncated responses, and 3 failed responses.
+- Truncated and failed responses were preserved without retry in accordance with the frozen collection protocol.
+- The final report should distinguish finalized API attempts from usable completed responses when reporting model-level data availability.
+
+### 2026-09-25 — Final study is v2.7.0 (three models); M2 excluded before final analysis
+
+- Sections affected:
+  - Chapter 1: change four model conditions to three and 360 to 270 planned observations; update the scope, contribution, and limitation wording. Do not imply any inference about M2.
+  - Chapter 2: minor wording updates wherever four selected conditions or Qwen/M2 appear as part of the final comparison.
+  - Chapter 3: major methodology revision covering the final design, model table, denominator, interface totals, manifest/freeze provenance, collection flow, exclusion rationale, evidence-reuse mapping, and threats to validity.
+  - Chapters 4–6: final results, discussion, and conclusions must be computed from the v2.7 cohort only. Do not hide an M2 series from a four-model calculation.
+  - Appendices, tables, and figures: use v2.7 counts. Keep v2.6 and M2 material only as labeled historical appendices.
+- Verified facts (sources: `docs/experiment_freeze_v2.7.0.md`, `docs/final_study_v2.7_migration_verification.md`, D036):
+  - 270 planned observations (30 tasks × 3 models × 3 repetitions; 90 per model).
+  - Retained model conditions M1, M3, and M4, with original IDs that are not renumbered.
+  - Interface assignment of 140 API / 130 manual (M1 40/50, M3 41/49, M4 59/31), inherited and not rebalanced. Interface is unevenly associated with model condition.
+  - M2 was excluded for operational reasons: its intended automatic API route could not complete the protocol consistently. The exclusion occurred after partial M2 collection and before final analysis.
+  - Historical M2 evidence (11 raw directories and all v2.6 M2 records) is preserved unchanged and is excluded from every v2.7 metric and denominator.
+  - Existing retained M1/M3/M4 evidence is reused in place without regeneration.
+- Required disclosure: the dissertation must state transparently that M2 was removed after partial collection (11 of 90 rows attempted: 2 completed, 9 failed). It must also state that the whole condition, including completed outputs, was excluded uniformly, and that no extraction or classification results existed at the time. This addresses potential selection-bias concerns. Do not describe the removal as wholly prospective. See audit section 11.3 for the full disclosure checklist.
+- Outdated statements to replace wherever they describe the current/final study (historical v2.x accounts may keep them if clearly labeled):
+  - "four model conditions" / "M1–M4" as final comparators;
+  - "360 planned observations" (`30 × 4 × 3`);
+  - "180 API / 180 manual";
+  - M2 (`qwen/qwen3.8-27b`, Darkbloom) as a final analyzed condition, including the 2026-09-22 notes saying deferred M2 rows would be collected later.
+- In this file, the "Current methodology facts" section (v2.3 active, 360 runs, four conditions) and the 2026-09-22/23 v2.6 entries predate v2.7. Treat them as superseded where they conflict with this entry.
+- No final empirical findings are recorded here. The v2.7 collection counts are collection-state data only.
+
+### 2026-09-25 — Final data collection complete; pre-freeze manual captures must be disclosed
+
+- Sections affected: Chapter 3 (Experimental Execution / Data Collection / Threats to Validity), Data Availability.
+- Final data collection is complete. The 270-row final v2.7 design consists of 130 manual-assigned rows (M1 50, M3 49, M4 31) and 140 API-assigned rows (M1 40, M3 41, M4 59).
+- API rows reached terminal states: 105 completed, 16 truncated, 19 failed, 0 pending. Report finalized attempts separately from usable completed responses. These are collection-state counts, not findings.
+- **Methodological disclosure required:** 85 of the 130 retained manual captures predate the formal v2.7 freeze (`2026-09-24T23:22:58.369305Z`): M1 36 and M3 49. The other 45 (M1 14, M4 31) were captured after it. The 85 pre-freeze captures were reused as compatible retained v2.6 evidence rather than regenerated. They were captured with the v2.6 HYBRID manual scaffold (D035) under their original `API-v2.6-…` run IDs and byte-identical prompts, and v2.7 membership was determined mechanically without outcome data (D036).
+- Chapter 3 must disclose this accurately. Do not describe the 85 captures as generated under a v2.7 collection event, and do not describe the manual phase as wholly post-freeze. Evidence: `reports/final_v2.7_manual_timing_provenance.md`.
+- Raw API evidence provenance (D043): the evidence remains outside Git and is protected by a SHA-256 inventory (`reports/final_v2.7_raw_evidence_inventory.sha256`). It will be copied byte-for-byte to the canonical final worktree and reverified there. This may be cited in the reproducibility/data-availability statement.
+- Chapter 3 was not edited in this task.

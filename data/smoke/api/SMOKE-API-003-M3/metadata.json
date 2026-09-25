@@ -1,0 +1,78 @@
+{
+  "api_provider": "Groq",
+  "authorization_scheme": "Bearer (credential omitted)",
+  "collection_status": "completed",
+  "excluded_from_research_metrics": true,
+  "expected_underlying_provider": null,
+  "finish_reason": "stop",
+  "generation_ended_at_utc": "2026-09-16T06:49:31.008488Z",
+  "generation_started_at_utc": "2026-09-16T06:49:27.404261Z",
+  "http_client": {
+    "http_protocol": "HTTP/1.1",
+    "library": "requests",
+    "proxy_environment": "honored_if_set",
+    "redirects": "disabled",
+    "version": "2.33.1"
+  },
+  "model_condition_id": "M3",
+  "phase": "smoke_excluded",
+  "prompt_sha256": "a82e27c2aeffc7de557eec8a4eb6a4afab41901043be70a2fea3507790384a4a",
+  "provider_response_id": "chatcmpl-5a8cc65e-b7d6-4d29-91e2-7f79d78ef4fd",
+  "provider_response_sha256": "8c0c923be537aec3832b1081b8fefb428b24d73378fbb16be8e045978430cc9e",
+  "request_sha256": "36398ec5fed80760139497c72ad3414742cab6e8119f1c89853ff0eefadf6c95",
+  "requested_model_id": "openai/gpt-oss-120b",
+  "resolved_underlying_provider": "Groq",
+  "response_completion_status": "COMPLETED",
+  "response_sha256": "093b6afa3881b93dbe14fa4c269c8ef6a5242d9460c865a5a7598004700b0b19",
+  "response_token_metadata": {
+    "reasoning_tokens": 663,
+    "total_completion_tokens": 1293,
+    "visible_response_tokens": null
+  },
+  "retry_history": [
+    {
+      "attempt_number": 1,
+      "ended_at_utc": "2026-09-16T06:49:31.007773Z",
+      "http_status": 200,
+      "outcome": "http_response",
+      "response_sha256": "8c0c923be537aec3832b1081b8fefb428b24d73378fbb16be8e045978430cc9e",
+      "started_at_utc": "2026-09-16T06:49:27.404474Z"
+    }
+  ],
+  "returned_model_id": "openai/gpt-oss-120b",
+  "run_id": "SMOKE-API-003-M3",
+  "safe_response_headers": {
+    "content-type": "application/json",
+    "date": "Wed, 16 Sep 2026 06:49:30 GMT",
+    "x-groq-region": "bom",
+    "x-ratelimit-limit-requests": "1000",
+    "x-ratelimit-limit-tokens": "8000",
+    "x-ratelimit-remaining-requests": "999",
+    "x-ratelimit-remaining-tokens": "7511",
+    "x-ratelimit-reset-requests": "1m26.4s",
+    "x-ratelimit-reset-tokens": "3.667s",
+    "x-request-id": "req_01m2mfmfz9ej899p58dd1yjyk5"
+  },
+  "smoke_attempt_series": "SMOKE-API-003",
+  "smoke_task_id": "SMOKE-API-001",
+  "stable_request_headers": {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "User-Agent": "ai-hallucination-study/1.0"
+  },
+  "token_usage": {
+    "completion_time": 2.724763271,
+    "completion_tokens": 1293,
+    "completion_tokens_details": {
+      "reasoning_tokens": 663
+    },
+    "prompt_time": 0.004856783,
+    "prompt_tokens": 128,
+    "queue_time": 0.396551755,
+    "total_time": 2.7296200539999997,
+    "total_tokens": 1421
+  },
+  "tool_calls_returned": 0,
+  "tool_choice": "none",
+  "tools_exposed": false
+}

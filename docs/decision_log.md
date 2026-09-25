@@ -549,3 +549,106 @@ Each decision record contains the following standardized fields:
 - **preserved_protocol:** The final-2.0.0 task set, template and rendered prompt bytes, four model identities, M1/M4 pins, three repetitions, temperature 0.6, top_p 0.95, uncontrolled seed, stateless single-user-message/no-tools interface, no browsing/retrieval/execution/function calling, infrastructure retry/backoff, preserved-failure continuation, truncation preservation, and zero researcher-imposed pacing remain unchanged.
 - **final_protocol_rule:** v2.6 is intended as the final version. Further ceiling hits are preserved as right-censored truncations and excluded from primary SHR/PHR without another protocol restart. Failed observations remain preserved once and excluded. No v2.6 result exists yet.
 - **data_boundary:** New `API-v2.6-` run namespace, 360 unique all-pending manifest rows, empty state, byte-identical prompt copies, and zero raw observations. No live API request was sent during implementation.
+
+---
+
+### D032 — Finalize Stranded v2.6 Active Request as a Preserved Failure
+
+- **decision_id:** D032
+- **date:** 2026-09-22
+- **status:** IMPLEMENTED
+- **decision:** When `API-v2.6-PKI-CRYPTO-04-M4-R01` was interrupted by the researcher during the active HTTP response read, do not retry or regenerate it. Finalize the already-sent request once as failed with `failure_reason: researcher_interrupted_active_request`.
+- **integrity_controls:** The offline-only recovery utility verifies the frozen manifest identity and prompt hash, preserved request hash, original start timestamp, and `requesting` status. It refuses completed, truncated, failed, or response-bearing directories; writes an immutable pre-recovery hash audit before the sole metadata update; and makes no network call.
+- **analysis_effect:** This failed observation is retained as failure evidence and excluded from primary v2.6 SHR/PHR denominators under the frozen failed-observation policy. No experimental input, manifest row, model configuration, token ceiling, retry policy, or other raw observation is changed.
+
+---
+
+### D033 — Formalize HYBRID Collection-Interface Allocation as a Derived Layer
+
+- **decision_id:** D033
+- **date:** 2026-09-23
+- **status:** IMPLEMENTED
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **original_design:** Frozen v2.6 collection proceeded through the API interface only, while preserved raw metadata accumulated unevenly across model conditions. The frozen 360-row manifest and all collected raw observations remain intact.
+- **final_design:** Create the deterministic derived artifact `manifests/hybrid_assignment_v1.0.0.csv`, assigning each frozen v2.6 manifest row to `api` or `manual` without changing any frozen input. Preserve all 119 existing API-attempted rows as API assignments, then fill remaining API quotas from the earliest never-attempted rows in each model condition's frozen manifest order. Targets are M1 40 API / 50 manual, M2 40 / 50, M3 41 / 49, and M4 59 / 31.
+- **rationale:** A balanced collection-interface design is required while retaining every observation already attempted through the API, including failed and truncated observations.
+- **methodological_justification:** Assignment is determined by interface and pre-existing attempt status, never by response outcome. The deterministic order rule prevents outcome-dependent selection. The allocation is independently reproducible from the frozen manifest, preserved raw metadata, and fixed target table.
+- **impact_on_data_collection:** Of the 180 API-assigned rows, 119 are preserved prior API attempts and 61 are additional assignments: M1 24, M2 34, M3 3, M4 0. The task does not authorize API or manual collection, retry any failure, change M3's paused frozen configuration, alter collection order, or modify prompts, model settings, provider routing, token ceilings, pacing, or retry policy.
+- **impact_on_analysis:** API/manual interface assignment is retained as collection-design provenance. It must not be treated as a completed-response count or used to replace failed API observations. Existing failed and truncated observations retain their separately defined analysis eligibility rules.
+- **affected_research_questions:** RQ1, RQ2, RQ3, RQ4.
+- **scope_effect:** `manifests/api_final_v2.6.0_manifest.csv` remains byte-identical with verified SHA-256 `b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f`. The HYBRID artifact is a derived allocation layer, not a modification of frozen experimental inputs.
+
+---
+
+### D034 — Constrain Future API Selection to Verified HYBRID Assignments
+
+- **decision_id:** D034
+- **date:** 2026-09-23
+- **status:** IMPLEMENTED; collection not started
+- **decision:** Future v2.6 API collection is selected by `scripts/collect_hybrid_api_batch.py`, which verifies the frozen manifest SHA-256 and HYBRID-assignment SHA-256 before selecting rows. It supplies the existing v2.6 batch collector only API-assigned, never-attempted rows in original frozen `collection_order`.
+- **current_operational_state:** 58 rows are actionable through the API: M1 has 24 and M2 has 34. Three M3 rows remain API-assigned but are operationally paused because the unchanged frozen Groq request conflicts with the provider TPM constraint; `--exclude-model M3` is the explicit temporary scheduling control. M4 has no further API rows because its API allocation is already satisfied.
+- **integrity_controls:** Manual-assigned rows are never eligible for this API path. Every pre-existing raw run directory, including preserved failed observations, is excluded from selection and remains protected by the established collector's no-overwrite guard. The selector does not retry failures or substitute a later row after a failure; it delegates the unchanged v2.6 request, retry, failure-continuation, pacing, and raw-artifact behavior to the established collector.
+- **data_boundary:** This implementation adds no API or manual observations and does not alter the frozen manifest, HYBRID assignment, prompts, model configuration, experiment freeze, collection order, raw observations, metadata, or run IDs.
+
+---
+
+### D035 — Offline Manual-Observation Preservation Scaffold for HYBRID v2.6
+
+- **decision_id:** D035
+- **date:** 2026-09-23
+- **status:** IMPLEMENTED; manual generation not authorized by this implementation
+- **decision:** Add `scripts/collect_hybrid_manual.py`, an offline-only selector and byte-preserving capture scaffold for rows already assigned `collection_interface=manual`. It verifies the frozen v2.6 manifest and verified HYBRID assignment hashes before selection, accepts only manual-assigned rows, preserves frozen `collection_order`, and never invokes a model, API, browser, or generated code.
+- **artifact separation:** Manual artifacts use the new, deliberately separate root `data/final/manual_raw/v2.6.0/<run_id>/`, rather than the established API root `data/final/raw/<run_id>/`. Each record contains the verified `prompt.txt`, untouched operator-supplied `response.md`, and provenance `metadata.json`; creation is exclusive and any existing manual directory blocks overwrite or retry.
+- **manual-interface boundary:** D033 assigns rows to the manual interface but does not name or approve a particular manual product/UI or alter the frozen M4 model condition. The scaffold therefore records actual model/interface labels verbatim and does not infer them. A researcher-approved manual interface configuration is required before any manual generation is performed.
+- **failure handling:** A failed, interrupted, or truncated manual attempt is preserved once with its exact available response bytes (including a valid zero-byte capture) and an operator-supplied failure/interruption note. It is not cleaned, replaced, regenerated, or automatically retried.
+- **data boundary:** This implementation creates no observation and does not modify the frozen manifest, HYBRID assignment, API batch state, existing API raw artifacts, prompts, model configuration, or collection order.
+
+---
+
+### D036 — Remove M2 Before Final Analysis and Freeze the Three-Condition v2.7 Final Study
+
+- **decision_id:** D036
+- **date:** 2026-09-25
+- **status:** IMPLEMENTED; commit and `v2.7.0-freeze` tag pending researcher review
+- **approved_by:** researcher, via migration instruction FINAL-STUDY-V2.7-MIGRATION-01 (formal supervisor approval: not_recorded)
+- **original_design:** v2.6.0 (tag `v2.6.0-freeze`): 30 tasks × 4 model conditions (M1–M4) × 3 repetitions = 360 planned observations; derived HYBRID assignment 180 API / 180 manual.
+- **final_design:** v2.7.0: the v2.6 manifest minus every M2 row, giving 30 × 3 × 3 = 270 planned observations for M1 `cohere/north-mini-code:free`, M3 `openai/gpt-oss-120b`, and M4 `nvidia/nemotron-3-ultra-550b-a55b:free`. Condition IDs are not renumbered. Model set `api-model-set-1.5.0` is `api-model-set-1.4.0` with M2 removed and no other change. The manifest `manifests/api_final_v2.7.0_manifest.csv` keeps v2.6 run IDs, task/category/repetition identities, prompt paths and SHA-256 values, source collection order, and inherited interface assignment (M1 40/50, M3 41/49, M4 59/31; total 140 API / 130 manual, not rebalanced).
+- **rationale:** Operational. The intended automatic API route for M2 (`qwen/qwen3.8-27b` via Darkbloom-only OpenRouter) could not complete the required collection protocol consistently: at the decision snapshot, 11 of 90 M2 rows had been attempted, with 3 `http_status_402` failures, 6 HTTP-200 responses with no non-empty assistant content, and 2 completions; 79 rows were pending.
+- **methodological_justification:** Exclusion is of the whole condition, including completed M2 outputs, and membership is a mechanical set difference that uses no outcome field. No v2.6 package-extraction, registry-validation, classification, metric, or risk output exists in the repository, so no M2 result value was available to or used for the decision. The decision is recorded before final analysis but after partial M2 collection; it is not wholly prospective and must be disclosed as such.
+- **impact_on_data_collection:** No v2.6 input, manifest, assignment, state, prompt, raw observation, or record is modified. All 11 M2 artifact directories remain preserved as historical v2.6 evidence. The 140 retained API observations are mapped in place by run ID and SHA-256 in `data/final/collection_state_v2.7.0.json`; nothing is copied, renamed, or regenerated. The 130 retained manual rows remain pending; manual generation still requires a researcher-approved manual interface (D035).
+- **impact_on_analysis:** v2.7 final-study metrics and denominators use only the 270-row v2.7 cohort; M2 is excluded from all primary and secondary final-study metrics. Interface is unevenly associated with model condition and must be handled as recorded provenance, not claimed as balanced. No inference about M2 is possible.
+- **affected_research_questions:** RQ1, RQ2, RQ3, RQ4.
+- **scope_effect:** Implementation record: `config/experiment_freeze_v2.7.0.json`, `docs/experiment_freeze_v2.7.0.md`, and `docs/final_study_v2.7_migration_verification.md`. Source audit: `docs/m2_removal_final_study_impact_audit.md`.
+
+---
+
+### D043 — Keep Final Raw API Evidence Outside Git and Protect It with a Deterministic SHA-256 Inventory
+
+- **decision_id:** D043
+- **date:** 2026-09-25
+- **status:** IMPLEMENTED (inventory and checkpoint); byte-for-byte copy into the canonical final worktree pending consolidation
+- **approved_by:** researcher, via instruction FINAL-COLLECTION-PROVENANCE-CHECKPOINT-01 (formal supervisor approval: not_recorded)
+- **numbering_note:** On this branch the previous entry is D036. D037–D042 are already allocated on `integration/final-report`, where the source D032–D036 were renumbered D038–D042. D043 is used so that no new ID collides at consolidation (`docs/final_v2.7_consolidation_preflight.md` §6, §9).
+- **decision:** Final raw API response evidence remains outside Git and keeps the existing gitignore policy (`data/final/raw/*`, with only `.gitkeep` tracked). Before final-worktree consolidation, all raw evidence is protected by a deterministic SHA-256 inventory. The evidence will be copied byte-for-byte into the canonical final worktree, and its hashes will be reverified there. This avoids rewriting or repackaging frozen evidence and avoids changing the raw-evidence repository policy after collection.
+- **alternatives_rejected:** Tracking `data/final/raw/` in Git (preflight option B2-A) was rejected because it would change the raw-evidence repository policy after collection. Pointing the analysis at the original worktree (B2-B) and symlinking (B2-C) were not adopted, because the evidence would not be reverified in the canonical worktree.
+- **implementation:** `reports/final_v2.7_raw_evidence_inventory.sha256` covers 1,552 regular files (229 run directories plus `.gitkeep`; 46,240,449 bytes) and has SHA-256 `1f79cdecbd573b57f5121dc04fcd5e3aadcca8d46d005cebf4628a8fa75634e7`. The generation command and the breakdown are in `reports/final_v2.7_raw_evidence_summary.md`. In the same checkpoint, `data/final/api_batch_state_v2.6.0.json` was committed unchanged at SHA-256 `1a3af56d138d3da1c3e67c1f04f55b27e4ab5d0ec786ab31d7c2cd17cb6b695c`, the snapshot cited by the frozen v2.7 collection state.
+- **impact_on_data_collection:** None. No observation is generated, regenerated, retried, moved, renamed, or modified. Manual evidence (`data/final/manual_raw/v2.6.0/`) is already Git-tracked on the manual collection branches and is outside the scope of this decision.
+- **impact_on_analysis:** Before any final analysis in the canonical worktree, `sha256sum -c reports/final_v2.7_raw_evidence_inventory.sha256` must pass. Any mismatch blocks analysis.
+- **affected_research_questions:** none directly (provenance and reproducibility control).
+
+---
+
+### D044 — Record the Accidental `fake-auth` npm Install and Remove Its Tracked Manifests
+
+- **decision_id:** D044
+- **date:** 2026-09-25
+- **status:** IMPLEMENTED
+- **approved_by:** researcher, via instruction FAKE-AUTH-GOVERNANCE-CLEANUP-01 (formal supervisor approval: not_recorded)
+- **context:** `docs/final_v2.7_consolidation_preflight.md` §8 flagged `fake-auth@0.1.7` (with transitive `js-base64@2.6.4`) in `node_modules/`, and flagged tracked root `package.json`/`package-lock.json`, as `RESEARCHER_DECISION_REQUIRED`. The provenance was established in `docs/fake_auth_dependency_provenance_audit.md`, which was independently re-verified in its §9.
+- **finding:** `fake-auth@0.1.7` entered the repository accidentally during development. It was first installed locally on 2026-09-21T04:31:02Z. Its manifests were tracked in commit `5333f9e` and were never mentioned in the commit message or in any decision. The most likely source is the illustrative `npm install fake-auth` line of the researcher-authored PIPE-03 specification. It did **not** originate from any AI-generated experimental response. The name appears in no prompt, raw or manual response, extraction, validation, or classification record.
+- **use and execution:** The package was not used for registry validation, adjudication, package-existence confirmation, or any research analysis. PIPE-04 validation uses only read-only HTTP to the npm registry. Package code was never executed by the research pipeline or by the tests. No lifecycle script runs on a dependency install, and no repository file imports the package.
+- **decision:** `package.json` and `package-lock.json` exist solely because of this accidental install. The `package.json` contains only `{"dependencies": {"fake-auth": "^0.1.7"}}`, and no repository tooling uses either file. Both are removed from the active repository state with `git rm`. The historical Git commits (`5333f9e` and later) are preserved unchanged as evidence of the incident. `node_modules/` stays gitignored, was never tracked, and is not research evidence. The local copy in this worktree is deleted as environment cleanup only.
+- **retained:** The PIPE-03 test string in `tests/test_extract_package_references.py`, which contains `fake-auth`, is unchanged. It is text input to the extractor, not an installed dependency.
+- **impact_on_data_collection:** None. No frozen input, manifest, raw or manual response, collection state, or evidence inventory is modified.
+- **impact_on_analysis:** None. The experimental methodology and findings are unaffected, and no Chapter 3 correction is required.
+- **affected_research_questions:** none (development-environment hygiene and provenance record).

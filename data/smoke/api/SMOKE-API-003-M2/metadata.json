@@ -1,0 +1,75 @@
+{
+  "api_provider": "Groq",
+  "authorization_scheme": "Bearer (credential omitted)",
+  "collection_status": "completed",
+  "excluded_from_research_metrics": true,
+  "expected_underlying_provider": null,
+  "finish_reason": "stop",
+  "generation_ended_at_utc": "2026-09-16T06:49:27.403032Z",
+  "generation_started_at_utc": "2026-09-16T06:49:26.473002Z",
+  "http_client": {
+    "http_protocol": "HTTP/1.1",
+    "library": "requests",
+    "proxy_environment": "honored_if_set",
+    "redirects": "disabled",
+    "version": "2.33.1"
+  },
+  "model_condition_id": "M2",
+  "phase": "smoke_excluded",
+  "prompt_sha256": "a82e27c2aeffc7de557eec8a4eb6a4afab41901043be70a2fea3507790384a4a",
+  "provider_response_id": "chatcmpl-5d5c6970-75c7-41f6-b030-a0275d115adb",
+  "provider_response_sha256": "8be696163726f1cd8a78951c00ea67556bd60a9777859b13296de2e2d417a7ab",
+  "request_sha256": "c6d38ca868d26ab98fb324eb6aa200b6cfd30cd1e5aa86468326b26814103863",
+  "requested_model_id": "qwen/qwen3.8-27b",
+  "resolved_underlying_provider": "Groq",
+  "response_completion_status": "COMPLETED",
+  "response_sha256": "a54c2a4ae4311bad6ce2109df395799f821493f903c5d209c789d86d1b1c4be4",
+  "response_token_metadata": {
+    "reasoning_tokens": null,
+    "total_completion_tokens": 274,
+    "visible_response_tokens": null
+  },
+  "retry_history": [
+    {
+      "attempt_number": 1,
+      "ended_at_utc": "2026-09-16T06:49:27.402617Z",
+      "http_status": 200,
+      "outcome": "http_response",
+      "response_sha256": "8be696163726f1cd8a78951c00ea67556bd60a9777859b13296de2e2d417a7ab",
+      "started_at_utc": "2026-09-16T06:49:26.473207Z"
+    }
+  ],
+  "returned_model_id": "qwen/qwen3.8-27b",
+  "run_id": "SMOKE-API-003-M2",
+  "safe_response_headers": {
+    "content-type": "application/json",
+    "date": "Wed, 16 Sep 2026 06:49:27 GMT",
+    "x-groq-region": "bom",
+    "x-ratelimit-limit-requests": "1000",
+    "x-ratelimit-limit-tokens": "8000",
+    "x-ratelimit-remaining-requests": "999",
+    "x-ratelimit-remaining-tokens": "7614",
+    "x-ratelimit-reset-requests": "1m26.4s",
+    "x-ratelimit-reset-tokens": "2.895s",
+    "x-request-id": "req_01m2mfmezgeavt0dvsvybj68vg"
+  },
+  "smoke_attempt_series": "SMOKE-API-003",
+  "smoke_task_id": "SMOKE-API-001",
+  "stable_request_headers": {
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+    "User-Agent": "ai-hallucination-study/1.0"
+  },
+  "token_usage": {
+    "completion_time": 0.527688201,
+    "completion_tokens": 274,
+    "prompt_time": 0.004461653,
+    "prompt_tokens": 69,
+    "queue_time": 0.048306997,
+    "total_time": 0.532149854,
+    "total_tokens": 343
+  },
+  "tool_calls_returned": 0,
+  "tool_choice": "none",
+  "tools_exposed": false
+}

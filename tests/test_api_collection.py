@@ -190,6 +190,73 @@ class APICollectionTests(unittest.TestCase):
         })
         self.assertEqual(len(metadata["retry_history"]), 1)
 
+    def test_completion_status_maps_only_stop_and_length_as_normal_d035(self):
+        def status(finish_reason):
+            return collect_api_run.completion_status({"choices": [{"finish_reason": finish_reason}]})
+
+        self.assertEqual(status("stop"), ("completed", "COMPLETED"))
+        self.assertEqual(status("length"), ("truncated", "TRUNCATED"))
+        for abnormal in ("error", "content_filter", "tool_calls", None):
+            self.assertEqual(status(abnormal), ("failed", "FAILED"), abnormal)
+
+    def test_error_finish_is_preserved_once_as_failed_without_retry_d035(self):
+        for label, content in (
+            ("non-empty", "# Complete-looking section\n\nconst ok = true;\n"),
+            ("partial", "const familyName = getAttr('familyName"),
+        ):
+            with self.subTest(content=label):
+                row = self.row()
+                row["run_id"] = f"API-v2.3-AUTH-FED-01-M3-R01-{label}"
+                calls = []
+                body = json.dumps({
+                    "id": "test-error-finish",
+                    "model": row["model_id"],
+                    "choices": [{"message": {"role": "assistant", "content": content}, "finish_reason": "error"}],
+                    "usage": {"prompt_tokens": 10, "completion_tokens": 7599, "total_tokens": 7609},
+                }).encode()
+
+                def transport(*_):
+                    calls.append(1)
+                    return collect_api_run.HTTPResult(200, {}, body)
+
+                with patch.dict("os.environ", {"GROQ_API_KEY": "test-only-secret"}, clear=False):
+                    with self.assertRaisesRegex(ValueError, "abnormal termination"):
+                        collect_api_run.collect_row(
+                            self.config, row, raw_root=self.raw_root,
+                            transport=transport, sleeper=lambda _: None,
+                        )
+                directory = self.raw_root / row["run_id"]
+                self.assertEqual(calls, [1])
+                self.assertEqual((directory / "response.md").read_bytes(), content.encode())
+                self.assertEqual((directory / "provider_response.json").read_bytes(), body)
+                metadata = json.loads((directory / "metadata.json").read_text())
+                self.assertEqual(metadata["collection_status"], "failed")
+                self.assertEqual(metadata["response_completion_status"], "FAILED")
+                self.assertEqual(metadata["finish_reason"], "error")
+                self.assertEqual(metadata["failure_reason"], "provider_finish_reason_error")
+                self.assertEqual(len(metadata["retry_history"]), 1)
+
+    def test_error_finish_is_skipped_as_preserved_failure_not_regenerated_d035(self):
+        row = self.row()
+        directory = self.raw_root / row["run_id"]
+        directory.mkdir(parents=True)
+        (directory / "metadata.json").write_text(json.dumps({
+            "collection_status": "failed", "finish_reason": "error",
+            "failure_reason": "provider_finish_reason_error",
+        }))
+        state_path = Path(self.temporary.name) / "state.json"
+        manifest_hash = "0" * 64
+
+        def collector(*_args, **_kwargs):
+            raise AssertionError("a preserved failed observation must not be regenerated")
+
+        collect_api_batch.run_batch(
+            self.config, [row], state_path=state_path, manifest_hash=manifest_hash,
+            raw_root=self.raw_root, limit=1, collector=collector, continue_after_failed=True,
+        )
+        events = json.loads(state_path.read_text())["events"]
+        self.assertEqual(events[-1]["event"], "skipped_preserved_failed_observation")
+
     def test_openrouter_omit_only_mode_sends_neither_tools_nor_tool_choice(self):
         model = self.config["models"][0]
         model["no_tools_request_mode"] = "omit_tools_only"

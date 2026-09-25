@@ -8,8 +8,10 @@ Current implementation scope is limited to **Node.js and npm** as research targe
 
 ## Status
 
-- Scaffolding only.
-- No model API integrations implemented.
+- Candidate pre-collection redesign documented for four fixed open-weight API model conditions.
+- Candidate dependency-intensive task set `final-2.0.0` created for review; it is not rendered or manifested.
+- API preflight and single-run collection scaffolding implemented but no official API request has been sent.
+- Historical v1 web/CLI collection infrastructure and pilot artifacts are retained for provenance.
 - No risk scoring implementation.
 - No dependency/package installation performed.
 
@@ -18,6 +20,7 @@ Current implementation scope is limited to **Node.js and npm** as research targe
 - `AGENTS.md`: Repository-level operating and integrity instructions.
 - `README.md`: Project overview and usage conventions.
 - `prompts/`: Standardized prompt assets used to drive experiments.
+  - `tasks/final_2.0.0.jsonl`: Candidate v2 dependency-intensive task definitions; not yet rendered or frozen.
   - `prompt_template_v1.0.0.md`: Frozen canonical prompt template.
   - `prompts_v1.0.0.csv`: Frozen tabular prompt definitions for scripted runs.
   - `prompts_v1.0.0.json`: Frozen JSON prompt definitions for scripted runs.
@@ -70,7 +73,7 @@ Current implementation scope is limited to **Node.js and npm** as research targe
 
 ## Data Collection
 
-See [docs/generation_guide.md](docs/generation_guide.md) for the operator procedure.
+See [docs/api_model_protocol.md](docs/api_model_protocol.md) and [docs/generation_guide.md](docs/generation_guide.md) before any collection. The commands below are historical v1 tooling and must not be used to generate the official v2 dataset.
 
 ```text
 python scripts/render_generation_prompts.py
@@ -78,3 +81,13 @@ python scripts/init_collection_run.py <RUN_ID>
 python scripts/finalize_collection_run.py <RUN_ID>
 python scripts/verify_collection.py --phase pilot
 ```
+
+Codex pilot rows can be collected reproducibly after preparing a clean, external authenticated `CODEX_HOME`:
+
+```text
+python scripts/collect_codex_runs.py --phase pilot --run-id <PILOT_CODEX_RUN_ID> --limit 1 --codex-home /absolute/path/to/clean-codex-home
+```
+
+The historical runner rejects baseline rows, uses a fresh read-only external workspace, sends exact verified prompt bytes through stdin, and preserves `response.md`, JSONL `transcript.txt`, `stderr.txt`, metadata, and SHA-256 hashes. It never installs dependencies or executes generated code.
+
+The v2 model set, task set, prompt template, rendered prompts, and 360-row manifest were frozen on 2026-09-16. `scripts/preflight_api_models.py` performs only read-only availability inspection; `scripts/collect_api_run.py` is the one-row collector and `scripts/collect_api_batch.py` is its sequential, resumable driver. Excluded smoke observations made after the freeze now establish infrastructure readiness for all four conditions following the documented Groq transport correction. No official manifest row has been collected, and official collection remains a separate deliberate action. None of these scripts installs dependencies or executes generated responses.

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/npm_package_validation_pipe04_v1.schema.json",
+  "title": "PIPE-04 npm package-level registry evidence",
+  "description": "Registry evidence only. No research classification or risk score.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["normalized_package", "validation_status", "registry", "request_url", "http_status", "checked_at", "validator_version", "evidence_summary", "error_type", "retry_count", "source_input_hash", "source_occurrences_hash", "history"],
+  "properties": {
+    "normalized_package": {"type": "string", "minLength": 1},
+    "validation_status": {"enum": ["exists", "not_found", "unresolved"]},
+    "registry": {"const": "https://registry.npmjs.org"},
+    "request_url": {"type": "string", "format": "uri"},
+    "http_status": {"type": ["integer", "null"], "minimum": 100, "maximum": 599},
+    "checked_at": {"type": "string", "format": "date-time"},
+    "validator_version": {"const": "pipe-04-npm-validator-1.0.0"},
+    "evidence_summary": {"type": "string", "minLength": 1},
+    "error_type": {"type": ["string", "null"]},
+    "retry_count": {"type": "integer", "minimum": 0},
+    "source_input_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "source_occurrences_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "history": {
+      "type": "array",
+      "description": "Previous unresolved evidence retained when explicitly retried.",
+      "items": {
+        "type": "object",
+        "required": ["validation_status", "http_status", "checked_at", "evidence_summary", "error_type", "retry_count"],
+        "properties": {
+          "validation_status": {"const": "unresolved"},
+          "http_status": {"type": ["integer", "null"]},
+          "checked_at": {"type": "string"},
+          "evidence_summary": {"type": "string"},
+          "error_type": {"type": ["string", "null"]},
+          "retry_count": {"type": "integer", "minimum": 0}
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

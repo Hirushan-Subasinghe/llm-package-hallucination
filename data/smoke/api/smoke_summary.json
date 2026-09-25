@@ -1,0 +1,34 @@
+{
+  "excluded_from_research_metrics": true,
+  "results": [
+    {
+      "collection_status": "completed",
+      "model_condition_id": "M1",
+      "resolved_underlying_provider": "Cohere",
+      "returned_model_id": "cohere/north-mini-code:free",
+      "tool_calls_returned": 0
+    },
+    {
+      "collection_status": "failed",
+      "model_condition_id": "M2",
+      "resolved_underlying_provider": null,
+      "returned_model_id": null,
+      "tool_calls_returned": null
+    },
+    {
+      "collection_status": "failed",
+      "model_condition_id": "M3",
+      "resolved_underlying_provider": null,
+      "returned_model_id": null,
+      "tool_calls_returned": null
+    },
+    {
+      "collection_status": "completed",
+      "model_condition_id": "M4",
+      "resolved_underlying_provider": "Nvidia",
+      "returned_model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "tool_calls_returned": 0
+    }
+  ],
+  "smoke_task_id": "SMOKE-API-001"
+}

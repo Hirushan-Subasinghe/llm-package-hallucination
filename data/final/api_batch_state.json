@@ -1,0 +1,69 @@
+{
+  "events": [
+    {
+      "api_provider": "OpenRouter",
+      "at_utc": "2026-09-16T07:08:01.112201Z",
+      "collection_order": 1,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-16T07:38:01.112187Z",
+      "run_id": "API-AUTH-FED-01-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-16T07:08:03.799647Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-AUTH-FED-01-M1-R01",
+      "event": "completed",
+      "run_id": "API-AUTH-FED-01-M1-R01"
+    },
+    {
+      "at_utc": "2026-09-16T07:11:51.598452Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-AUTH-FED-01-M1-R01",
+      "status": "completed"
+    },
+    {
+      "api_provider": "Groq",
+      "at_utc": "2026-09-16T07:11:51.599253Z",
+      "collection_order": 2,
+      "event": "request_slot_reserved",
+      "next_provider_request_not_before_utc": "2026-09-16T07:56:51.599241Z",
+      "run_id": "API-AUTH-FED-01-M2-R01"
+    },
+    {
+      "at_utc": "2026-09-16T07:11:52.644587Z",
+      "directory": "/home/hirushan/Dev/ai-hallucination-study/data/final/raw/API-AUTH-FED-01-M2-R01",
+      "event": "completed",
+      "run_id": "API-AUTH-FED-01-M2-R01"
+    },
+    {
+      "at_utc": "2026-09-16T07:13:56.559626Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-AUTH-FED-01-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-16T07:13:56.560496Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-AUTH-FED-01-M2-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-16T07:21:29.081034Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-AUTH-FED-01-M1-R01",
+      "status": "completed"
+    },
+    {
+      "at_utc": "2026-09-16T07:21:29.081885Z",
+      "event": "skipped_preserved_observation",
+      "run_id": "API-AUTH-FED-01-M2-R01",
+      "status": "completed"
+    }
+  ],
+  "manifest_sha256": "ee0f335ad7f1eee020bd39011f2aeb3e4788ee0381f0a6d30d85cbc5f0d810ea",
+  "provider_next_allowed_at_epoch": {
+    "Groq": 1789545411.5992413,
+    "OpenRouter": 1789544281.1121874
+  },
+  "state_version": "api-batch-state-1.0.0",
+  "updated_at_utc": "2026-09-16T07:21:29.081902Z"
+}

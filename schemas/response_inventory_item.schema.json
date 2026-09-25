@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/response_inventory_item.schema.json",
+  "title": "Response Inventory Item",
+  "description": "Schema for a single row in the read-only response inventory dataset.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "collection_order",
+    "provider",
+    "tool",
+    "model",
+    "model_condition_id",
+    "workflow",
+    "task_id",
+    "category",
+    "replicate",
+    "manifest_path",
+    "rendered_prompt_path",
+    "expected_prompt_sha256",
+    "response_artifact_path",
+    "collection_status",
+    "completion_status",
+    "truncated",
+    "token_count",
+    "interface_pass"
+  ],
+  "properties": {
+    "run_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique identifier for the experimental run."
+    },
+    "collection_order": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Planned sequential order of collection from the manifest."
+    },
+    "provider": {
+      "type": "string",
+      "description": "API provider or service name (e.g., OpenRouter, Groq)."
+    },
+    "tool": {
+      "type": ["string", "null"],
+      "description": "Tool or interface name if applicable; null for direct API."
+    },
+    "model": {
+      "type": "string",
+      "description": "Configured/requested model identifier."
+    },
+    "model_condition_id": {
+      "type": "string",
+      "description": "Model condition code (e.g., M1, M2, M3, M4)."
+    },
+    "workflow": {
+      "type": ["string", "null"],
+      "description": "Workflow or interface mode if applicable; null for direct API."
+    },
+    "task_id": {
+      "type": "string",
+      "description": "Functional task identifier."
+    },
+    "category": {
+      "type": "string",
+      "description": "Functional task category."
+    },
+    "replicate": {
+      "type": "string",
+      "description": "Run repetition code (e.g., R01, R02, R03)."
+    },
+    "manifest_path": {
+      "type": "string",
+      "description": "Repository-relative path to the governing manifest."
+    },
+    "rendered_prompt_path": {
+      "type": "string",
+      "description": "Repository-relative path to the rendered prompt file."
+    },
+    "expected_prompt_sha256": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$",
+      "description": "Expected SHA-256 hash of the rendered prompt."
+    },
+    "response_artifact_path": {
+      "type": ["string", "null"],
+      "description": "Repository-relative path to the raw response artifact, or null if pending."
+    },
+    "collection_status": {
+      "type": "string",
+      "enum": ["pending", "requesting", "completed", "truncated", "failed", "suspended"],
+      "description": "Current status of data collection for this run."
+    },
+    "completion_status": {
+      "type": ["string", "null"],
+      "description": "Model completion status (e.g., COMPLETED, TRUNCATED), or null if pending."
+    },
+    "truncated": {
+      "type": ["boolean", "null"],
+      "description": "Whether the response was truncated by output token limits, or null if pending."
+    },
+    "token_count": {
+      "type": ["integer", "null"],
+      "description": "Total completion tokens produced, or null if pending."
+    },
+    "interface_pass": {
+      "type": ["boolean", "null"],
+      "description": "Interface format/compliance pass indicator, or null if not applicable."
+    }
+  }
+}
