@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-AUTH-FED-04-M1-R03",
+  "collection_order": 256,
+  "model_condition_id": "M1",
+  "expected_model_id": "cohere/north-mini-code:free",
+  "actual_model": "cohere/north-mini-code:free",
+  "actual_interface": "OpenRouter Chatroom web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R03",
+  "task_id": "AUTH-FED-04",
+  "category": "AUTH-FED",
+  "prompt_path": "data/generated_prompts/v2.6.0/AUTH-FED-04.txt",
+  "prompt_sha256": "98f5ea52de7d8df9413e82ce9c49bc4249929b09cbed959790141562a88a3422",
+  "captured_at_utc": "2026-09-24T21:57:08.576768Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-AUTH-FED-04-M1-R03/response.md",
+  "raw_response_sha256": "86f6e6e06f4976ace227df59ba548569850001d997237463fb3075b3e02ea71b",
+  "raw_response_size_bytes": 3693
+}

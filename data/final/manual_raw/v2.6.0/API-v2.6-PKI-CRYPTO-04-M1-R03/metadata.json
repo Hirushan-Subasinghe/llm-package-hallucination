@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-PKI-CRYPTO-04-M1-R03",
+  "collection_order": 275,
+  "model_condition_id": "M1",
+  "expected_model_id": "cohere/north-mini-code:free",
+  "actual_model": "cohere/north-mini-code:free",
+  "actual_interface": "OpenRouter Chatroom web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R03",
+  "task_id": "PKI-CRYPTO-04",
+  "category": "PKI-CRYPTO",
+  "prompt_path": "data/generated_prompts/v2.6.0/PKI-CRYPTO-04.txt",
+  "prompt_sha256": "3a978299b633edff0cb3a45e3c2293ce1b5ed314bc15b4d6e2f8334693831bbf",
+  "captured_at_utc": "2026-09-24T22:28:38.196409Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-PKI-CRYPTO-04-M1-R03/response.md",
+  "raw_response_sha256": "39e2b6e5cfa16e7fdcccd650a5719a488c69e579e4bd2f5bf741919886f036ac",
+  "raw_response_size_bytes": 27265
+}

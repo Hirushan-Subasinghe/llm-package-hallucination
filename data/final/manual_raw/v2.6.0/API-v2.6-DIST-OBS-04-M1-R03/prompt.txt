@@ -1,0 +1,7 @@
+Create a self-contained Node.js TypeScript distributed caching layer for three simulated API instances using Redis. Implement cache-aside reads, versioned keys, stale-while-revalidate, request coalescing to prevent stampedes, negative caching, and atomic compare-and-set updates. Publish invalidation events, recover from missed pub-sub messages with version checks, and degrade predictably when Redis is unavailable. Emit traces and metrics for hit state, coalescing, invalidation lag, and backend calls without high-cardinality labels. Include deterministic multi-instance tests. Include a complete package.json with exact dependency versions and scripts, identify exact cache, Redis, pub-sub, and telemetry APIs used, and provide reproducible installation and example commands. Use suitable npm packages where appropriate.
+
+Return the complete requested solution directly in this single response.
+
+There is no existing repository or project scaffold. No filesystem, terminal, browser, tools, external execution environment, or prior files are available.
+
+Do not request, invoke, or simulate tool calls, and do not emit tool-call markup. Include all requested code, package.json content, configuration, examples, explanations, and commands directly in your response.
