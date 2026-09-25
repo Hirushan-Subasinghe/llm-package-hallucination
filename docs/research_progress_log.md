@@ -1026,3 +1026,15 @@ Next:
 - References were unchanged.
 - Verification recorded in `docs/final_report_support/chapter2_v2.7_reconciliation_verification.md`.
 - Outstanding supporting-document reconciliation: `claims_evidence_matrix.md` contains stale Chapter 1 claims CH1-004, CH1-006, and CH1-014, and this worktree's `docs/current_research_status.md` still reflects v2.6.
+
+### 2026-09-25 — Chapter 1 reconciled to frozen v2.7 final study
+
+- Updated `docs/report_drafts/chapter1_complete_draft.md` to align with the frozen v2.7.0 three-model design.
+- Current Chapter 1 reports M1, M3, and M4 as the retained model conditions.
+- Updated the planned design from the superseded four-condition/360-observation description to 270 planned observations.
+- Updated assignment totals to 140 API-assigned and 130 manual-assigned observations.
+- Added a concise disclosure that M2 was removed after partial collection and before final analysis because its intended collection protocol could not be completed consistently; historical M2 evidence remains preserved but excluded from final analysis.
+- Research questions and objectives were unchanged.
+- No empirical findings were introduced.
+- Verification recorded in `docs/final_report_support/chapter1_v2.7_reconciliation_verification.md`.
+- Chapter 1 reconciliation committed as `7442715`.
