@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-DATA-ADV-02-M4-R03",
+  "collection_order": 325,
+  "model_condition_id": "M4",
+  "expected_model_id": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "actual_model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "actual_interface": "OpenRouter Chatroom web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R03",
+  "task_id": "DATA-ADV-02",
+  "category": "DATA-ADV",
+  "prompt_path": "data/generated_prompts/v2.6.0/DATA-ADV-02.txt",
+  "prompt_sha256": "1179c220931eae775e801f6e5c8954554e40bb988b346fe0729cce2c2ec1a865",
+  "captured_at_utc": "2026-09-25T02:51:14.912374Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-DATA-ADV-02-M4-R03/response.md",
+  "raw_response_sha256": "85e9e1fbb4c51afe88cea7fcabd1caba82dd48bcae2f27cf125a9c70137bf021",
+  "raw_response_size_bytes": 62183
+}

@@ -780,3 +780,21 @@
 - Exactly 150 files were committed for the 50 observations, corresponding to the preserved `metadata.json`, `prompt.txt`, and `response.md` artifacts.
 - Frozen experiment inputs and the HYBRID assignment were not modified during M1 manual capture. Raw responses remain preserved as captured without response-content editing or whitespace normalization.
 - Next step: integrate and validate M1 alongside the other completed/finalizing v2.6 model conditions before downstream response inventory, scoring, and statistical analysis.
+
+### 2026-09-25 — M4 manual collection completed
+
+- Completed the manual-assigned portion of the frozen v2.6 M4 condition: 31/31 manual observations are now captured under `data/final/manual_raw/v2.6.0/`.
+- The recorded M4 model is `nvidia/nemotron-3-ultra-550b-a55b:free`, and all 31 M4 manual metadata files record the actual interface as `OpenRouter Chatroom web UI`.
+- Verification confirmed:
+  - 31 M4 observation directories;
+  - 0 missing `response.md` files;
+  - 0 empty `response.md` files;
+  - 0 missing `metadata.json` files;
+  - 0 incorrect `actual_model` values;
+  - 0 incorrect `actual_interface` values.
+- `scripts/collect_hybrid_manual.py --model M4 --show-next --dry-run` reports `FAIL: no unobserved manual-assigned rows remain`, confirming that the M4 manual allocation is exhausted.
+- The completed M4 manual collection is recorded on branch `collection/m4-manual-v2.6`.
+- Completion commit: `44d3e24b4f19b34cd68d8389dd85375ad5c1700e` (`data: complete M4 manual collection`).
+- Exactly 93 files were committed for the 31 observations, corresponding to the preserved `metadata.json`, `prompt.txt`, and `response.md` artifacts.
+- Frozen experiment inputs and the HYBRID assignment were not modified during M4 manual capture. Raw responses remain preserved as captured without response-content editing or whitespace normalization.
+- Next step: integrate and validate M4 alongside the other completed v2.6 model conditions before downstream response inventory, scoring, and statistical analysis.
