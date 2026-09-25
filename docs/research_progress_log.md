@@ -1532,3 +1532,18 @@ Next:
 - `git diff --check` passed.
 - No frozen experimental evidence or permanent result artifact was modified.
 - PIPE-09 is now considered implementation-ready for the eventual final v2.6 inferential analysis.
+
+### 2026-09-25 — Final v2.7 evidence consolidation verified in canonical worktree
+
+- Task FINAL-V2.7-EVIDENCE-CONSOLIDATION-VALIDATION-01, on `integration/v2.7-final`. Full record: `docs/final_v2.7_evidence_consolidation_verification.md`. These are collection-state and integrity facts only, not results.
+- Raw API evidence copied from `~/Dev/ai-hallucination-study/data/final/raw/` verifies against `reports/final_v2.7_raw_evidence_inventory.sha256`. That is 1,552 files, inventory SHA-256 `1f79cdecbd573b57f5121dc04fcd5e3aadcca8d46d005cebf4628a8fa75634e7`, and no file outside the inventory. The evidence is gitignored and untracked; only `.gitkeep` is tracked (D043).
+- `data/derived_checkpoints/` (24 files), `data/quarantine/` (12) and `data/manual_review/` (3) are byte-identical to `~/Dev/ai-hallucination-analysis`, and their embedded checksum files pass. Quarantine stays preservation material, not final-study evidence.
+- Manual evidence is complete: 130 rows (M1 50, M3 49, M4 31), all `completed`, with prompt and response hashes consistent with the manifest and metadata.
+- Created a non-frozen derived record, `reports/final_collection_completion_v2.7.0.json` and `.md`. Final observed state: API 105 completed, 16 truncated, 19 failed, 0 pending; manual 130 completed; 270 assigned; M2 0. The only change since the freeze is 130 manual rows moving from `pending` to `completed`; no API row changed. The frozen `data/final/collection_state_v2.7.0.json` is unchanged (`55a32c0d…3709a6`). The record makes no primary-analysis eligibility claim.
+- Checks:
+  - `create_hybrid_assignment_v1_0.py --verify` and `create_experiment_freeze_v2_6.py --check` pass.
+  - `create_experiment_freeze_v2_7.py --check` fails only because it compares the frozen snapshot with a live re-derivation. All its other steps pass, and the unmodified check passes on the freeze-time evidence set (manual evidence absent).
+  - `v2.7.0-freeze` → `bba890d9aa5838f06bee4b1bd0e85d9e61b444f8`, and 43/43 frozen hashes match.
+- Full suite: 370 run, 369 passed, 1 failed, 0 errors. The failure, `test_raw_final_contains_no_active_v2_6_run_directories`, is an obsolete analysis-worktree guard assumption, and the test was not changed. The quarantine guard test now passes.
+- Audit found stale "analysis/report worktree" wording in `AGENTS.md`, `.analysis-repository-marker` and `scripts/repository_guard.py`, and found that the `collect_hybrid_*.py` collectors are unguarded. The recommended changes are in the verification document §8 and were not applied.
+- Next: v2.7 analysis adaptation, starting with a snapshot-aware completion verifier and the documented guard-test adjustment. Then push with `git push -u origin integration/v2.7-final:integration/v2.7-final` after researcher approval.

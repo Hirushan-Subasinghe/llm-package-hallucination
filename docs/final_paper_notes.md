@@ -966,3 +966,13 @@ Chapter 3 now describes the frozen v2.7.0 final study: three retained conditions
 - Non-testable comparisons emit no p-value, odds ratio, risk difference, confidence interval, or Holm-adjusted p-value.
 - This confirms that the final dissertation must not interpret all-zero outcome group comparisons as evidence of between-model, between-category, model×category, or repetition differences.
 - The correction and verification occurred before final v2.6 inferential analysis; only outputs from the corrected PIPE-09 implementation may be used for final reporting.
+
+### 2026-09-25 — Frozen initial collection state versus derived final completion record
+
+**Affected sections:** Methodology — Data Collection; Reproducibility; Results — collection-completeness table.
+
+- The frozen `data/final/collection_state_v2.7.0.json` is an initial snapshot taken at freeze. It records the 130 manual-assigned rows as `pending`, because no manual evidence was present in the freeze commit.
+- Final collection completeness is recorded separately, in the non-frozen derived record `reports/final_collection_completion_v2.7.0.json`: API 105 completed, 16 truncated, 19 failed; manual 130 completed; 270 assigned; 0 pending. Its only change from the frozen snapshot is manual `pending` → `completed`, and no API observation changed after the freeze.
+- The collection-completeness table should cite the derived record, while the design section cites the frozen state as the initial snapshot.
+- Reproducibility wording: the v2.7 freeze self-check (`create_experiment_freeze_v2_7.py --check`) verifies the frozen snapshot against the freeze-time evidence set. It does not pass once post-freeze manual evidence is present, because it compares against a live re-derivation. Do not state that the frozen state check passes in the final repository without this qualification.
+- Collection status is not analysis eligibility. Truncated and failed rows must not be described as primary-analysis observations unless the controlling decisions establish that.
