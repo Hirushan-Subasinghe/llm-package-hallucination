@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-ENT-INT-05-M3-R02",
+  "collection_order": 199,
+  "model_condition_id": "M3",
+  "expected_model_id": "openai/gpt-oss-120b",
+  "actual_model": "openai/gpt-oss-120b",
+  "actual_interface": "Groq Playground web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R02",
+  "task_id": "ENT-INT-05",
+  "category": "ENT-INT",
+  "prompt_path": "data/generated_prompts/v2.6.0/ENT-INT-05.txt",
+  "prompt_sha256": "caf93be10c7e32dcc3d565f45756a0b07122b4b6d8c80f09663c6fd3d2eb3fc1",
+  "captured_at_utc": "2026-09-24T10:46:41.614439Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-ENT-INT-05-M3-R02/response.md",
+  "raw_response_sha256": "8e28e65d0a04e719123ad0bdcb0f27c33d432b2a4cc95f8f565bfd89b59241a2",
+  "raw_response_size_bytes": 25321
+}

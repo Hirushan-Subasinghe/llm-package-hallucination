@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-DOC-BINARY-01-M3-R03",
+  "collection_order": 283,
+  "model_condition_id": "M3",
+  "expected_model_id": "openai/gpt-oss-120b",
+  "actual_model": "openai/gpt-oss-120b",
+  "actual_interface": "Groq Playground web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R03",
+  "task_id": "DOC-BINARY-01",
+  "category": "DOC-BINARY",
+  "prompt_path": "data/generated_prompts/v2.6.0/DOC-BINARY-01.txt",
+  "prompt_sha256": "767bc383aa87c71b76a17e551dc128950b38ad55c71d0cd35ae1aacf99c0f962",
+  "captured_at_utc": "2026-09-24T13:04:25.038852Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-DOC-BINARY-01-M3-R03/response.md",
+  "raw_response_sha256": "12926d3ec1cf267e8cd233e11aba2903759f082621d00461e416d7926aa6d6fa",
+  "raw_response_size_bytes": 24593
+}

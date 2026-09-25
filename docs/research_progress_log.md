@@ -752,3 +752,13 @@
 - Recorded D044. The tracked accidental manifests `package.json` and `package-lock.json` were removed with `git rm`. The history is preserved as evidence. The local, gitignored `node_modules/` in this worktree was deleted as environment cleanup only. The analysis worktree is untouched.
 - The PIPE-03 test string that contains `fake-auth` is unchanged.
 - Experiment evidence and frozen inputs are unchanged. This resolves the `RESEARCHER_DECISION_REQUIRED` item in preflight §8 for the study worktree.
+
+### 2026-09-25 — M3 manual collection completed
+
+- Completed the manual-assigned portion of the frozen v2.6 M3 condition: 49/49 manual observations are now captured under `data/final/manual_raw/v2.6.0/`.
+- The recorded model is `openai/gpt-oss-120b`, and all 49 M3 manual metadata files record the actual interface as `Groq Playground web UI`.
+- Verified that all 49 M3 manual `response.md` files are non-empty.
+- `scripts/collect_hybrid_manual.py --model M3 --show-next --dry-run` reports `FAIL: no unobserved manual-assigned rows remain`, confirming that the M3 manual allocation is exhausted.
+- The completed M3 manual collection is recorded on branch `collection/m3-manual-v2.6`; completion commit: `4ae8344` (`data: complete M3 manual collection`).
+- Frozen experiment inputs and the HYBRID assignment were not modified during manual capture. Raw responses remain preserved as captured without whitespace normalization or response-content editing.
+- Next step: validate and integrate the completed M3 collection with the broader v2.6 experiment state without modifying frozen prompts, manifests, assignments, or raw observations.

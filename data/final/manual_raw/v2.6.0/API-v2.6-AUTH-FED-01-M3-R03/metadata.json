@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-AUTH-FED-01-M3-R03",
+  "collection_order": 241,
+  "model_condition_id": "M3",
+  "expected_model_id": "openai/gpt-oss-120b",
+  "actual_model": "openai/gpt-oss-120b",
+  "actual_interface": "Groq Playground web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R03",
+  "task_id": "AUTH-FED-01",
+  "category": "AUTH-FED",
+  "prompt_path": "data/generated_prompts/v2.6.0/AUTH-FED-01.txt",
+  "prompt_sha256": "9578dd98d4b32a7d526d6e8cb8fd1337472a6ed563e32de08994903a4642b64e",
+  "captured_at_utc": "2026-09-24T11:47:22.973107Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-AUTH-FED-01-M3-R03/response.md",
+  "raw_response_sha256": "d29d1a7e05fb489c3636b517e62dbb45034390bebe25091acb357864493e1e18",
+  "raw_response_size_bytes": 25592
+}

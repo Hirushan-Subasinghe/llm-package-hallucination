@@ -1,0 +1,21 @@
+{
+  "run_id": "API-v2.6-DATA-ADV-01-M3-R02",
+  "collection_order": 202,
+  "model_condition_id": "M3",
+  "expected_model_id": "openai/gpt-oss-120b",
+  "actual_model": "openai/gpt-oss-120b",
+  "actual_interface": "Groq Playground web UI",
+  "collection_interface": "manual",
+  "run_repetition": "R02",
+  "task_id": "DATA-ADV-01",
+  "category": "DATA-ADV",
+  "prompt_path": "data/generated_prompts/v2.6.0/DATA-ADV-01.txt",
+  "prompt_sha256": "e32c759d896d42a27d4d4fc64472164455ac3edeaff87d018b740014d4dcb5b0",
+  "captured_at_utc": "2026-09-24T10:52:10.208786Z",
+  "operator_id": "collector_01",
+  "response_status": "completed",
+  "failure_or_interruption_note": "",
+  "raw_response_path": "data/final/manual_raw/v2.6.0/API-v2.6-DATA-ADV-01-M3-R02/response.md",
+  "raw_response_sha256": "d29f96f7e72719a60b44e3642a8a4335166ffa7f0e3a0aec9a5709b110823ac5",
+  "raw_response_size_bytes": 23300
+}
