@@ -777,3 +777,60 @@ Each decision record contains the following standardized fields:
 - **historical_preservation:** The original `feature/data-collection` history remains unchanged and still records this branch-local decision as D036. The integrated branch uses D039 only to eliminate the duplicate identifier. The integrated D036 (DFR/RDFR) entry is not modified.
 - **affected_research_questions:** RQ1, RQ2, RQ3, RQ4 (as enumerated in the source entry).
 - **scope_effect:** Implementation record (data-collection repository, tag `v2.7.0-freeze`): `config/experiment_freeze_v2.7.0.json`, `docs/experiment_freeze_v2.7.0.md`, and `docs/final_study_v2.7_migration_verification.md`. Source audit: `docs/m2_removal_final_study_impact_audit.md`. Integration record: `docs/final_report_support/decision_id_collision_reconciliation.md`.
+
+---
+
+### D040 — Formalize HYBRID Collection-Interface Allocation as a Derived Layer
+
+- **decision_id:** D040
+- **date:** 2026-09-23
+- **status:** IMPLEMENTED
+- **approved_by:** researcher (formal supervisor approval: not_recorded)
+- **integration_reconciliation:** This decision was originally recorded as `D033` on `feature/data-collection` in `~/Dev/ai-hallucination-study/docs/decision_log.md` (introduced in commit `ce13048bc7a426e856b8c46fd7f70e68540e781b`, contained in tag `v2.7.0-freeze`). During 2026-09-25 integration reconciliation (REMAINING-DECISION-ID-COLLISION-RECONCILIATION-01), a branch-local decision-ID collision was found because this integration branch had independently assigned `D033` to the primary PHR/SHR unit decision. Following the D038 and D039 precedent, integrated D033 is unchanged and this decision is assigned the integrated identifier `D040`. The decision itself is unchanged; only its integrated decision identifier differs.
+- **original_branch_decision_id:** D033 (`feature/data-collection`)
+- **original_design:** Frozen v2.6 collection proceeded through the API interface only, while preserved raw metadata accumulated unevenly across model conditions. The frozen 360-row manifest and all collected raw observations remain intact.
+- **final_design:** Create the deterministic derived artifact `manifests/hybrid_assignment_v1.0.0.csv`, assigning each frozen v2.6 manifest row to `api` or `manual` without changing any frozen input. Preserve all 119 existing API-attempted rows as API assignments, then fill remaining API quotas from the earliest never-attempted rows in each model condition's frozen manifest order. Targets are M1 40 API / 50 manual, M2 40 / 50, M3 41 / 49, and M4 59 / 31.
+- **rationale:** A balanced collection-interface design is required while retaining every observation already attempted through the API, including failed and truncated observations.
+- **methodological_justification:** Assignment is determined by interface and pre-existing attempt status, never by response outcome. The deterministic order rule prevents outcome-dependent selection. The allocation is independently reproducible from the frozen manifest, preserved raw metadata, and fixed target table.
+- **impact_on_data_collection:** Of the 180 API-assigned rows, 119 are preserved prior API attempts and 61 are additional assignments: M1 24, M2 34, M3 3, M4 0. The task does not authorize API or manual collection, retry any failure, change M3's paused frozen configuration, alter collection order, or modify prompts, model settings, provider routing, token ceilings, pacing, or retry policy.
+- **impact_on_analysis:** API/manual interface assignment is retained as collection-design provenance. It must not be treated as a completed-response count or used to replace failed API observations. Existing failed and truncated observations retain their separately defined analysis eligibility rules.
+- **affected_research_questions:** RQ1, RQ2, RQ3, RQ4 (as enumerated in the source entry).
+- **scope_effect:** `manifests/api_final_v2.6.0_manifest.csv` remains byte-identical with verified SHA-256 `b2b2750b3ae4ce96a867df14117b05c12f214760ef7036d6bbf2f78e44939b7f`. The HYBRID artifact is a derived allocation layer, not a modification of frozen experimental inputs.
+- **integration_note:** The source entry describes the v2.6 (four-condition, 360-row) allocation. Under integrated D039, the v2.7.0 final study inherits this allocation unchanged for the retained M1, M3, and M4 rows (140 API / 130 manual, not rebalanced); M2 rows are excluded from the v2.7.0 final study. This note adds cross-reference only and does not alter the source decision.
+- **historical_preservation:** The original `feature/data-collection` history remains unchanged and still records this branch-local decision as D033. The integrated branch uses D040 only to eliminate the duplicate identifier. The integrated D033 (primary PHR/SHR units) entry is not modified.
+- **integration_record:** `docs/final_report_support/remaining_decision_id_collision_reconciliation.md`.
+
+---
+
+### D041 — Constrain Future API Selection to Verified HYBRID Assignments
+
+- **decision_id:** D041
+- **date:** 2026-09-23
+- **status:** IMPLEMENTED; collection not started (status as recorded in the source entry on 2026-09-23)
+- **integration_reconciliation:** This decision was originally recorded as `D034` on `feature/data-collection` in `~/Dev/ai-hallucination-study/docs/decision_log.md` (introduced in commit `7b2a23f707ef037c1880f5b4f1e00bd369b742ba`, contained in tag `v2.7.0-freeze`). During 2026-09-25 integration reconciliation (REMAINING-DECISION-ID-COLLISION-RECONCILIATION-01), a branch-local decision-ID collision was found because this integration branch had independently assigned `D034` to the primary/secondary external-dependency eligibility decision. Following the D038 and D039 precedent, integrated D034 is unchanged and this decision is assigned the integrated identifier `D041`. The decision itself is unchanged; only its integrated decision identifier differs.
+- **original_branch_decision_id:** D034 (`feature/data-collection`)
+- **decision:** Future v2.6 API collection is selected by `scripts/collect_hybrid_api_batch.py`, which verifies the frozen manifest SHA-256 and HYBRID-assignment SHA-256 before selecting rows. It supplies the existing v2.6 batch collector only API-assigned, never-attempted rows in original frozen `collection_order`.
+- **current_operational_state (as recorded in the source entry, 2026-09-23):** 58 rows are actionable through the API: M1 has 24 and M2 has 34. Three M3 rows remain API-assigned but are operationally paused because the unchanged frozen Groq request conflicts with the provider TPM constraint; `--exclude-model M3` is the explicit temporary scheduling control. M4 has no further API rows because its API allocation is already satisfied.
+- **integrity_controls:** Manual-assigned rows are never eligible for this API path. Every pre-existing raw run directory, including preserved failed observations, is excluded from selection and remains protected by the established collector's no-overwrite guard. The selector does not retry failures or substitute a later row after a failure; it delegates the unchanged v2.6 request, retry, failure-continuation, pacing, and raw-artifact behavior to the established collector.
+- **data_boundary:** This implementation adds no API or manual observations and does not alter the frozen manifest, HYBRID assignment, prompts, model configuration, experiment freeze, collection order, raw observations, metadata, or run IDs.
+- **integration_note:** "HYBRID assignment" in this entry is the allocation formalized by source `feature/data-collection` D033, integrated here as D040. The operational state above is a historical 2026-09-23 snapshot; current v2.7.0 collection state is recorded in `docs/current_research_status.md` and the authoritative data-collection repository. This note adds cross-reference only and does not alter the source decision.
+- **historical_preservation:** The original `feature/data-collection` history remains unchanged and still records this branch-local decision as D034. The integrated branch uses D041 only to eliminate the duplicate identifier. The integrated D034 (external-dependency eligibility) entry is not modified.
+- **integration_record:** `docs/final_report_support/remaining_decision_id_collision_reconciliation.md`.
+
+---
+
+### D042 — Offline Manual-Observation Preservation Scaffold for HYBRID v2.6
+
+- **decision_id:** D042
+- **date:** 2026-09-23
+- **status:** IMPLEMENTED; manual generation not authorized by this implementation (status as recorded in the source entry)
+- **integration_reconciliation:** This decision was originally recorded as `D035` on `feature/data-collection` in `~/Dev/ai-hallucination-study/docs/decision_log.md` (introduced in commit `8accdc54df5678df7ae978f50751476542d73ca1`, contained in tag `v2.7.0-freeze`). During 2026-09-25 integration reconciliation (REMAINING-DECISION-ID-COLLISION-RECONCILIATION-01), a branch-local decision-ID collision was found because this integration branch had independently assigned `D035` to the provider abnormal-termination decision. Following the D038 and D039 precedent, integrated D035 is unchanged and this decision is assigned the integrated identifier `D042`. The decision itself is unchanged; only its integrated decision identifier differs.
+- **original_branch_decision_id:** D035 (`feature/data-collection`)
+- **decision:** Add `scripts/collect_hybrid_manual.py`, an offline-only selector and byte-preserving capture scaffold for rows already assigned `collection_interface=manual`. It verifies the frozen v2.6 manifest and verified HYBRID assignment hashes before selection, accepts only manual-assigned rows, preserves frozen `collection_order`, and never invokes a model, API, browser, or generated code.
+- **artifact separation:** Manual artifacts use the new, deliberately separate root `data/final/manual_raw/v2.6.0/<run_id>/`, rather than the established API root `data/final/raw/<run_id>/`. Each record contains the verified `prompt.txt`, untouched operator-supplied `response.md`, and provenance `metadata.json`; creation is exclusive and any existing manual directory blocks overwrite or retry.
+- **manual-interface boundary:** D033 [source `feature/data-collection` D033; integrated D040] assigns rows to the manual interface but does not name or approve a particular manual product/UI or alter the frozen M4 model condition. The scaffold therefore records actual model/interface labels verbatim and does not infer them. A researcher-approved manual interface configuration is required before any manual generation is performed.
+- **failure handling:** A failed, interrupted, or truncated manual attempt is preserved once with its exact available response bytes (including a valid zero-byte capture) and an operator-supplied failure/interruption note. It is not cleaned, replaced, regenerated, or automatically retried.
+- **data boundary:** This implementation creates no observation and does not modify the frozen manifest, HYBRID assignment, API batch state, existing API raw artifacts, prompts, model configuration, or collection order.
+- **integration_note:** The bracketed qualifier in `manual-interface boundary` is the only textual addition to the source wording; it disambiguates the source's bare "D033" from integrated D033 (primary PHR/SHR units). Integrated D039's reference to the manual-interface requirement ("source-recorded as D035 on `feature/data-collection`") resolves to this entry.
+- **historical_preservation:** The original `feature/data-collection` history remains unchanged and still records this branch-local decision as D035. The integrated branch uses D042 only to eliminate the duplicate identifier. The integrated D035 (provider abnormal-termination handling) entry is not modified.
+- **integration_record:** `docs/final_report_support/remaining_decision_id_collision_reconciliation.md`.

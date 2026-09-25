@@ -15,7 +15,7 @@ The v2.7 freeze records live in the authoritative data-collection repository (`~
 - Tasks: 30 frozen tasks (`final-2.0.0`) in 6 functional categories.
 - Repetitions: 3 planned repetitions per task-condition combination.
 - Planned observations: 30 tasks × 3 model conditions × 3 repetitions = **270** (90 per retained model, 90 per repetition, 45 per category).
-- Interface assignment, inherited unchanged from the v2.6 HYBRID allocation and not rebalanced: **140 API-assigned / 130 manual-assigned** (M1 40/50, M3 41/49, M4 59/31). Interface is unevenly associated with model condition, so analyses must not claim interface balance.
+- Interface assignment, inherited unchanged from the v2.6 HYBRID allocation and not rebalanced: **140 API-assigned / 130 manual-assigned** (M1 40/50, M3 41/49, M4 59/31). Interface is unevenly associated with model condition, so analyses must not claim interface balance. Allocation decision: integrated **D040** (originally D033 on `feature/data-collection`; not the integrated D033 PHR/SHR-unit decision).
 - M2 rows in the v2.7 final study: **0**.
 - Task set, prompt template, rendered prompt bytes, model IDs, providers, pins, output ceilings, sampling parameters, retry, pacing, failure, and truncation policies are unchanged from v2.6.
 
@@ -27,7 +27,7 @@ The v2.7 freeze records live in the authoritative data-collection repository (`~
 - Schema: `schemas/api_model_set_v2_7.schema.json`.
 - Freeze record: `config/experiment_freeze_v2.7.0.json` and `docs/experiment_freeze_v2.7.0.md`.
 - Migration verification: `docs/final_study_v2.7_migration_verification.md`; freeze-tag verification: `docs/v2.7_freeze_tag_verification.md`; source audit: `docs/m2_removal_final_study_impact_audit.md`.
-- Controlling decision: integrated **D039** in this worktree's `docs/decision_log.md` ("Remove M2 Before Final Analysis and Freeze the Three-Condition v2.7 Final Study"), originally recorded as D036 on `feature/data-collection` in `~/Dev/ai-hallucination-study/docs/decision_log.md`. Integrated D036 remains the DFR/RDFR secondary dependency-reliability decision. Collision record: `docs/final_report_support/decision_id_collision_reconciliation.md`.
+- Controlling decision: integrated **D039** in this worktree's `docs/decision_log.md` ("Remove M2 Before Final Analysis and Freeze the Three-Condition v2.7 Final Study"), originally recorded as D036 on `feature/data-collection` in `~/Dev/ai-hallucination-study/docs/decision_log.md`. Integrated D036 remains the DFR/RDFR secondary dependency-reliability decision. Collision records: `docs/final_report_support/decision_id_collision_reconciliation.md` (D036/D039) and `docs/final_report_support/remaining_decision_id_collision_reconciliation.md` (source D033–D035 → integrated D040–D042; integrated D033–D035 unchanged).
 
 ### M2 exclusion
 
@@ -39,7 +39,7 @@ The v2.7 freeze records live in the authoritative data-collection repository (`~
 ### Evidence reuse and collection status
 
 - The 140 retained M1/M3/M4 API observations are mapped in place to their preserved v2.6 raw evidence by run ID and SHA-256. They were reused without regeneration; nothing was copied, renamed, or rewritten, and no `API-v2.7-*` raw directory exists. Their generation provenance remains `api-model-set-1.4.0`.
-- All 140 API-assigned rows are finalized. The 130 manual-assigned rows remain pending manual collection in the authoritative repository. Per-condition collection-state counts are recorded in `~/Dev/ai-hallucination-study/docs/current_research_status.md`; they are collection-state counts, not research results.
+- All 140 API-assigned rows are finalized. The 130 manual-assigned rows remain pending manual collection in the authoritative repository. Manual capture uses the offline preservation scaffold of integrated **D042** (originally D035 on `feature/data-collection`; not the integrated D035 abnormal-termination decision), which requires a researcher-approved manual interface before any manual generation. Per-condition collection-state counts are recorded in `~/Dev/ai-hallucination-study/docs/current_research_status.md`; they are collection-state counts, not research results.
 - No final PHR/SHR, DFR/RDFR, grouped comparison, or risk output exists for v2.7.0. All final findings remain `[FINAL RESULT PENDING]`.
 
 ## Superseded v2.6.0 four-condition design (historical)
