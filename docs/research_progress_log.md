@@ -1038,3 +1038,14 @@ Next:
 - No empirical findings were introduced.
 - Verification recorded in `docs/final_report_support/chapter1_v2.7_reconciliation_verification.md`.
 - Chapter 1 reconciliation committed as `7442715`.
+
+### 2026-09-25 — Decision-ID collision resolved for M2 removal
+
+- Resolved the cross-worktree D036 decision-ID collision before Chapter 3 reconciliation.
+- Integration/report D036 remains the existing DFR/RDFR secondary dependency-reliability decision unchanged.
+- The M2-removal decision originally recorded as D036 in the data-collection worktree is represented in the integration worktree as D039.
+- D039 preserves the source decision meaning and records provenance to `feature/data-collection`, freeze commit `bba890d9aa5838f06bee4b1bd0e85d9e61b444f8`, and tag `v2.7.0-freeze`.
+- Updated `docs/current_research_status.md` and `docs/final_report_support/claims_evidence_matrix.md` to use the unambiguous D039 mapping.
+- Added `docs/final_report_support/decision_id_collision_reconciliation.md`.
+- No chapter draft, figure asset, frozen experimental input, or empirical result was modified.
+- Remaining cross-worktree decision-ID collisions D033–D035 require reconciliation if they are referenced by the dissertation or current methodology documentation.
