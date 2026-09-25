@@ -27,7 +27,7 @@ The v2.7 freeze records live in the authoritative data-collection repository (`~
 - Schema: `schemas/api_model_set_v2_7.schema.json`.
 - Freeze record: `config/experiment_freeze_v2.7.0.json` and `docs/experiment_freeze_v2.7.0.md`.
 - Migration verification: `docs/final_study_v2.7_migration_verification.md`; freeze-tag verification: `docs/v2.7_freeze_tag_verification.md`; source audit: `docs/m2_removal_final_study_impact_audit.md`.
-- Controlling decision: `docs/decision_log.md` D036 **on `feature/data-collection`** ("Remove M2 Before Final Analysis and Freeze the Three-Condition v2.7 Final Study"). This decision has not been integrated into this worktree's decision log, where D036 is the DFR/RDFR decision; cite it with its branch qualifier until an integrated alias is assigned.
+- Controlling decision: integrated **D039** in this worktree's `docs/decision_log.md` ("Remove M2 Before Final Analysis and Freeze the Three-Condition v2.7 Final Study"), originally recorded as D036 on `feature/data-collection` in `~/Dev/ai-hallucination-study/docs/decision_log.md`. Integrated D036 remains the DFR/RDFR secondary dependency-reliability decision. Collision record: `docs/final_report_support/decision_id_collision_reconciliation.md`.
 
 ### M2 exclusion
 
