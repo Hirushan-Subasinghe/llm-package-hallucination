@@ -180,8 +180,24 @@ class ZeroEventGroupsTests(TempDirCase):
         for record in summary["records"]:
             self.assertEqual(record["phr"]["numerator"], 0)
         result = comparisons["comparisons"]["package_level_confirmed_vs_not"]
-        self.assertEqual(result["method"], "fisher_exact")
-        self.assertAlmostEqual(result["p_value"], 1.0, places=9)
+        self.assertEqual(result["method"], "not_testable")
+        self.assertNotIn("p_value", result)
+        self.assertNotIn("odds_ratio", result)
+        self.assertNotIn("risk_difference", result)
+
+    def test_unequal_zero_event_rows_do_not_reach_fisher(self):
+        result = grp.compare_two_groups("A", (0, 2), "B", (0, 1))
+        self.assertEqual(result["method"], "not_testable")
+        self.assertEqual(result["table"], [[0, 2], [0, 1]])
+        self.assertNotIn("p_value", result)
+
+    def test_fisher_primitive_handles_unequal_zero_event_rows(self):
+        self.assertAlmostEqual(grp.fisher_exact_2x2(0, 2, 0, 1), 1.0)
+
+    def test_both_groups_all_events_are_not_testable(self):
+        result = grp.compare_two_groups("A", (2, 2), "B", (1, 1))
+        self.assertEqual(result["method"], "not_testable")
+        self.assertNotIn("p_value", result)
 
 
 class OneGroupNotTestableTests(TempDirCase):
@@ -207,6 +223,35 @@ class FisherTwoByTwoPathTests(TempDirCase):
         self.assertEqual(result["method"], "fisher_exact")
         self.assertIn("odds_ratio", result)
         self.assertIn("risk_difference", result)
+
+    def test_one_zero_event_group_and_one_nonzero_event_group_is_testable(self):
+        result = grp.compare_two_groups("A", (0, 4), "B", (2, 4))
+        self.assertEqual(result["method"], "fisher_exact")
+        self.assertGreater(result["p_value"], 0.0)
+        self.assertLessEqual(result["p_value"], 1.0)
+
+    def test_nonzero_event_comparison_preserves_normal_fisher_output(self):
+        result = grp.compare_two_groups("A", (3, 10), "B", (7, 10))
+        self.assertEqual(result["method"], "fisher_exact")
+        self.assertIn("p_value", result)
+        self.assertIn("odds_ratio", result)
+        self.assertIn("risk_difference", result)
+
+    def test_zero_denominator_in_one_group_is_not_testable(self):
+        result = grp.compare_two_groups("A", (0, 0), "B", (1, 2))
+        self.assertEqual(result["method"], "not_testable")
+        self.assertNotIn("p_value", result)
+
+    def test_zero_denominator_in_both_groups_is_not_testable(self):
+        result = grp.compare_two_groups("A", (0, 0), "B", (0, 0))
+        self.assertEqual(result["method"], "not_testable")
+        self.assertEqual(result["reason"], "both groups have zero total")
+        self.assertNotIn("p_value", result)
+
+    def test_identical_nondegenerate_rows_remain_testable(self):
+        result = grp.compare_two_groups("A", (2, 4), "B", (2, 4))
+        self.assertEqual(result["method"], "fisher_exact")
+        self.assertAlmostEqual(result["p_value"], 1.0)
 
 
 class ChiSquareAssumptionTests(TempDirCase):
@@ -289,11 +334,43 @@ class MultipleComparisonCorrectionTests(TempDirCase):
         result = comparisons["comparisons"]["package_level_confirmed_vs_not"]
         self.assertEqual(result["multiple_comparison_correction"], "holm")
         for pair in result["pairwise_comparisons"]:
-            self.assertGreaterEqual(pair["holm_adjusted_p_value"], pair["p_value"] - 1e-12)
+            if pair["method"] == "not_testable":
+                self.assertNotIn("p_value", pair)
+                self.assertNotIn("holm_adjusted_p_value", pair)
+            else:
+                self.assertGreaterEqual(pair["holm_adjusted_p_value"], pair["p_value"] - 1e-12)
 
     def test_holm_correction_function_matches_known_case(self):
         adjusted = grp.holm_correction([0.01, 0.04, 0.03, 0.20])
         self.assertEqual(adjusted, [0.04, 0.09, 0.09, 0.20])
+
+    def test_holm_excludes_not_testable_pairwise_comparisons(self):
+        result = grp.compare_groups(
+            {"A": (0, 10), "B": (0, 8), "C": (2, 10)},
+            monte_carlo_iterations=200,
+            monte_carlo_seed=11,
+        )
+        pairs = result["pairwise_comparisons"]
+        non_testable = [pair for pair in pairs if pair["method"] == "not_testable"]
+        testable = [pair for pair in pairs if pair["method"] == "fisher_exact"]
+        self.assertEqual(len(non_testable), 1)
+        self.assertEqual(len(testable), 2)
+        self.assertNotIn("p_value", non_testable[0])
+        self.assertNotIn("holm_adjusted_p_value", non_testable[0])
+        for pair in testable:
+            self.assertIn("holm_adjusted_p_value", pair)
+
+    def test_all_zero_event_omnibus_and_pairs_are_not_testable(self):
+        result = grp.compare_groups(
+            {"A": (0, 10), "B": (0, 8), "C": (0, 6)},
+            monte_carlo_iterations=200,
+            monte_carlo_seed=11,
+        )
+        self.assertEqual(result["omnibus"]["method"], "not_testable")
+        for pair in result["pairwise_comparisons"]:
+            self.assertEqual(pair["method"], "not_testable")
+            self.assertNotIn("p_value", pair)
+            self.assertNotIn("holm_adjusted_p_value", pair)
 
 
 class IncompleteGroupCoverageTests(TempDirCase):

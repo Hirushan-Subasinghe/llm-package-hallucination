@@ -179,7 +179,7 @@ def fisher_exact_2x2(a, b, c, d):
 
     def hypergeom_prob(x):
         # P(A = x) given fixed margins (row1, row2, col1, total).
-        if x < 0 or x > col1 or (row1 - x) < 0 or (row1 - x) > row2:
+        if x < 0 or x > col1 or (row1 - x) < 0 or (row1 - x) > col2:
             return 0.0
         return math.exp(
             math.lgamma(row1 + 1) + math.lgamma(row2 + 1) + math.lgamma(col1 + 1) + math.lgamma(col2 + 1)
@@ -351,14 +351,33 @@ def compare_two_groups(label_a, counts_a, label_b, counts_b):
     successes_a, total_a = counts_a
     successes_b, total_b = counts_b
     if total_a == 0 or total_b == 0:
-        return {"method": "not_testable", "reason": f"group {label_a if total_a == 0 else label_b} has zero total"}
+        if total_a == 0 and total_b == 0:
+            reason = "both groups have zero total"
+        else:
+            reason = f"group {label_a if total_a == 0 else label_b} has zero total"
+        return {"method": "not_testable", "reason": reason}
     a, b = successes_a, total_a - successes_a
     c, d = successes_b, total_b - successes_b
+    table = [[a, b], [c, d]]
+    if a + c == 0:
+        return {
+            "method": "not_testable",
+            "reason": "outcome has no variation: both groups have zero events",
+            "groups": [label_a, label_b],
+            "table": table,
+        }
+    if b + d == 0:
+        return {
+            "method": "not_testable",
+            "reason": "outcome has no variation: both groups have all events",
+            "groups": [label_a, label_b],
+            "table": table,
+        }
     p_value = fisher_exact_2x2(a, b, c, d)
     return {
         "method": "fisher_exact",
         "groups": [label_a, label_b],
-        "table": [[a, b], [c, d]],
+        "table": table,
         "p_value": p_value,
         "odds_ratio": odds_ratio_with_ci(a, b, c, d),
         "risk_difference": risk_difference_with_ci(successes_a, total_a, successes_b, total_b),
@@ -381,31 +400,41 @@ def compare_groups(group_counts, monte_carlo_iterations, monte_carlo_seed):
 
     labels = [label for label, _ in usable]
     table = [[counts[0] for _, counts in usable], [counts[1] - counts[0] for _, counts in usable]]
-    statistic, df, chi_p, assumptions_met, reason = chi_square_test(table)
-    if assumptions_met:
-        omnibus = {"method": "chi_square", "groups": labels, "table": table,
-                   "statistic": statistic, "degrees_of_freedom": df, "p_value": chi_p,
-                   "assumptions_met": True, "assumption_reason": reason}
+    if sum(table[0]) == 0:
+        omnibus = {"method": "not_testable", "groups": labels, "table": table,
+                   "reason": "outcome has no variation: all groups have zero events"}
+    elif sum(table[1]) == 0:
+        omnibus = {"method": "not_testable", "groups": labels, "table": table,
+                   "reason": "outcome has no variation: all groups have all events"}
     else:
-        mc_statistic, mc_p = monte_carlo_2xc_pvalue(table, monte_carlo_iterations, monte_carlo_seed)
-        omnibus = {"method": "monte_carlo_permutation", "groups": labels, "table": table,
-                   "statistic": mc_statistic, "p_value": mc_p,
-                   "iterations": monte_carlo_iterations, "seed": monte_carlo_seed,
-                   "assumptions_met": False, "assumption_reason": reason,
-                   "chi_square_reference_statistic": statistic, "chi_square_reference_p_value": chi_p}
+        statistic, df, chi_p, assumptions_met, reason = chi_square_test(table)
+        if assumptions_met:
+            omnibus = {"method": "chi_square", "groups": labels, "table": table,
+                       "statistic": statistic, "degrees_of_freedom": df, "p_value": chi_p,
+                       "assumptions_met": True, "assumption_reason": reason}
+        else:
+            mc_statistic, mc_p = monte_carlo_2xc_pvalue(table, monte_carlo_iterations, monte_carlo_seed)
+            omnibus = {"method": "monte_carlo_permutation", "groups": labels, "table": table,
+                       "statistic": mc_statistic, "p_value": mc_p,
+                       "iterations": monte_carlo_iterations, "seed": monte_carlo_seed,
+                       "assumptions_met": False, "assumption_reason": reason,
+                       "chi_square_reference_statistic": statistic, "chi_square_reference_p_value": chi_p}
 
     pairwise = []
     raw_p_values = []
+    testable_pair_indexes = []
     for i in range(len(usable)):
         for j in range(i + 1, len(usable)):
             label_a, counts_a = usable[i]
             label_b, counts_b = usable[j]
             pair_result = compare_two_groups(label_a, counts_a, label_b, counts_b)
             pairwise.append(pair_result)
-            raw_p_values.append(pair_result.get("p_value", 1.0))
+            if pair_result["method"] != "not_testable":
+                testable_pair_indexes.append(len(pairwise) - 1)
+                raw_p_values.append(pair_result["p_value"])
     adjusted = holm_correction(raw_p_values)
-    for pair_result, adjusted_p in zip(pairwise, adjusted):
-        pair_result["holm_adjusted_p_value"] = adjusted_p
+    for pair_index, adjusted_p in zip(testable_pair_indexes, adjusted):
+        pairwise[pair_index]["holm_adjusted_p_value"] = adjusted_p
 
     return {"omnibus": omnibus, "pairwise_comparisons": pairwise,
             "multiple_comparison_correction": "holm", "excluded_zero_total_groups": excluded}

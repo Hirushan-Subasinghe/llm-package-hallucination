@@ -1340,3 +1340,195 @@ Next:
 - Tables 3-1, 3-2, 3-3 updated; Tables 3-4 to 3-9 unchanged. Word count 7,501 to 8,055.
 - Figures 3-1 and 3-2 require regeneration; Figures 3-3 to 3-5 unaffected.
 - Verification: `docs/final_report_support/chapter3_v2.7_reconciliation_verification.md`. No empirical results added.
+
+### 2026-09-23 — Final dissertation reporting control layer established
+
+- Established the permanent final-dissertation/reporting control layer in the integration worktree.
+- Commit: `17b1ae6` (`docs: establish final dissertation reporting controls`).
+- Updated `AGENTS.md` to define the final-report worktree purpose, source-of-truth priority, frozen-experiment integrity rules, experiment/repository security safeguards, classification and metric controls, dissertation writing rules, citation controls, reporting workflow, and worktree safety boundaries.
+- Added `docs/report_generation_protocol.md` defining the detailed dissertation-generation workflow, including university formatting requirements, baseline-draft reconciliation, citation policy, chapter-specific workflows, results safety, claims-evidence requirements, AI-tool responsibilities, and the standard audit → reconciliation → drafting → verification process.
+- Added `docs/final_report_support/claims_evidence_matrix.md` as the control surface for VERIFIED / PENDING / REJECTED dissertation claims.
+- Added `docs/references/approved_references.md` as a controlled reference-list skeleton. Reference extraction has not yet been performed.
+- Confirmed that no experimental/frozen files, raw data, manifests, prompts, model configuration, collection state, results, code, schemas, or tests were modified by this documentation milestone.
+- Confirmed that `recomendations.txt` is not currently present under `~/Dev` within the checked search scope; repository instructions therefore treat it as advisory only when present and do not reconstruct it from memory.
+- Next step: extract and verify the approved academic reference list from the baseline dissertation `IM2021101.pdf`, then begin the Chapter 1 evidence/reconciliation audit.
+
+### 2026-09-24 — Fourteen high-confidence v2.6 dependency adjudications applied
+
+- Applied exactly 14 previously reviewed high-confidence adjudication decisions to the current temporary v2.6 PIPE-05 preview using the existing PIPE-05B protocol.
+- No medium-confidence or unresolved case was approved.
+- Approved classifications:
+  - `SELF_REFERENCE_OR_LOCAL_PACKAGE`:
+    - `mtls-pfx-loader`
+    - `etcd-leader-coordination`
+    - `docx-content-control-processor`
+  - `PACKAGE_NAME_CONFUSION`:
+    - `pkcs12`
+    - `mime-node`
+    - `@pgvector/pg`
+    - `@peculiar/asn1-rs`
+  - `NAMESPACE_CONFUSION`:
+    - `@xmldom/xpath`
+    - `opentelemetry-api`
+    - `opentelemetry-instrumentation`
+    - `opentelemetry-instrumentation-redis`
+    - `opentelemetry-sdk-node`
+    - `opentelemetry-sdk-trace-base`
+  - `INVALID_OR_REDUNDANT_TYPES_PACKAGE`:
+    - `@types/pdf-lib`
+- Created PIPE-05B decision artifacts:
+  - `results/pipe05b_adjudication_v2.6-current-temporary-preview_high-confidence_20260924T080652Z/package_adjudication_pipe05b_v1.json`
+  - `results/pipe05b_adjudication_v2.6-current-temporary-preview_high-confidence_20260924T080652Z/package_adjudication_pipe05b_v1.csv`
+  - preserved researcher decision input: `data/manual_review/pipe05b_adjudications_v2.6-current-temporary-preview_high-confidence_20260924T080652Z.json`
+- Provenance bindings verified:
+  - proposed packet SHA-256: `cd5cb8f0a8bc2ee3b30112f593d1cebca1c8879bcfe3d7d28e112170a2916d04`
+  - PIPE-05 source SHA-256: `9caa4828ecb5af75971523cbfc544bf150838becd4064364296a5acfea33df9f`
+  - decision-input SHA-256: `1587ab8ab00de68578c9c79d9e3aa8f148badd54369bbd4b878f1b9e07ec93d8`
+  - PIPE-05B envelope SHA-256: `4fcc75010d32a95b3f9c3d0ea4d52c7af6b07a121cc2ca99342ec022257ab5b2`
+- Official PIPE-05B adjudicator and custom package/taxonomy invariants passed.
+- PIPE-05B/PIPE-07/PIPE-08/PIPE-10 validation result: 100 tests passed.
+- Temporary PIPE-07/08/10 end-to-end validation passed.
+- No approved decision produced a confirmed package hallucination.
+- Temporary incomplete-collection primary metrics remained:
+  - PHR: `0 / 1114 = 0`
+  - SHR: `0 / 105 = 0`
+- Eligible unadjudicated PIPE-05 rows decreased from 18 to 6.
+- Temporary incomplete-collection dependency-reliability metrics became:
+  - DFR: `9 / 1105 = 0.0081447964` (~0.8145%)
+  - RDFR: `5 / 99 = 0.0505050505` (~5.0505%)
+- Current dependency status after approved decisions:
+  - 9 external dependency failures
+  - 1096 external non-failures
+  - 3 not-external rows
+  - 6 undetermined rows
+- Completeness gate remains `INTERIM_OR_INCOMPLETE`.
+- Two medium-confidence cases remain unapproved:
+  - `@opentelemetry/instrumentation-https`
+  - `@types/xpath`
+- Five unresolved cases remain:
+  - `@types/edifact`
+  - `asn1-encoder`
+  - `cms-signeddata-verifier`
+  - `node-smime`
+  - `webauthn2`
+- Confirmed hallucinations created: 0.
+- Risk-eligible findings created: 0.
+- No frozen prompts, manifests, raw responses, collection state, quarantine data, checkpoints, or other frozen experiment evidence were modified.
+- The PIPE-05B envelope is explicitly hash-bound to the current temporary PIPE-05 preview. When PIPE-05 is rebuilt, the preserved researcher decision input must be rerun under the D037 rebuild rule; the existing envelope must not be manually rebased.
+- Next analysis priority: correct and regression-test the previously identified PIPE-09 all-zero-event Fisher edge case before final inferential analysis.
+
+### 2026-09-24 — Fourteen high-confidence v2.6 dependency adjudications applied
+
+- Applied exactly 14 previously reviewed high-confidence adjudication decisions to the current temporary v2.6 PIPE-05 preview using the existing PIPE-05B protocol.
+- No medium-confidence or unresolved case was approved.
+- Approved classifications:
+  - `SELF_REFERENCE_OR_LOCAL_PACKAGE`:
+    - `mtls-pfx-loader`
+    - `etcd-leader-coordination`
+    - `docx-content-control-processor`
+  - `PACKAGE_NAME_CONFUSION`:
+    - `pkcs12`
+    - `mime-node`
+    - `@pgvector/pg`
+    - `@peculiar/asn1-rs`
+  - `NAMESPACE_CONFUSION`:
+    - `@xmldom/xpath`
+    - `opentelemetry-api`
+    - `opentelemetry-instrumentation`
+    - `opentelemetry-instrumentation-redis`
+    - `opentelemetry-sdk-node`
+    - `opentelemetry-sdk-trace-base`
+  - `INVALID_OR_REDUNDANT_TYPES_PACKAGE`:
+    - `@types/pdf-lib`
+- Created PIPE-05B decision artifacts:
+  - `results/pipe05b_adjudication_v2.6-current-temporary-preview_high-confidence_20260924T080652Z/package_adjudication_pipe05b_v1.json`
+  - `results/pipe05b_adjudication_v2.6-current-temporary-preview_high-confidence_20260924T080652Z/package_adjudication_pipe05b_v1.csv`
+  - preserved researcher decision input: `data/manual_review/pipe05b_adjudications_v2.6-current-temporary-preview_high-confidence_20260924T080652Z.json`
+- Provenance bindings verified:
+  - proposed packet SHA-256: `cd5cb8f0a8bc2ee3b30112f593d1cebca1c8879bcfe3d7d28e112170a2916d04`
+  - PIPE-05 source SHA-256: `9caa4828ecb5af75971523cbfc544bf150838becd4064364296a5acfea33df9f`
+  - decision-input SHA-256: `1587ab8ab00de68578c9c79d9e3aa8f148badd54369bbd4b878f1b9e07ec93d8`
+  - PIPE-05B envelope SHA-256: `4fcc75010d32a95b3f9c3d0ea4d52c7af6b07a121cc2ca99342ec022257ab5b2`
+- Official PIPE-05B adjudicator and custom package/taxonomy invariants passed.
+- PIPE-05B/PIPE-07/PIPE-08/PIPE-10 validation result: 100 tests passed.
+- Temporary PIPE-07/08/10 end-to-end validation passed.
+- No approved decision produced a confirmed package hallucination.
+- Temporary incomplete-collection primary metrics remained:
+  - PHR: `0 / 1114 = 0`
+  - SHR: `0 / 105 = 0`
+- Eligible unadjudicated PIPE-05 rows decreased from 18 to 6.
+- Temporary incomplete-collection dependency-reliability metrics became:
+  - DFR: `9 / 1105 = 0.0081447964` (~0.8145%)
+  - RDFR: `5 / 99 = 0.0505050505` (~5.0505%)
+- Current dependency status after approved decisions:
+  - 9 external dependency failures
+  - 1096 external non-failures
+  - 3 not-external rows
+  - 6 undetermined rows
+- Completeness gate remains `INTERIM_OR_INCOMPLETE`.
+- Two medium-confidence cases remain unapproved:
+  - `@opentelemetry/instrumentation-https`
+  - `@types/xpath`
+- Five unresolved cases remain:
+  - `@types/edifact`
+  - `asn1-encoder`
+  - `cms-signeddata-verifier`
+  - `node-smime`
+  - `webauthn2`
+- Confirmed hallucinations created: 0.
+- Risk-eligible findings created: 0.
+- No frozen prompts, manifests, raw responses, collection state, quarantine data, checkpoints, or other frozen experiment evidence were modified.
+- The PIPE-05B envelope is explicitly hash-bound to the current temporary PIPE-05 preview. When PIPE-05 is rebuilt, the preserved researcher decision input must be rerun under the D037 rebuild rule; the existing envelope must not be manually rebased.
+- Next analysis priority: correct and regression-test the previously identified PIPE-09 all-zero-event Fisher edge case before final inferential analysis.
+
+### 2026-09-24 — PIPE-09 zero-event Fisher defect corrected and regression-tested
+
+- Corrected a statistical implementation defect in `scripts/analyze_group_comparisons.py`.
+- Root cause: the internal Fisher exact-test feasibility calculation compared `row1 - x` against `row2` instead of the second-column total (`col2`), causing valid all-zero-event contingency tables such as `[[0, 2], [0, 1]]` to be assigned zero probability and return a misleading `p = 0`.
+- Pairwise comparison logic also lacked an explicit no-outcome-variation guard, allowing all-zero-event and all-event comparisons to receive inferential outputs despite containing no outcome variation.
+- Corrected behavior:
+  - both groups with zero events → `not_testable`;
+  - both groups with all events → `not_testable`;
+  - no p-value, odds ratio, risk difference, confidence interval, or Holm-adjusted p-value is emitted for these non-testable comparisons;
+  - one zero-event group versus a non-zero-event group remains eligible for valid Fisher analysis;
+  - identical non-degenerate rows remain testable;
+  - zero-denominator handling remains unchanged and non-testable.
+- Holm correction now excludes non-testable pairwise comparisons rather than treating them as artificial valid p-values.
+- Added ten focused regression tests covering zero-event, all-event, zero-denominator, valid Fisher, identical-row, Holm-exclusion, and multi-group edge cases.
+- Updated two existing expectations to match the corrected statistical protocol.
+- Validation results:
+  - narrow PIPE-09 suite: 36 passed, 0 failed;
+  - PIPE-08/PIPE-09 metric suite: 63 passed, 0 failed;
+  - broader analysis subset: 160 passed, 0 failed;
+  - full suite: 337 passed, 2 failed.
+- The two full-suite failures are pre-existing unrelated historical freeze tests expecting absent v2.1/v2.3 raw-run fixtures and are not caused by this change.
+- Exhaustive small-table Fisher invariant validation covered 1,225 contingency tables successfully.
+- No frozen prompts, manifests, raw responses, collection state, adjudication rules, metric definitions, risk-model rules, quarantine data, or permanent result artifacts were modified.
+- Before the fix, the temporary v2.6 preview contained 148 misleading pairwise `p = 0` results: 3 model, 12 category, 131 model×category, and 2 repetition comparisons.
+- Final closure of this defect requires re-running PIPE-09 against the existing temporary preview inputs and confirming those misleading zero p-values have disappeared.
+
+### 2026-09-24 — PIPE-09 zero-event Fisher correction verified against temporary v2.6 preview
+
+- Completed post-fix verification of PIPE-09 against the existing incomplete v2.6 temporary-preview inputs.
+- Fresh disposable verification output: `/tmp/current_v26_preview/pipe09_verify_02.3b96mF`.
+- Re-evaluated 424 pairwise comparisons:
+  - model: 12
+  - category: 30
+  - model × category: 380
+  - repetition: 2
+- Because the current temporary preview contains no confirmed hallucination events, all 424 pairwise comparisons correctly resolved as `not_testable`.
+- The previously observed 148 misleading `p = 0` outputs were eliminated:
+  - model: 3 → 0
+  - category: 12 → 0
+  - model × category: 131 → 0
+  - repetition: 2 → 0
+  - total: 148 → 0
+- No comparison emitted a misleading Holm-adjusted zero p-value.
+- All-zero-event comparisons now contain no p-value, odds ratio, risk difference, confidence interval, or Holm-adjusted p-value.
+- No one-zero-vs-nonzero comparison was present in this temporary preview; that valid Fisher-analysis path remains covered by regression tests.
+- Model, category, and model×category omnibus analyses correctly report the all-zero outcome as non-testable.
+- Repetition analysis remains non-testable, including exclusion of R03 because it currently has no eligible denominator.
+- No new statistical defect or anomaly was identified.
+- `git diff --check` passed.
+- No frozen experimental evidence or permanent result artifact was modified.
+- PIPE-09 is now considered implementation-ready for the eventual final v2.6 inferential analysis.
