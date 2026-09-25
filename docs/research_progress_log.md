@@ -1015,3 +1015,14 @@ Next:
 - create the five approved Chapter 3 figures;
 - transfer the verified compact Chapter 3 to Word;
 - check actual pagination after the figures and university formatting are applied.
+
+### 2026-09-25 — Chapter 2 v2.7 reconciliation
+
+- Reviewed the complete Chapter 2 literature-review draft against the frozen v2.7.0 three-model final study.
+- No Chapter 2 prose changes were required.
+- Chapter 2 contains no current-study model count, planned observation total, API/manual split, M2 inclusion, or active-study version that conflicts with v2.7.
+- Section 2.9.3 remains valid because it refers generically to frozen model conditions and leaves implementation detail to Chapter 3.
+- Figures 2-1 and 2-2 are conceptual and independent of the number of retained model conditions.
+- References were unchanged.
+- Verification recorded in `docs/final_report_support/chapter2_v2.7_reconciliation_verification.md`.
+- Outstanding supporting-document reconciliation: `claims_evidence_matrix.md` contains stale Chapter 1 claims CH1-004, CH1-006, and CH1-014, and this worktree's `docs/current_research_status.md` still reflects v2.6.
