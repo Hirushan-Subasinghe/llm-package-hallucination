@@ -2,11 +2,11 @@
 
 ## 3.1 Chapter Introduction
 
-Chapter 1 identified four questions concerning confirmed npm package-name hallucinations, secondary exact-name dependency-resolution failures, variation across model conditions and task categories, and the practical risk of eligible confirmed findings. Chapter 2 established that such observations depend on the defined model, prompt, task, ecosystem, and measurement boundary, and that a registry lookup alone cannot establish hallucination. This chapter describes the implemented, frozen v2.6 methodology developed in response to those constraints.
+Chapter 1 identified four questions concerning confirmed npm package-name hallucinations, secondary exact-name dependency-resolution failures, variation across model conditions and task categories, and the practical risk of eligible confirmed findings. Chapter 2 established that such observations depend on the defined model, prompt, task, ecosystem, and measurement boundary, and that a registry lookup alone cannot establish hallucination. This chapter describes the implemented, frozen v2.7.0 final-study methodology developed in response to those constraints.
 
 The study separated collection from interpretation. Frozen tasks and prompts were submitted to predefined model conditions; raw responses and collection records were preserved; and extraction, registry validation, classification, adjudication, measurement, statistical analysis, and risk assessment were conducted as derived stages. The chapter describes the planned design and implemented analytical rules, not empirical outcomes. No achieved totals, rates, comparisons, or risk distributions are presented here.
 
-The methodology follows the implemented final-study boundary where it differs from earlier proposals or protocol iterations. It is therefore a record of what was frozen and performed for the v2.6 study, rather than a description of superseded multi-ecosystem, survey, execution, or risk approaches. The sections proceed from design and inputs through collection, derived analysis, and interpretation safeguards.
+The methodology follows the implemented final-study boundary where it differs from earlier proposals or protocol iterations. It is therefore a record of what was frozen and performed for the v2.7.0 final study, rather than a description of superseded multi-ecosystem, survey, execution, or risk approaches. The sections proceed from design and inputs through collection, derived analysis, and interpretation safeguards.
 
 ## 3.2 Research Design
 
@@ -14,21 +14,22 @@ The study used a quantitative, controlled, repeated experimental design. A fixed
 
 Control, repetition, and traceability guided the design. Task wording, outer template, rendered prompts, model configuration, and the observation manifest were frozen before official collection. Content digests bound the frozen inputs to the collection and analysis record. Each task-condition combination was planned for three separate fresh requests because the generation seed was uncontrolled. Repetition describes the request protocol and does not establish statistical independence. Raw evidence was preserved separately from all derived outputs, allowing an analytical claim to be traced from a reported classification to the source response without rewriting that response.
 
-The frozen design contained 30 tasks, four model conditions, and three repetitions, giving 360 planned observations. An observation is one generation for a task, condition, and repetition, identified by a run identifier in the manifest. This is a planned design total rather than an achieved or eligible sample count. Earlier protocol versions are retained as methodological evidence but are not pooled with the v2.6 analysis.
+The frozen v2.7.0 design contained 30 tasks, three retained model conditions, and three repetitions, giving 270 planned observations. An observation is one generation for a task, condition, and repetition, identified by a run identifier in the manifest. This is a planned design total rather than an achieved or eligible sample count. The v2.7.0 design was derived from the superseded four-condition v2.6.0 design by excluding one whole condition (Section 3.5.1). Earlier stopped protocol versions are retained as methodological evidence but are not pooled with the final analysis.
 
-The design was prospective in the sense that the inputs, outcome definitions, eligibility criteria, and comparison procedure were established before the final v2.6 analysis. It does not remove all sources of uncertainty: provider behaviour, unconstrained generation seeds, task heterogeneity, and later adjudication evidence remain relevant to interpretation. Rather, it specifies how those uncertainties are recorded or bounded, and prevents a response from being replaced or a denominator revised after the response content is known.
+The design was prospective in the sense that the inputs, outcome definitions, eligibility criteria, and comparison procedure were established before final analysis. The one exception to a wholly prospective design was the removal of a model condition after partial collection, which is disclosed in Section 3.5.1. The design does not remove all sources of uncertainty: provider behaviour, unconstrained generation seeds, task heterogeneity, and later adjudication evidence remain relevant to interpretation. Rather, it specifies how those uncertainties are recorded or bounded, and prevents a response from being replaced or a denominator revised after the response content is known.
 
 The sequence of derived stages also defines the order of methodological inference. A response first becomes a preserved collection record; its status then determines whether it can contribute to metrics; explicit references are subsequently extracted and normalised; registry evidence and contextual review inform classification; and only then can a controlled confirmation or dependency-resolution state be aggregated. Risk scoring follows confirmation rather than preceding it. This order limits circular reasoning, since an apparent practical consequence, a registry absence, or an expected group difference cannot independently determine the primary outcome.
 
-**Table 3-1. Summary of the frozen v2.6 study design and analytical coverage**
+**Table 3-1. Summary of the frozen v2.7.0 final-study design and analytical coverage**
 
 | Element | Implemented specification |
 | --- | --- |
 | Design | Quantitative, controlled, repeated experiment; descriptive and, where estimable, comparative analysis |
 | Ecosystem | Node.js runtime and npm registry only |
 | Inputs | 30 frozen tasks in six categories; common prompt template and rendered prompts |
-| Conditions | Four frozen model/API configurations; three planned fresh repetitions |
-| Planned observations | 30 × 4 × 3 = 360 |
+| Conditions | Three retained frozen model/API configurations (M1, M3, M4); three planned fresh repetitions |
+| Planned observations | 30 × 3 × 3 = 270 |
+| Collection assignment | 140 API-assigned and 130 manual-assigned rows; deterministic, not randomised |
 | Primary outcomes | Package Hallucination Rate (PHR) and Session Hallucination Rate (SHR) |
 | Secondary outcomes | Dependency Failure Rate (DFR) and Response Dependency Failure Rate (RDFR) |
 | RQ coverage | RQ1: extraction, validation, adjudication and PHR/SHR; RQ2: DFR/RDFR; RQ3: grouped analysis; RQ4: post-classification risk assessment |
@@ -57,13 +58,13 @@ The frozen `final-2.0.0` task set comprised 30 self-contained TypeScript-for-Nod
 
 | Code | Functional task category | Tasks | Planned observations |
 | --- | --- | ---: | ---: |
-| `AUTH-FED` | Identity, Authentication & Federation | 5 | 60 |
-| `PKI-CRYPTO` | PKI, Cryptography & Trust Services | 5 | 60 |
-| `DOC-BINARY` | Complex Documents & Binary Formats | 5 | 60 |
-| `ENT-INT` | Enterprise Messaging & Interoperability | 5 | 60 |
-| `DATA-ADV` | Specialized Data & Storage Integration | 5 | 60 |
-| `DIST-OBS` | Distributed Systems & Observability | 5 | 60 |
-| **Total** |  | **30** | **360** |
+| `AUTH-FED` | Identity, Authentication & Federation | 5 | 45 |
+| `PKI-CRYPTO` | PKI, Cryptography & Trust Services | 5 | 45 |
+| `DOC-BINARY` | Complex Documents & Binary Formats | 5 | 45 |
+| `ENT-INT` | Enterprise Messaging & Interoperability | 5 | 45 |
+| `DATA-ADV` | Specialized Data & Storage Integration | 5 | 45 |
+| `DIST-OBS` | Distributed Systems & Observability | 5 | 45 |
+| **Total** |  | **30** | **270** |
 
 Package selection was left neutral. No task named a package, requested obscure packages, mentioned hallucination, or asked the model to validate availability. Pre-freeze review narrowed excessive implementation volume while retaining the specialised standards, formats, protocols, and package requirements that motivated the task. Sixteen tasks were minimally narrowed; one was reviewed but retained unchanged. All such decisions preceded official generation, so model outputs did not influence task wording. The full task list is retained in [APPENDIX REFERENCE PENDING].
 
@@ -73,9 +74,9 @@ The tasks were designated medium difficulty using a qualitative rubric: a realis
 
 Each prompt was deterministically rendered by inserting one task specification into a common outer template. The template required a direct, complete response and stated that no existing project, filesystem, terminal, browser, tools, external execution environment, or prior files were available. It required all requested code, package configuration, examples, explanations, and commands to appear in the response. Thus, the generated answer was a self-contained textual artefact and each condition was subject to the same interaction boundary.
 
-The task file, template, rendered prompts, configuration, and manifest were frozen before collection. Rendering checks confirmed task/category structure and matched each output to its frozen prompt. For a given task, every model condition received byte-identical prompt text. Detailed digests and template metadata are retained in [APPENDIX REFERENCE PENDING].
+The task file, template, rendered prompts, configuration, and manifest were frozen before collection; the v2.7.0 configuration and manifest were derived from their frozen v2.6.0 counterparts without altering any retained definition or row (Section 3.5.1). Rendering checks confirmed task/category structure and matched each output to its frozen prompt. For a given task, every model condition received byte-identical prompt text. Detailed digests and template metadata are retained in [APPENDIX REFERENCE PENDING].
 
-The manifest enumerated 360 rows in advance, each with a run identifier, task, category, condition, repetition, rendered-prompt identity, and expected prompt digest. It fixed the collection order, rotating the within-task condition position to avoid a condition always being collected first. The manifest is a design record, not evidence that every row became an eligible response.
+The v2.7.0 manifest enumerated 270 rows, each with a run identifier, task, category, condition, repetition, rendered-prompt identity, expected prompt digest, and collection assignment. Retained rows kept their original run identifiers and the collection order of the v2.6.0 manifest, in which the within-task condition position rotated to avoid a condition always being collected first. The manifest is a design record, not evidence that every row became an eligible response.
 
 The task set was intentionally dependency-intensive. Its domains included identity and federation, public-key and trust services, complex document formats, enterprise interoperability, specialised data and storage, and distributed-system observability. Such requirements ordinarily require a code generator to make explicit library recommendations rather than relying solely on the Node.js standard library. That choice improves the opportunity to observe the study construct, but also means that the results cannot be interpreted as a prevalence estimate for simple programming questions or for all software-development prompts. A task was not selected because a particular package was expected to fail or exist; package evidence was obtained only after generation.
 
@@ -91,51 +92,56 @@ Show the fixed design structure and planned, rather than achieved, observation t
 
 Required content:
 - Six functional task categories, each containing five frozen tasks, leading to 30 frozen tasks.
-- A factorial sequence: 30 frozen tasks × four model conditions (M1 to M4) × three planned repetitions (R01 to R03) = 360 planned observations.
+- A factorial sequence: 30 frozen tasks × three retained model conditions (M1, M3, M4) × three planned repetitions (R01 to R03) = 270 planned observations.
 - A note that repetitions are separate fresh requests and do not establish statistical independence.
-- A note that 360 is a planned design total, not an achieved or analytically eligible count.
+- A note that 270 is a planned design total, not an achieved or analytically eligible count.
+- Do not depict the excluded M2 condition as a final condition. The existing asset encodes the superseded four-condition design and must be regenerated to this specification.
 
 ## 3.5 Model Conditions and Data Collection
 
-### 3.5.1 Frozen model conditions
+### 3.5.1 Final model conditions and exclusion of M2
 
-Four frozen model conditions, M1 to M4, received the rendered prompts. Their identifiers, providers, routing constraints, and output-token ceilings are reported as frozen, rather than updated to later provider naming. Shared sampling settings were temperature 0.6 and top-p 0.95; seed was not controlled. No condition had a fallback model. The settings and interaction format were held constant, but hidden model and provider characteristics were not observed or controlled.
+Three retained model conditions, M1, M3, and M4, formed the v2.7.0 final study. Their identifiers, providers, routing constraints, and output-token ceilings are reported as frozen in `api-model-set-1.5.0`, rather than updated to later provider naming. Condition identifiers were not renumbered. Shared sampling settings were temperature 0.6 and top-p 0.95; seed was not controlled. No condition had a fallback model. The settings and interaction format were held constant, but hidden model and provider characteristics were not observed or controlled.
 
-**Table 3-3. Frozen model conditions in the v2.6 experiment**
+**Table 3-3. Retained model conditions in the v2.7.0 final study**
 
 | Condition | Frozen model identifier | API provider | Underlying-provider constraint | Output-token ceiling |
 | --- | --- | --- | --- | ---: |
 | M1 | `cohere/north-mini-code:free` | OpenRouter | Pinned to `cohere`; fallback disabled | 64,000 |
-| M2 | `qwen/qwen3.8-27b` | OpenRouter | Restricted to Darkbloom only; no fallback | 32,768 |
 | M3 | `openai/gpt-oss-120b` | Groq | Not applicable | 65,536 |
 | M4 | `nvidia/nemotron-3-ultra-550b-a55b:free` | OpenRouter | Pinned to `nvidia`; fallback disabled | 65,536 |
 
-For routed conditions, the frozen provider constraint was requested and fallback was disabled. A provider identity mismatch was retained as a protocol deviation and, for M2, constituted failure. These configurations are experimental conditions, not model-architecture treatments.
+For routed conditions, the frozen provider constraint was requested and fallback was disabled. A provider identity mismatch was retained as a protocol deviation. These configurations are experimental conditions, not model-architecture treatments.
+
+The superseded v2.6.0 design had frozen a fourth condition, M2 (`qwen/qwen3.8-27b` through OpenRouter, restricted to the Darkbloom provider), and 360 planned observations. Partial M2 collection occurred under v2.6.0. M2 was then removed as a whole condition before final analysis, because its intended automated API collection route could not complete the required collection protocol consistently. The rationale was operational and drew on collection outcomes only. At the time of the decision, no package extraction, registry validation, classification, metric, or risk output existed for any condition, so the exclusion could not have been based on observed hallucination performance. The exclusion applied to all 90 planned M2 rows, including M2 responses that had completed. M2 contributes zero rows to the v2.7.0 manifest and is excluded from every final metric and denominator. All M2 evidence remains preserved unchanged as historical v2.6.0 evidence. Because the condition set changed after partial collection, the final design is not wholly prospective in this respect; no other protocol element was altered.
 
 ### 3.5.2 Hybrid collection and preservation boundary
 
-The manifest assigned 180 rows to automated API collection and 180 to manual collection. Assignment was planned and recorded, not randomised. It is distinct from analytical eligibility: an API-assigned row that failed remained API-assigned and was not moved to the manual route to obtain a replacement. Manual-route operational detail is retained in [APPENDIX REFERENCE PENDING].
+The v2.7.0 manifest assigned 140 rows to automated API collection and 130 to manual collection. This deterministic, non-randomised assignment was inherited unchanged from the v2.6.0 hybrid allocation by removing the M2 rows; no retained row was reassigned or rebalanced. The resulting split was uneven across conditions: M1 had 40 API-assigned and 50 manual-assigned rows, M3 had 41 and 49, and M4 had 59 and 31. Collection route was therefore unevenly associated with model condition, and no interface balance is assumed. It is distinct from analytical eligibility: an API-assigned row that failed remained API-assigned and was not moved to the manual route to obtain a replacement. Manual-route operational detail is retained in [APPENDIX REFERENCE PENDING].
+
+Retained M1, M3, and M4 observations already collected under the compatible frozen v2.6.0 protocol were reused without regeneration where provenance matched. Each was mapped in place to its preserved raw evidence by run identifier and SHA-256 digest after its design identity, prompt digest, collection assignment, and response digest had been verified. The source model set, `api-model-set-1.4.0`, defines M1, M3, and M4 identically to `api-model-set-1.5.0`. Reused responses retain their original generation provenance and are not represented as new v2.7.0 generations.
 
 API requests followed the manifest sequentially. The collector verified the frozen prompt and applicable condition before submission, retained the prompt, request, raw provider response, assistant content, safe metadata, and attempt history, and prevented an existing run record being overwritten. Retries were permitted only for infrastructure faults; content never triggered a retry, substitution, or fallback. A final failure was preserved once and collection continued. Credentials were excluded from preserved records. Detailed request configuration and recovery mechanics are retained in [APPENDIX REFERENCE PENDING].
 
 The preservation record included the requested and, where exposed, returned model identity, provider route, sampling parameters, output ceiling, timestamps, token-use information, and declared finish reason. These fields allow collection fidelity and status to be inspected without implying that unavailable provider-side details were known. A route mismatch was recorded as a deviation rather than silently accepted. The workflow also distinguished a transport or provider fault from answer content: retries addressed only the former, while an answer was never regenerated because it was short, inconvenient, incomplete in substance, or apparently unreliable. This rule prevented selection of a preferred response after observing its content.
 
-The API and manual routes were operational means of collecting preassigned manifest rows. They were not intended as a comparison between interfaces, and no conclusion about interface effects is planned. Recording assignment nevertheless preserves a factual account of the collection process and prevents a failed assigned row from disappearing through reassignment. The one-way preservation boundary in Figure 3-2 is consequently both a data-integrity principle and a methodological separation: analysis may derive an inventory or classification from raw evidence, but cannot change the response that created it.
+The API and manual routes were operational means of collecting preassigned manifest rows. They were not intended as a comparison between interfaces, and no conclusion about interface effects is planned; the uneven association between route and condition would in any case prevent such effects from being separated from condition differences. Recording assignment nevertheless preserves a factual account of the collection process and prevents a failed assigned row from disappearing through reassignment. The one-way preservation boundary in Figure 3-2 is consequently both a data-integrity principle and a methodological separation: analysis may derive an inventory or classification from raw evidence, but cannot change the response that created it.
 
 [FIGURE 3-2 TO BE DRAWN]
 
 Title:
-Figure 3-2. Final v2.6 experimental workflow and preservation boundary.
+Figure 3-2. Final v2.7 experimental workflow and preservation boundary.
 
 Purpose:
 Show how frozen inputs become preserved response evidence and how later analysis reads, but never rewrites, that evidence.
 
 Required content:
 - Frozen inputs: task set, template, rendered prompts, model configuration, and manifest.
-- Assigned collection route: API or manual, followed by preserved response evidence: prompt, request, raw provider response, assistant content, metadata, and attempt history.
+- Assigned collection route: API (140 planned rows) or manual (130 planned rows), shown as deterministic and unbalanced rather than as a 50/50 split, followed by preserved response evidence: prompt, request, raw provider response, assistant content, metadata, and attempt history.
 - A clearly labelled preservation boundary after the preserved evidence; arrows must cross it in one direction only.
 - Derived response inventory and status, extraction, registry evidence, classification/adjudication, analytical dataset, metrics/statistics, and risk assessment after the boundary.
-- A note that raw evidence is not rewritten by later stages; do not depict installation, execution, collection completion, or results.
+- A note that raw evidence is not rewritten by later stages and that retained v2.6.0 evidence is mapped in place without regeneration; do not depict installation, execution, collection completion, or results.
+- Show the three retained conditions (M1, M3, M4) only; excluded M2 evidence, if shown, must appear as preserved historical evidence outside the analysis path. The existing asset encodes the superseded v2.6 workflow and 180/180 split and must be regenerated to this specification.
 
 ## 3.6 Response Preservation, Status, and Analytical Eligibility
 
@@ -359,11 +365,11 @@ Quality assurance also relied on separation of stages. Extraction did not alter 
 
 ## 3.15 Research Integrity, Safety, and Methodological Limitations
 
-Frozen inputs, append-only raw evidence, and derived-only analysis protected the distinction between observation and interpretation. Frozen task, prompt, configuration, and manifest controls were checked against their identities; raw response content and provider records were not overwritten to obtain preferred outcomes. Derived outputs retained source relationships and timestamps. Denominators and confirmation rules were fixed before final results, and failed or truncated observations were not regenerated, substituted, or pooled from earlier protocol versions.
+Frozen inputs, append-only raw evidence, and derived-only analysis protected the distinction between observation and interpretation. Frozen task, prompt, configuration, and manifest controls were checked against their identities; raw response content and provider records were not overwritten to obtain preferred outcomes. Derived outputs retained source relationships and timestamps. Denominators and confirmation rules were fixed before final results, and failed or truncated observations were not regenerated, substituted, or replaced with observations from earlier stopped protocol versions.
 
 Generated dependencies and code were neither installed nor executed. npm validation was read-only, and no package name was claimed, registered, reserved, published, or actively exploited. This safety boundary restricted the research to generated references and their documentary classification, avoiding exposure to untrusted artefacts and preserving the stated construct.
 
-The study is limited to direct, supported forms of Node.js/npm references in a bounded design of 30 tasks, four conditions, and three planned repetitions. The medium-difficulty label was not independently calibrated. Extraction excludes narrative implications, transitive dependencies, non-literal and several unsupported forms. The method does not assess execution, functional correctness, package capability, version compatibility, or wrong-but-existing packages. Registry evidence is time-bounded; provider serving and exposed versions were not fully controlled; and the hybrid collection route was operational rather than randomised. Adjudications may remain unresolved, and the rule-based risk framework is not a calibrated forecast. These boundaries limit generalisation beyond the evaluated conditions.
+The study is limited to direct, supported forms of Node.js/npm references in a bounded design of 30 tasks, three retained conditions, and three planned repetitions. The removal of one planned condition after partial collection narrowed the compared condition set. The medium-difficulty label was not independently calibrated. Extraction excludes narrative implications, transitive dependencies, non-literal and several unsupported forms. The method does not assess execution, functional correctness, package capability, version compatibility, or wrong-but-existing packages. Registry evidence is time-bounded; provider serving and exposed versions were not fully controlled; and the hybrid collection route was operational, not randomised, and unevenly associated with model condition. Adjudications may remain unresolved, and the rule-based risk framework is not a calibrated forecast. These boundaries limit generalisation beyond the evaluated conditions.
 
 The study's controlled prompt format also differs from ordinary multi-turn development. Each model received one fresh user message and could not inspect a repository, ask follow-up questions, browse documentation, call tools, or test code. This makes the evidence comparable across conditions, but it means that the findings do not show how package references would change after iterative debugging, retrieval, human review, or execution feedback. Likewise, the selected tasks emphasise specialised dependency use, so observed rates should not be generalised to all code-completion settings or used to make a claim about the prevalence of hallucination in all programming activity.
 
@@ -371,7 +377,7 @@ Finally, the status exclusions and conservative adjudication rules prioritise a 
 
 ## 3.16 Chapter Summary
 
-This chapter specified the frozen v2.6 methodology for a Node.js/npm experiment with 30 tasks across six functional categories, four frozen model conditions, and three planned fresh repetitions. It defined prompt freezing, a hybrid collection assignment, response preservation, and the distinction between collection status and analytical eligibility. Only completed responses were eligible for the primary and secondary analyses; truncated and failed responses were retained as evidence but excluded from metric denominators. The package-level analysis used direct explicit reference extraction, normalisation, and read-only official npm registry evidence, followed by conservative classification and adjudication. Registry absence alone did not establish hallucination.
+This chapter specified the frozen v2.7.0 methodology for a Node.js/npm experiment with 30 tasks across six functional categories, three retained model conditions, and three planned fresh repetitions, giving 270 planned observations. It disclosed the operational exclusion of M2 before final analysis and defined prompt freezing, a deterministic hybrid collection assignment, reuse of retained evidence without regeneration, response preservation, and the distinction between collection status and analytical eligibility. Only completed responses were eligible for the primary and secondary analyses; truncated and failed responses were retained as evidence but excluded from metric denominators. The package-level analysis used direct explicit reference extraction, normalisation, and read-only official npm registry evidence, followed by conservative classification and adjudication. Registry absence alone did not establish hallucination.
 
 PHR and SHR were defined as the primary measures of confirmed package-name hallucination, with unique `(run_id, normalized_package)` package units and completed zero-package responses retained in the SHR denominator. DFR and RDFR were defined separately as secondary, exploratory measures of exact-name dependency resolution. The chapter also specified prescreened grouped comparisons, effect-size reporting, the post-confirmation Impact × Detectability risk framework, synthetic-fixture validation, and the integrity, safety, and limitation boundaries. Chapter 4 reports empirical results only after final collection and provenance-consistent analysis are complete.
 
