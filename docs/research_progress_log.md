@@ -1049,3 +1049,20 @@ Next:
 - Added `docs/final_report_support/decision_id_collision_reconciliation.md`.
 - No chapter draft, figure asset, frozen experimental input, or empirical result was modified.
 - Remaining cross-worktree decision-ID collisions D033–D035 require reconciliation if they are referenced by the dissertation or current methodology documentation.
+
+### 2026-09-25 — Remaining decision-ID collisions reconciled
+
+- Resolved the remaining cross-worktree decision-ID collisions D033, D034, and D035 before Chapter 3 v2.7 reconciliation.
+- Existing integration/report decisions remain unchanged:
+  - D033: primary PHR/SHR analytical units and truncated-response exclusion.
+  - D034: primary PHR/SHR retained; external-dependency eligibility handled separately in secondary sensitivity analysis.
+  - D035: abnormal provider termination other than `stop` or `length` is FAILED and metric-ineligible.
+- Added integration aliases for the corresponding data-collection decisions:
+  - data-collection D033 → integration D040: deterministic HYBRID API/manual allocation.
+  - data-collection D034 → integration D041: API collection restricted to eligible never-attempted API-assigned rows.
+  - data-collection D035 → integration D042: offline manual observation capture and preservation workflow.
+- Source decisions remain preserved unchanged in the data-collection repository.
+- Updated `docs/current_research_status.md` and `docs/final_report_support/claims_evidence_matrix.md` to use the unambiguous aliases where relevant.
+- Added `docs/final_report_support/remaining_decision_id_collision_reconciliation.md`.
+- No chapter draft, figure asset, frozen experiment input, or empirical result was modified.
+- Future Chapter 3 references to HYBRID allocation, API row selection, or manual capture must use D040, D041, and D042 respectively.
