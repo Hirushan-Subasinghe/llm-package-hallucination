@@ -119,6 +119,65 @@ npm install express@4.21.0 @scope/package@1.2.3
             ("@scope/package", "npm_install", "1.2.3"),
         ])
 
+    def test_npm_install_stops_at_double_ampersand_with_package(self):
+        records = self.packages("npm install express && npm run build")
+        self.assertEqual(records, [("express", "npm_install", None)])
+
+    def test_npm_install_stops_at_semicolon_with_multiple_packages(self):
+        records = self.packages("npm i express lodash; npm test")
+        self.assertEqual(records, [("express", "npm_install", None), ("lodash", "npm_install", None)])
+
+    def test_npm_install_stops_at_double_pipe_with_scoped_package(self):
+        records = self.packages("npm install @scope/pkg || echo failed")
+        self.assertEqual(records, [("@scope/pkg", "npm_install", None)])
+
+    def test_npm_install_stops_at_single_pipe(self):
+        records = self.packages("npm install | tee install.log")
+        self.assertEqual(records, [])
+
+    def test_npm_install_scoped_package_before_double_ampersand(self):
+        records = self.packages("npm install @scope/package && npm run lint")
+        self.assertEqual(records, [("@scope/package", "npm_install", None)])
+
+    def test_npm_install_versioned_package_before_shell_operator(self):
+        records = self.packages("npm install express@4.21.0 && npm start")
+        self.assertEqual(records, [("express", "npm_install", "4.21.0")])
+
+    def test_npm_install_flags_before_package_and_shell_operator(self):
+        records = self.packages("npm install --save-dev typescript && tsc --noEmit")
+        self.assertEqual(records, [("typescript", "npm_install", None)])
+
+    def test_npm_install_ordinary_behavior_unchanged_without_operators(self):
+        records = self.packages("npm install express lodash @scope/package")
+        self.assertEqual(records, [
+            ("express", "npm_install", None), ("lodash", "npm_install", None),
+            ("@scope/package", "npm_install", None),
+        ])
+
+    def test_bare_npm_install_followed_by_chained_commands_yields_zero_packages(self):
+        records = self.packages("npm install && npm run build")
+        self.assertEqual(records, [])
+
+    def test_no_fabricated_shell_or_subcommand_tokens_appear(self):
+        records = self.packages("npm install express && npm run build && npm test")
+        fabricated = {"&&", "||", "npm", "run", "build", "test"}
+        extracted_names = {name for name, _source_type, _version in records}
+        self.assertFalse(extracted_names & fabricated,
+                          f"Fabricated token(s) leaked into extraction: {extracted_names & fabricated}")
+        self.assertEqual(records, [("express", "npm_install", None)])
+
+    def test_real_data_regression_npm_install_and_run_build_and_test(self):
+        # Exact line observed in a real v2.6 response during INTERIM-VAL-01
+        # (API-v2.6-DOC-BINARY-02-M4-R01), which previously fabricated
+        # "&&", "npm", "run", and "build" as spurious package references.
+        records = self.packages("npm install && npm run build && npm test")
+        self.assertEqual(records, [])
+        self.assertEqual(len(records), 0)
+
+    def test_npm_install_shell_operator_fix_is_deterministic_on_rerun(self):
+        text = "npm install express && npm run build && npm test"
+        self.assertEqual(self.packages(text), self.packages(text))
+
     def test_all_package_json_dependency_sections(self):
         records = self.packages('''{
   "dependencies": {"express": "^4.0.0"},

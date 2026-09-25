@@ -798,3 +798,545 @@
 - Exactly 93 files were committed for the 31 observations, corresponding to the preserved `metadata.json`, `prompt.txt`, and `response.md` artifacts.
 - Frozen experiment inputs and the HYBRID assignment were not modified during M4 manual capture. Raw responses remain preserved as captured without response-content editing or whitespace normalization.
 - Next step: integrate and validate M4 alongside the other completed v2.6 model conditions before downstream response inventory, scoring, and statistical analysis.
+
+### 2026-09-22 — accidental collection in analysis workspace quarantined and blocked
+
+- An API collection command was accidentally run from the analysis repository instead of the official study repository.
+- The accidental analysis-repo run created:
+  - `API-v2.6-AUTH-FED-01-M1-R01` as `failed` with `transport_failure`;
+  - `API-v2.6-AUTH-FED-01-M3-R01` as a completed duplicate generation.
+- The M3 accidental run used the same request hash as the official study-repo observation but produced a different provider response ID and different response hash, confirming that it was a second live generation for the same planned observation.
+- The official dataset remains exclusively under `~/Dev/ai-hallucination-study/data/final/raw/`.
+- The accidental analysis-repo artifacts were removed from the active `data/final/raw/` location and preserved under `data/quarantine/accidental_v2.6_collection_2026-09-22/`.
+- The tracked `data/final/api_batch_state_v2.6.0.json` was restored to its pre-accident Git version.
+- Active analysis-repo `data/final/raw/` contains no `API-v2.6-*` directories.
+- Quarantined evidence is excluded from SHR, PHR, package validation, classification, risk-model inputs, and all final analysis.
+- Quarantine hashes were preserved; the `SHA256SUMS.txt` file contains a self-referential checksum entry and should not be treated as validating itself, while the individual evidence-file hashes were verified.
+- A hard sentinel-based repository guard was added so all 10 collection CLI entry points refuse to run in this analysis repository.
+- The guard aborts before network/provider calls, raw-directory creation, and collection-state mutation.
+- Guard implementation committed as `fa01ad4` (`Block live collection in analysis repository`).
+- Repository-guard tests passed 25/25 before the final init-guard extension; after extension the full suite ran 179 tests with no new failures. Two historical freeze tests remain failing because gitignored historical raw artifacts are absent from this worktree; these failures pre-existed the guard work and are unrelated.
+- Two legacy initializer tests currently pass because the new CLI guard intercepts before the logic named by those tests; this is a testing-quality caveat for later cleanup, not a collection-safety failure.
+
+### PIPE-06 — risk-scoring infrastructure implemented
+
+- Implemented deterministic risk-scoring infrastructure for the frozen `risk-model-1.0.0` protocol in `docs/risk_assessment_protocol.md`.
+- Model uses:
+  - Impact 1-5;
+  - Detectability 1-4;
+  - risk score = Impact x Detectability;
+  - LOW 1-4;
+  - MODERATE 5-8;
+  - HIGH 9-14;
+  - CRITICAL 15-20.
+- `security_sensitive_context` is recorded separately and does not change the numeric score.
+- Only eligible, resolved hallucination findings are scoreable; ineligible or evidence-unresolved findings retain null score/band, never zero.
+- Created:
+  - `scripts/score_risk_findings.py`
+  - `schemas/risk_finding_pipe06_v1.schema.json`
+  - `tests/test_score_risk_findings.py`
+- 24/24 new risk-model tests passed using synthetic fixtures only.
+- No real finding was scored.
+- No PHR, SHR, prevalence, comparison, or real risk result was calculated.
+- No collection/raw/state file was modified by this implementation.
+- The broader suite (179 tests) still contains the same two pre-existing, unrelated `test_api_freeze.py` failures noted above; do not attribute those to PIPE-06.
+
+### PIPE-07 — derived analysis-dataset builder implemented
+
+- Implemented a version-agnostic derived analysis-dataset builder (`scripts/build_analysis_dataset.py`) that joins the response inventory, PIPE-03 unique package-per-response records, PIPE-04 joined registry evidence, and PIPE-05 joined research classification into two reusable datasets: package/response-level (one row per `(run_id, normalized_package)`) and response-level (one row per planned manifest run, including pending/failed/truncated rows with zero counts).
+- The primary package-level unit is one unique normalized package per response, `(run_id, normalized_package)`, per decision D033. Occurrence-level provenance (`occurrence_count`, `source_types`) is preserved on each row but never inflates a count on its own.
+- Primary metric eligibility uses `collection_status == "completed"` (completed, non-truncated responses only), per decision D033 and the frozen truncation-exclusion rule.
+- Created: `scripts/build_analysis_dataset.py`, `schemas/package_response_analysis_pipe07_v1.schema.json`, `schemas/response_level_analysis_pipe07_v1.schema.json`, `tests/test_build_analysis_dataset.py`.
+- 21/21 new PIPE-07 tests passed using synthetic fixtures only.
+- Verified exact broader-suite result after adding PIPE-07: 200 tests run, 198 passed, 2 failed, 0 errors. The 2 failures are the same pre-existing, unrelated `test_api_freeze.py` cases (`test_freeze_record_v2_1_historical_context_and_preserved_observations`, `test_freeze_record_v2_3_hashes_and_zero_observations`), both `AssertionError` from historical v2.1/v2.3 raw artifact directories being absent (gitignored) from this worktree; neither failure is caused by or related to PIPE-06 or PIPE-07.
+- An attempted v2.2 dry validation failed safely: this analysis worktree lacks the physical v2.2 raw response files that the existing `results/*_v2.2.0.json` derived snapshots were built from, so a freshly regenerated v2.2 response inventory (360/360 pending) disagreed with those 97-row snapshots. The builder's fail-safe cross-validation caught this and refused to write output rather than generating an inconsistent dataset; no PHR/SHR/result metric was calculated.
+- Final use of this builder will be against provenance-consistent v2.6-derived inputs (a response inventory and PIPE-03/04/05 outputs all built from the same v2.6 collection snapshot) once v2.6 collection is sufficiently complete.
+
+### DESIGN/SIGNAL-01 — v2.6 prompt-to-analysis alignment audit completed
+
+- The frozen v2.6 design was audited read-only against the implemented extraction and classification pipeline.
+- All 30/30 tasks are dependency-intensive and require complete package.json output with exact dependencies and documented API usage.
+- Package selection is model-selected rather than pre-specified; no task names a specific npm package for the model to reuse.
+- No prompt-level anti-dependency or anti-hallucination wording was found that would structurally suppress package-name hallucination opportunities.
+- Current v2.6 signal snapshot at audit time:
+  - 25 completed non-truncated responses;
+  - 3 truncated responses;
+  - 6 failed;
+  - 1 requesting;
+  - 325 pending;
+  - all 28 completed/truncated responses contained at least one explicit external package reference;
+  - 576 occurrence records;
+  - 292 unique `(run_id, normalized_package)` rows;
+  - 87 distinct normalized package names.
+- Current source-type mix: package_json 339, es_import 216, require 18, dynamic_import 3, npm_install 0.
+- Extractor coverage was adequate for all package-reference forms observed in the current v2.6 sample.
+- Theoretical gaps noted: `export ... from` re-export syntax, yarn/pnpm install syntax, and `require.resolve`; none were observed in the current sample.
+- Narrative-only package claims remain intentionally out of scope under the existing taxonomy.
+- Current model/category coverage is incomplete because collection is still in progress.
+- Audit conclusion: ADEQUATE WITH DOCUMENTED LIMITATIONS.
+- A future zero confirmed package-hallucination count would remain interpretable if package-opportunity density and extraction coverage remain comparable through the completed experiment.
+- No frozen prompt, manifest, raw response, state, or analysis file was modified.
+
+### PIPE-08 — primary PHR/SHR metric calculator implemented
+
+- Implemented version-agnostic `scripts/calculate_primary_metrics.py`.
+- Created `schemas/primary_metrics_pipe08_v1.schema.json`.
+- Added `tests/test_calculate_primary_metrics.py`.
+- PHR follows D033: confirmed package-name hallucination rows / all metric-eligible unique `(run_id, normalized_package)` rows.
+- Repeated occurrences of the same package in one response cannot inflate PHR.
+- SHR follows D033: eligible responses containing >=1 confirmed package-name hallucination / all metric-eligible responses.
+- Completed zero-package responses remain in the SHR denominator.
+- Truncated responses are excluded through the PIPE-07 `metric_eligible` field, not a recomputed rule.
+- Zero denominator produces null rate, never zero.
+- Ambiguous/unresolved/non-hallucination classifications do not enter the numerator.
+- The calculator independently cross-checks the package and response datasets and fails on inconsistent provenance/counts rather than repairing them.
+- 27/27 PIPE-08 tests passed using synthetic fixtures only.
+- Full suite: 227 run, 225 passed, 2 failed — the same pre-existing, unrelated `test_api_freeze.py` failures documented above; not caused by PIPE-08.
+- No real PHR, SHR, model comparison, or v2.6 result was calculated.
+- First real run must use provenance-consistent v2.6 PIPE-07 outputs.
+
+### Secondary dependency-reliability analysis planned
+
+- Decided to retain the frozen primary package-hallucination methodology unchanged:
+  confirmed package-name hallucinations remain the basis for primary PHR/SHR.
+- A secondary dependency-reliability analysis will be added to examine
+  `REVIEW_REQUIRED` package recommendations without reclassifying them automatically
+  as hallucinations or failures.
+- Planned workflow:
+  1. calculate review-required package/response screening counts;
+  2. implement PIPE-05B manual evidence-based adjudication;
+  3. freeze a secondary dependency-error taxonomy only after reviewing real cases;
+  4. implement secondary package-level and response-level reliability metrics;
+  5. use selected adjudicated cases for qualitative analysis.
+- The secondary analysis must remain separate from the frozen primary hallucination
+  outcome and must not alter v2.6 prompts, manifest, collection state, PHR, or SHR.
+- No secondary failure metric has yet been finalized or calculated.
+
+### PIPE-05B — REVIEW_REQUIRED adjudication infrastructure implemented
+
+- Implemented `scripts/adjudicate_review_required_packages.py`, a conservative, evidence-based secondary adjudication tool for PIPE-05 rows already marked `AMBIGUOUS`/`REVIEW_REQUIRED`.
+- Taxonomy: `CONFIRMED_HALLUCINATION`, `LEGACY_OR_REMOVED`, `NAMESPACE_CONFUSION`, `PACKAGE_NAME_CONFUSION`, `INVALID_OR_REDUNDANT_TYPES_PACKAGE`, `ECOSYSTEM_CONFUSION`, `OTHER_DEPENDENCY_ERROR`, `UNRESOLVED`; `dependency_failure` is tracked independently of `confirmed_package_hallucination`.
+- Reads an existing PIPE-05 joined classification envelope read-only; writes a separate PIPE-05B adjudication output. It does not modify PIPE-05 outputs, PHR, or SHR.
+- Created `scripts/adjudicate_review_required_packages.py`, `schemas/package_adjudication_pipe05b_v1.schema.json`, and `tests/test_adjudicate_review_required_packages.py`.
+- 22/22 new PIPE-05B tests passed using synthetic fixtures only; full suite 287 run, 285 passed, with 2 pre-existing unrelated `test_api_freeze.py` failures.
+- No real `REVIEW_REQUIRED` package was adjudicated; this milestone covers infrastructure only.
+
+### 2026-09-22 — PIPE-05B.1 — self-reference/local package adjudication outcome added
+
+- Added `SELF_REFERENCE_OR_LOCAL_PACKAGE` to `scripts/adjudicate_review_required_packages.py` and `schemas/package_adjudication_pipe05b_v1.schema.json`; adjudicator/schema version is now `pipe-05b-adjudicator-1.1.0`.
+- The outcome requires response-internal evidence (`self_reference_evidence`: the generated project's own package name or a generated local/workspace package, with declaration and reference locations).
+- It always records `dependency_failure=false`, `confirmed_package_hallucination=false`, and `external_dependency_eligible=false`.
+- 29/29 PIPE-05B tests passed using synthetic fixtures only; full suite 294 run, 292 passed, with the same 2 pre-existing unrelated `test_api_freeze.py` failures.
+- No real package was adjudicated.
+- Decision D034 resolves primary-vs-secondary denominator handling: D033 primary PHR and primary SHR are unchanged; adjudicated self/local references are excluded only from a separately labelled secondary/exploratory external-dependency sensitivity analysis, and `external_dependency_eligible=null` rows are reported separately.
+
+### PIPE-09 — grouped descriptive and statistical-comparison infrastructure implemented
+
+- Implemented `scripts/analyze_group_comparisons.py`, reusing the validated PIPE-07/08 package-response and response-level analysis units.
+- Grouped descriptive summaries support `model_condition_id`, `category`, `repetition`, and `model_condition_id × category`.
+- Statistical comparison support includes Fisher's exact test for 2×2 comparisons, assumption-gated Pearson chi-square or deterministic seeded Monte Carlo handling for sparse 2×C tables, and Holm-Bonferroni-corrected pairwise Fisher comparisons.
+- Two-group comparisons report odds ratio and risk/rate difference with 95% confidence intervals.
+- Sparse, zero-event, zero-total, and single-group cases are handled with explicit boundary or `not_testable` outputs rather than fabricated significance.
+- No ranking, best/worst, or winner output is produced.
+- 26/26 PIPE-09 tests passed using synthetic fixtures only.
+- No final v2.6 inferential comparison or model ranking has been produced; final use requires a provenance-consistent final v2.6 analysis dataset.
+
+### 2026-09-22 — STATUS-AUDIT-01 and D035: provider error finish reason reclassified as failed
+
+- STATUS-AUDIT-01 found `API-v2.6-AUTH-FED-04-M4-R01` recorded as completed/`COMPLETED`/metric-eligible although the provider returned HTTP 200 with `finish_reason: "error"`. It used 7,599 of 65,536 permitted completion tokens (no output-ceiling truncation), and `response.md` ends mid-identifier. Cause: the collector's `length`-else-`completed` mapping.
+- Decision D035 (`docs/decision_log.md`): `stop` → completed; `length` → truncated; any other provider finish reason, including `error`, → failed/`FAILED`, even with partial content. Failed observations are preserved once, not regenerated, and not primary-metric eligible.
+- Correction implemented as a derived inventory overlay (`scripts/build_response_inventory.py`; new inventory fields `raw_collection_status`, `provider_finish_reason`, `status_correction = "D035"`; schema updated). Raw `metadata.json`/`response.md` were not modified, and the run was not regenerated.
+- Collector hardened in this repository (`scripts/collect_api_run.py`): abnormal finish reasons are preserved as failed with `failure_reason: provider_finish_reason_<value>`. The same patch is **not yet applied** to the official collection repository `~/Dev/ai-hallucination-study`.
+- PIPE-03/PIPE-07 handling (approach A): failed responses are not extracted; PIPE-07 keeps an ineligible response-level row and rejects stale package rows for failed runs.
+- Tests: 14 new tests (collector 3, inventory 9, PIPE-07 2); full suite 308 run, 306 passed, with the same 2 pre-existing unrelated `test_api_freeze.py` failures.
+- Read-only live scan of all 60 v2.6 run directories on 2026-09-22 UTC: `API-v2.6-AUTH-FED-04-M4-R01` is the only observation recorded completed/truncated with a finish reason other than `stop`/`length`. The other 11 non-`stop`/`length` directories carry no finish reason: 10 are already `failed` before a response was parsed, and 1 (`API-v2.6-DATA-ADV-01-M4-R01`) is `requesting`.
+- Screening recompute on the same checkpoint `/tmp/v2.6_screening_checkpoint_20260922T161227Z` (outputs in `/tmp/v2.6_screening_d035_20260922T190815Z`, not in the repository). Inventory, PIPE-03, and PIPE-07 were rerun. PIPE-04/05 joined evidence is the preserved pre-D035 screening evidence with only this run's rows removed; no registry request was made. The rebuilt PIPE-03 output equals the earlier output minus this run's 18 unique rows / 26 occurrences, and every other row is unchanged.
+
+**INTERIM DESCRIPTIVE SCREENING — NOT FINAL RESEARCH RESULT** (49 of 360 v2.6 observations at the checkpoint; no real adjudication performed)
+
+| Count | Pre-D035 | D035-corrected |
+|---|---:|---:|
+| Completed responses | 35 | 34 |
+| Truncated responses | 6 | 6 |
+| Failed responses | 8 | 9 |
+| Eligible package-response rows | 350 | 332 |
+| Eligible `REVIEW_REQUIRED` package rows | 5 | 4 |
+| Eligible responses | 35 | 34 |
+| Eligible responses with ≥1 `REVIEW_REQUIRED` package | 5 | 4 |
+
+### POST-D035-LIVE-AUDIT-01 — live collector deployment verified
+
+- The D035 collector patch is present in `~/Dev/ai-hallucination-study`: `stop` → completed/`COMPLETED`, `length` → truncated/`TRUNCATED`, and every other finish reason → failed/`FAILED`.
+- The live collector's focused test suite passed 27/27.
+- A read-only scan covered 79 current v2.6 raw metadata records: 58 completed, 9 truncated, 11 failed, and 1 requesting; 281 of 360 manifest rows had no raw metadata yet.
+- Exactly one present abnormal finish reason was found: `API-v2.6-AUTH-FED-04-M4-R01`, raw completed/`COMPLETED` with `finish_reason="error"`. D035 analytically reclassifies it as failed/`FAILED`/metric-ineligible; it was not regenerated and its stored artifacts matched their recorded hashes.
+- Among observations collected after `2026-09-22T16:10:32Z`, no additional completed observation had an abnormal present finish reason; therefore no additional D035 analytical corrections were identified at this audit snapshot.
+- The audit modified no raw observation, collection state, manifest, prompt, configuration, or pacing rule.
+
+### 2026-09-23 — PIPE-05C-PROV-01 — reproducible provenance archived for first real adjudication
+
+- Archived a permanent non-frozen derived evidence snapshot at `data/derived_checkpoints/interim_val_01b_20260922T112234Z/` for `API-v2.6-PKI-CRYPTO-02-M4-R01` / `mtls-pfx-loader`.
+- Verified the original PIPE-05 joined source SHA-256 `2f5796d4d0ea06ee868a3602fb79eda87e0c39b3ea0d6ae6f2ce10c6a28256eb` and target response SHA-256 `6d2fbae0d09dd7463cacf9c386c48b829453729bf103638d011a82450f6764be`.
+- The snapshot contains the minimum provenance required to reproduce the adjudication, including the PIPE-05 source envelope, relevant PIPE-03/04/inventory evidence, the target response, a SHA-256 manifest, and provenance documentation.
+- Reproduced the PIPE-05B adjudication from the permanent snapshot. The outcome remained `SELF_REFERENCE_OR_LOCAL_PACKAGE`, with `dependency_failure=false`, `confirmed_package_hallucination=false`, `external_dependency_eligible=false`, and `installation_impact=not_applicable_local_reference`.
+- PIPE-05B focused tests passed 29/29 and the reproduced output satisfied the PIPE-05B schema contract.
+- No raw/frozen experiment data, manifests, prompts, quarantine data, collection state, or `/tmp` source files were modified.
+- Historical checkpoint-b PHR `0/309` and SHR `0/31` predate D035 and must not be used as current or final metrics.
+
+### 2026-09-23 — PIPE-05C-FINAL-01 — remaining three interim REVIEW_REQUIRED rows adjudicated
+
+- Adjudicated, from permanent derived snapshot `data/derived_checkpoints/interim_val_01b_20260922T112234Z_pipe05c-final-01/`:
+  - `API-v2.6-DOC-BINARY-02-M4-R01` / `@xmldom/xpath` → `NAMESPACE_CONFUSION`
+  - `API-v2.6-PKI-CRYPTO-02-M1-R01` / `pkcs12` → `PACKAGE_NAME_CONFUSION`
+  - `API-v2.6-PKI-CRYPTO-03-M4-R01` / `mime-node` → `PACKAGE_NAME_CONFUSION`
+- All three have `dependency_failure=true`, `confirmed_package_hallucination=false`, `external_dependency_eligible=true`, `installation_impact=would_fail_install`, and `checks.historical=inconclusive`.
+- No evidence of historical existence was found with the sources checked; this is not treated as proof that the exact package names never existed. Classification rests on positive evidence of the legitimate package/module relationship.
+- PIPE-05 source SHA-256: `2f5796d4d0ea06ee868a3602fb79eda87e0c39b3ea0d6ae6f2ce10c6a28256eb`.
+- Output: `results/pipe05b_adjudication_interim-v2.6-checkpoint-b_pipe05c-final-01_20260923T034600Z/`; JSON SHA-256 `33e5e28c381b910e4fa6f946158d77ecac40c6502d87aafe9eeffaa01fd2749a`.
+- Reproduction from the permanent snapshot was byte-identical; PIPE-05B focused tests passed 29/29.
+- All four metric-eligible interim REVIEW_REQUIRED rows are now adjudicated: 3 eligible external dependency failures, 1 excluded self-reference, 0 unresolved, and 0 confirmed package hallucinations.
+- D033 primary PHR/SHR definitions remain unchanged.
+- No raw/frozen data, manifests, prompts, quarantine data, or collection state were modified.
+- INTERIM — NOT FINAL RESEARCH RESULT.
+
+### 2026-09-23 — D037 primary confirmed-hallucination routing defined (no metrics calculated)
+
+- Accepted decision D037 (`docs/decision_log.md`): a metric-eligible unique `(run_id, normalized_package)` row counts in the primary PHR numerator, and its response in the primary SHR numerator, when confirmed as `CONFIRMED_HALLUCINATION` through exactly one authorized path: PIPE-05 `REVIEWED`, or a guarded PIPE-05B `CONFIRMED_HALLUCINATION` on a PIPE-05 `REVIEW_REQUIRED` row. PIPE-07 is the single resolution point.
+- A key present on both paths (even if they agree), unmatched PIPE-05B records, provenance-hash disagreement, guard failures, unsupported versions, or `source_truncated` mismatches fail closed. The PIPE-05B input must be supplied explicitly or explicitly declared absent.
+- PIPE-05 `research_classification` is not rewritten. D033 PHR/SHR units and denominators, zero-package handling, metric eligibility, D021, D035, and D034 are unchanged. D036 remains PROPOSED and is not affected.
+- Supersedes prospectively, for `CONFIRMED_HALLUCINATION` only, earlier statements that PIPE-05B never contributes to PHR/SHR. Earlier entries are preserved.
+- Interim effect: none. The four real PIPE-05B adjudications include no `CONFIRMED_HALLUCINATION`, and no PIPE-05 `REVIEWED` rows exist in the archived checkpoints. Earlier interim figures are not rewritten.
+- Definition only: no code changed, no PHR/SHR calculated. No raw/frozen data, manifests, prompts, quarantine data, results, or collection state were modified.
+
+### 2026-09-23 — D036 secondary dependency-reliability metrics defined (no rates calculated)
+
+- Accepted decision D036 (`docs/decision_log.md`), secondary/exploratory: Dependency Failure Rate (DFR; unit = metric-eligible unique `(run_id, normalized_package)` row) and Response Dependency Failure Rate (RDFR; unit = metric-eligible completed response, same eligibility as D033 SHR).
+- Construct: exact-name npm dependency-resolution failure under the defined adjudication rules. It excludes wrong-but-existing packages, version-resolution errors, API errors, capability mismatches, and functional-unsuitability errors.
+- `AUTO_VALID` rows enter the DFR denominator as non-failures. Adjudicated external failures enter the numerator and denominator. Self/local references are excluded. Undetermined rows (PIPE-05B `UNRESOLVED`, unadjudicated `REVIEW_REQUIRED`, registry-unresolved, PIPE-05 reviewed `AMBIGUOUS`) are excluded from point estimates, counted by reason, and bounded.
+- Zero-package and self/local-only responses remain in the RDFR denominator as NEGATIVE. INDETERMINATE responses are excluded from the point estimate and bounded. A response with any external failure is POSITIVE.
+- FINAL labelling requires zero unadjudicated `REVIEW_REQUIRED` rows and zero registry-unresolved rows.
+- Truncated (D021) and failed (D035) responses remain excluded. D033 primary PHR/SHR and the finalized D037 confirmation routing are unchanged. D034 is clarified: `AUTO_VALID` rows are deterministic external non-failures; its treatment of adjudicated rows is unchanged.
+- Definition only: no DFR, RDFR, PHR, or SHR has been calculated, and no calculator exists. The four interim PIPE-05B adjudications are not a denominator.
+- No code, schemas, tests, results, raw/frozen data, manifests, prompts, quarantine data, or collection state were modified.
+
+### 2026-09-23 — D037 implemented and D036/PIPE-10 secondary metric infrastructure completed
+
+- Implemented finalized D037 primary-confirmation routing in PIPE-07. PIPE-07 is now the single resolution point for `primary_confirmed_hallucination`, with explicit PIPE-05B or explicit no-PIPE-05B input modes, conservative confirmation guards, per-row provenance, and fail-closed integrity checks.
+- PIPE-08 and PIPE-09 now consume the D037-resolved confirmation fields rather than relying only on raw PIPE-05 classification.
+- D033 primary PHR/SHR units, denominators, metric eligibility, zero-package response handling, D021 truncation handling, and D035 failed-response handling remain unchanged.
+- Added PIPE-10 (`scripts/calculate_dependency_reliability_metrics.py`) implementing finalized D036 secondary/exploratory Dependency Failure Rate (DFR) and Response Dependency Failure Rate (RDFR), including external/non-external/undetermined resolution, uncertainty bounds, descriptive Wilson intervals, completeness gating, required counts, and denominator invariants.
+- Version updates: PIPE-07 `1.1.0`, PIPE-08 `1.1.0`, PIPE-09 `1.1.0`, and new PIPE-10 `1.0.0`.
+- D037-focused PIPE-07/08/09 tests passed 78/78. PIPE-10 focused tests passed 6/6.
+- Full suite: 316 tests run, 314 passed; the 2 failures are the previously known historical freeze tests caused by missing v2.1/v2.3 raw fixtures in this worktree.
+- No real v2.6 PHR, SHR, DFR, or RDFR was calculated. No raw/frozen data, manifests, prompts, collection state, quarantine data, or existing result outputs were modified.
+- Remaining validation item before real metrics: expand negative/fail-closed test coverage for malformed PIPE-05B provenance and guard combinations.
+
+### 2026-09-23 — FINAL-ANALYSIS-VALIDATION-01 completed; analysis pipeline passes with documented historical-fixture limitation
+
+- Completed FINAL-ANALYSIS-VALIDATION-01 using synthetic-only fixtures.
+- Expanded D037 malformed PIPE-05B fail-closed coverage and D036/PIPE-10 state, boundary, denominator, uncertainty-bound, determinism, and regression coverage.
+- Synthetic cross-pipeline reconciliation passed:
+  - PIPE-07 resolved confirmation counts reconcile with PIPE-08 primary numerators.
+  - PIPE-09 grouped totals reconcile with the primary analysis outputs.
+  - PIPE-10 package-state totals equal the D033 package denominator.
+  - PIPE-10 eligible-response totals equal the D033 SHR denominator.
+  - D037 confirmation-path counts sum to the primary numerator.
+  - historical PIPE-07/08/09 output overwrite protection was verified.
+- Focused adjudication + PIPE-07/08/09/10 suites: 126 passed.
+- PIPE-07/PIPE-10-focused subset: 44 passed.
+- Full suite: 327 passed with 2 known historical freeze-test failures caused by absent historical raw fixtures:
+  - v2.1 expected 4 `API-v2.1-*` raw directories, found 0.
+  - v2.3 expected 8 `API-v2.3-*` raw directories, found 0.
+- Readiness verdict: PASS WITH DOCUMENTED LIMITATIONS. No new D036/D037 implementation defect was identified.
+- No real v2.6 PHR, SHR, DFR, RDFR, interim adjudication metric, or final research result was calculated.
+- No raw data, frozen inputs, manifests, prompts, model configuration, pacing, collection state, quarantine data, or existing result outputs were modified.
+
+### 2026-09-23 — Final report integration worktree created and analysis pipeline consolidated
+
+- Created dedicated integration/report worktree `/home/hirushan/Dev/ai-hallucination-integration` on branch `integration/final-report`, based on the committed live-collection branch snapshot.
+- Merged committed `analysis/pipeline` state (`102320f`) into the integration branch without modifying the active live collection worktree.
+- Integration merge committed as `2607907` (`integration: combine collection history with verified analysis pipeline`).
+- Preserved the verified D033-D037 methodology and PIPE-05B/06/07/08/09/10 implementation while retaining the live collection/recovery history.
+- Resolved a branch-local decision-ID collision: the analysis risk-model decision retains canonical ID `D032`; the live interrupted-request recovery decision, originally branch-local `D032`, is preserved unchanged in substance as integrated decision `D038`, with its original ID explicitly recorded for provenance.
+- The integration/report repository retains the analysis collection-prevention guard and must not be used for live collection.
+- Repository-guard validation in the integration worktree passed 24/25 tests. The sole failure was `test_quarantine_evidence_is_untouched` because `data/quarantine/` is intentionally absent from the integration worktree; the live-collection refusal and side-effect-prevention guard tests passed.
+- Active v2.6 raw observations, batch state, recovery-audit state, analysis quarantine evidence, and derived checkpoint material were not merged into the integration worktree.
+- Live v2.6 collection remains authoritative in `/home/hirushan/Dev/ai-hallucination-study` and can continue independently.
+
+### 2026-09-23 — Final dissertation reporting control layer established
+
+- Established the permanent final-dissertation/reporting control layer in the integration worktree.
+- Commit: `17b1ae6` (`docs: establish final dissertation reporting controls`).
+- Updated `AGENTS.md` to define the final-report worktree purpose, source-of-truth priority, frozen-experiment integrity rules, experiment/repository security safeguards, classification and metric controls, dissertation writing rules, citation controls, reporting workflow, and worktree safety boundaries.
+- Added `docs/report_generation_protocol.md` defining the detailed dissertation-generation workflow, including university formatting requirements, baseline-draft reconciliation, citation policy, chapter-specific workflows, results safety, claims-evidence requirements, AI-tool responsibilities, and the standard audit → reconciliation → drafting → verification process.
+- Added `docs/final_report_support/claims_evidence_matrix.md` as the control surface for `VERIFIED`, `PENDING`, and `REJECTED` dissertation claims.
+- Added `docs/references/approved_references.md` as a controlled reference-list skeleton. Reference extraction has not yet been performed.
+- Confirmed that no experimental/frozen files, raw data, manifests, prompts, model configuration, collection state, results, code, schemas, or tests were modified by this documentation milestone.
+- Confirmed that `recomendations.txt` was not present under `~/Dev` within the checked search scope; repository instructions therefore treat it as advisory only when present and do not reconstruct it from memory.
+- Next step: extract and verify the approved academic reference list from the baseline dissertation `IM2021101.pdf`, then begin the Chapter 1 evidence/reconciliation audit.
+
+### 2026-09-23 — Approved dissertation reference set extracted
+
+- Populated `docs/references/approved_references.md` from the baseline dissertation `IM2021101.pdf`.
+- Extracted and preserved 34 baseline-approved citation entries.
+- No external academic sources were added.
+- Citation keys were checked for duplicates; none were found.
+- Bibliographic metadata was preserved as supplied by the baseline dissertation rather than silently corrected.
+- One baseline ambiguity was retained for later verification: the Yadav et al. DOI is recorded without an `http(s)` scheme.
+- External DOI/bibliographic verification was not performed at this stage.
+- The approved reference set now acts as the citation gate for final dissertation drafting.
+- No experimental or frozen research artifacts were modified.
+- Next step: conduct the Chapter 1 evidence/reconciliation audit before drafting final prose.
+
+### 2026-09-23 — v2.6 hybrid API allocation corrected from 62 to 61 remaining rows
+
+- Re-audited current v2.6 raw API observations before continuing hybrid allocation.
+- Verified 119 existing API-assigned raw observations: M1=16, M2=6, M3=38, M4=59.
+- The additional M1 observation is `API-v2.6-ENT-INT-01-M1-R01` (collection order 62), preserved with `collection_status: failed`.
+- Because every existing raw API observation must retain its original interface assignment, the failed M1 observation remains API-assigned and must not be reclassified as manual.
+- Correct remaining API allocation is therefore M1=24, M2=34, M3=3, M4=0, for 61 additional API rows.
+- This preserves the intended final hybrid assignment of exactly 180 API rows and 180 Manual rows across the 360-row v2.6 manifest.
+- Failed observations remain preserved and metric-ineligible; no failed observation is regenerated, substituted, or reassigned.
+- The earlier estimate of 62 additional API rows was based on the previous M1 started count of 15 and is superseded by this raw-state audit.
+
+### 2026-09-23 — Chapter 1 support-document milestone completed
+
+- Completed `CHAPTER-1-EVIDENCE-AUDIT-01`, `CHAPTER-1-DRAFT-RECONCILIATION-01`, and `CHAPTER-1-LITERATURE-RECONCILIATION-01`.
+- Created `docs/final_report_support/chapter1_evidence_audit.md`, `docs/final_report_support/chapter1_draft_reconciliation.md`, and `docs/final_report_support/chapter1_literature_reconciliation.md`.
+- Preserved the existing research title unchanged. Aligned the working aim, O1–O4, and RQ1–RQ4 to the implemented Node.js/npm study; identified the baseline SLR-oriented framing for replacement.
+- The literature reconciliation reviewed 22 claims: `SUPPORTED` 8; `PARTIALLY_SUPPORTED` 5; `UNVERIFIED` 8; `CONTRADICTED` 1.
+- The strongest approved Chapter 1 sources identified were Spracklen et al. (2025), Al-Zofi (2025), Gao et al. (2025), Ladisa et al. (2023), Wang et al. (2025), Williams et al. (2025), Duan et al. (2020), and Ohm and Stuke (2023).
+- Unsupported percentages and broad novelty claims must not be reused. Final empirical results remain pending.
+- No frozen or experimental files were modified.
+
+### 2026-09-23 — Chapter 1 final verification completed
+
+- Completed `FINAL-CHAPTER-1-VERIFICATION-01` against repository evidence, approved references, the baseline dissertation, and the reconciled Chapter 1 support documents.
+- Created `docs/final_report_support/chapter1_final_verification.md`.
+- Verified 24 study-specific factual claims and 22 citation uses.
+- Verification verdict: `PASS WITH MINOR CORRECTIONS`.
+- One wording correction was required in Section 1.8 so the practical-risk statement matches the implemented framework boundary: assessment is limited to eligible confirmed package-hallucination findings.
+- No final empirical result, prevalence value, model/category ranking, statistical conclusion, or risk distribution was introduced.
+- No superseded SLR, autonomy-comparison, Java/Maven experimental, survey, predictive-modelling, or mitigation-study methodology remains in Chapter 1.
+- After the verified wording correction, Chapter 1 Sections 1.1–1.11 are ready for transfer into the dissertation Word document.
+- No frozen experimental artifacts were modified and no final v2.6 metrics were calculated.
+
+### 2026-09-23 — Chapter 2 literature synthesis and baseline reconciliation completed
+
+- Created `docs/final_report_support/chapter2_literature_synthesis.md`.
+- Reconciled the baseline Chapter 2 against the implemented Node.js/npm study.
+- Assessed all 34 approved references in a reference-theme matrix.
+- Assessed 20 candidate literature claims.
+- Audited 21 numeric/prevalence claims from the baseline literature review.
+- Established the proposed final Chapter 2 structure and section-by-section writing plan.
+- Distinguished literature context from the actual experimental scope so Java/Maven, PyPI, autonomy, slopsquatting, mitigation, and related cross-ecosystem topics are not misrepresented as performed experimental variables.
+- Established a bounded literature-gap synthesis rather than a broad novelty claim.
+- Identified source-level verification as a prerequisite before final Chapter 2 prose is drafted.
+- No approved reference was added or removed.
+- No frozen/experimental artifact was modified.
+- No empirical result was calculated.
+- `git diff --check` passed for the synthesis task.
+
+### 2026-09-23 — Chapter 2 source verification, reference-coverage plan, and pre-draft freeze completed
+
+- Completed `CHAPTER-2-SOURCE-VERIFICATION-01`, `CHAPTER-2-REFERENCE-COVERAGE-PLAN-01`, and `CHAPTER-2-PRE-DRAFT-FREEZE-01`.
+- Created `docs/final_report_support/chapter2_source_verification.md` and `docs/final_report_support/chapter2_reference_coverage_plan.md`.
+- Updated `docs/final_report_support/chapter2_literature_synthesis.md` with a source-verification addendum and the final Chapter 2 reference-coverage requirement; the original reconciliation assessment was preserved.
+- Source-checked all 34 approved references: `FULL_TEXT_VERIFIED` 11; `METADATA_ONLY` 23; `ABSTRACT_ONLY` 0; `UNAVAILABLE` 0.
+- Claim verification (20 claims): `DIRECTLY_SUPPORTED` 14; `SUPPORTED_WITH_QUALIFICATION` 5; `NOT_SUPPORTED` 0; `NOT_VERIFIABLE` 1 (LC19, agentic-systems context).
+- Numeric-claim audit (21 baseline claims): `SAFE_TO_USE` 0; `USE_ONLY_WITH_CONTEXT` 6; removed/unverified 15.
+- All 34 approved references have a planned Chapter 2 use: 11 full-text-verified references are planned for multiple substantive use; 22 metadata-only references are planned for single conservative contextual use; Gandhi (2026) was held as conditional pending bibliographic reconciliation.
+- Gandhi bibliographic reconciliation: the baseline `IM2021101.pdf` reference list contains exactly one Gandhi entry, labelled `[Gandhi, 2026]` with year field 2026 and DOI `10.36227/techrxiv.176800890.09196406/v1`, identical to approved entry 6 in `docs/references/approved_references.md`. All 16 baseline in-text Gandhi citations use `Gandhi, 2025`; none uses 2026, and no other Gandhi entry exists. The discrepancy is therefore an in-text citation-year mismatch only, not a source-identity conflict. Status: `RESOLVED — USE Gandhi (2026)`. `approved_references.md` was not changed because its entry matches the baseline reference list. External bibliographic verification remains not performed, consistent with the approved-reference status.
+- Gandhi (2026) remains `METADATA_ONLY`; resolution of the year makes it citable for one conservative contextual use only (Section 2.7, autonomous-development security-risk context). LC19 remains `NOT_VERIFIABLE`, and autonomy remains outside the performed study.
+- Froze the Chapter 2 reference policy: all 34 approved references must appear at least once; argumentative weight follows source strength; no citation dumping; no unsupported percentages; no broad novelty claim.
+- Chapter 2 drafting verdict remains `READY_WITH_RESTRICTED_CLAIMS`.
+- No approved reference was added or removed. No frozen/experimental file was modified. No empirical result was calculated.
+
+### 2026-09-23 — Chapter 2 first drafting block (Sections 2.1–2.4)
+
+- Created `docs/report_drafts/chapter2_sections_2_1_to_2_4.md` (approximately 4,640 words; Sections 2.5–2.10 not yet drafted).
+- Cited 18 of 34 approved references in this first block: 11 full-text-verified sources and 7 metadata-only sources used conservatively for contextual claims.
+- The seven metadata-only sources used once are Agarwal et al. (2024), Daoud (2026), Le-Anh et al. (2026), Zhuo et al. (2025), Dubey and Madisetti (2026), Ohm and Stuke (2023), and Wang et al. (2025).
+- Sixteen approved references remain to be incorporated in later Chapter 2 sections under the established reference-coverage plan.
+- Dubey and Madisetti (2026) and Ohm and Stuke (2023) used their planned single contextual citation earlier than originally allocated; they should not later be reused as independent support for stronger claims unless source-level evidence is available.
+- Spracklen et al. (2025) was additionally used in Section 2.2.1 for the verified non-determinism/repetition claim.
+- No numeric claims were used.
+- No `Gandhi, 2025`, `Spracklen, 2024`, or `Ohm et al., 2020` citation was used.
+- No dissertation empirical result was stated or inferred.
+- The draft remains uncommitted pending factual, citation, and synthesis review.
+
+### 2026-09-23 — Chapter 2 Block 1 correction
+
+- Applied CHAPTER-2-BLOCK-1-CORRECTION-01 to `docs/report_drafts/chapter2_sections_2_1_to_2_4.md`.
+- Completed C01–C16 and applied optional clarity revisions R1–R4.
+- Re-verified Table 2.1, citation constraints, metadata-only contextual uses, and absence of dissertation results and numeric claims.
+- Verdict: PASS; readiness: READY_TO_DRAFT_2_5_TO_2_10.
+
+### 2026-09-24 — Chapter 2 Block 2 drafted (Sections 2.5–2.7)
+
+- Created `docs/report_drafts/chapter2_sections_2_5_to_2_7.md` (working draft; ~5,325 words).
+- 23 approved references cited (9 full-text-verified; 14 metadata-only, each once at title/topic level only). Chapter 2 coverage now 32/34; Liu et al. (2025a) and Zheng et al. (2026) reserved for Section 2.8.
+- No numeric claims; no dissertation results; Gandhi cited once as Gandhi (2026); no Spracklen 2024 / Ohm et al. 2020 forms.
+- Package hallucination presented as a reliability defect; slopsquatting as a conditional downstream scenario; the Impact × Detectability framework stated as study-defined (Chapter 3), not literature-derived.
+- Block 2 source-level verification recommended before drafting Sections 2.8–2.10.
+
+### 2026-09-24 — Chapter 2 Block 3 drafted (Sections 2.8–2.10)
+
+- Drafted `docs/report_drafts/chapter2_sections_2_8_to_2_10.md` (comparative dimensions, bounded synthesis/research gap, chapter summary); Sections 2.1–2.7 unchanged.
+- Cumulative Chapter 2 approved-reference coverage: 34/34; Liu et al. (2025a) and Zheng et al. (2026) used once each at metadata/title level in Section 2.8.
+- No numeric literature claims; no dissertation results; no novelty/absence claims. Block 3 verification and chapter assembly pending.
+
+### 2026-09-24 — Chapter 2 assembled and final verification passed
+
+- Assembled the verified Chapter 2 drafting blocks into `docs/report_drafts/chapter2_complete_draft.md`.
+- Created `docs/final_report_support/chapter2_final_verification.md`.
+- Final Chapter 2 verification verdict: `PASS`.
+- Final Chapter 2 word count: approximately 13,192 words, estimated at approximately 32–36 pages under the dissertation formatting before final Word-layout verification.
+- Verified all 34 approved references appear at least once in Chapter 2, with no unapproved references.
+- Gandhi is cited only as `Gandhi (2026)`; the superseded forms `Gandhi (2025)`, `Spracklen (2024)`, and `Ohm et al. (2020)` do not appear.
+- Table 2.1 passed final verification and preserves the distinctions among typosquatting, dependency confusion, accidental dependency error, package hallucination, and slopsquatting.
+- Table 2.2 passed final verification as a literature-design synthesis; evidence-limited fields remain `—` rather than being inferred.
+- One duplicated topic-context sentence in Section 2.7 was removed during final assembly; no broader prose rewrite was performed.
+- No unverified numeric literature claim, dissertation empirical result, model/category ranking, statistical-significance result, risk distribution, or unsupported novelty/absence claim appears in the final Chapter 2 draft.
+- Final Word-readiness status: `READY_FOR_WORD`.
+- No frozen or experimental artifact was modified and no final study metric was calculated.
+
+### 2026-09-24 — Chapter 2 figure plan reconciled with final study
+
+- Updated `docs/report_drafts/chapter2_complete_draft.md` with two final-study-aligned figure placeholders.
+- Added Figure 2-1 after Table 2.1 and before Section 2.5: conceptual relationship between LLM package-name hallucination, dependency resolution, and downstream software supply-chain risk.
+- Added Figure 2-2 at the start of Section 2.9: literature synthesis linking LLM code generation, package hallucination, dependency reliability, and software supply-chain risk.
+- Baseline Chapter 2 figures representing PRISMA, autonomous-agent/slopsquatting execution flow, defensive architecture, hybrid mitigation architecture, and sandboxed execution were designated for removal/replacement because they reflect superseded methodology or unperformed work.
+- Table 2.1 and Table 2.2 were not modified.
+- Chapter 2 citation coverage remains 34/34 approved references.
+- No verified Chapter 2 claim, citation, experimental artifact, or result was changed.
+
+### 2026-09-24 — Chapter 3 methodology reconciliation completed
+
+- Completed evidence-grounded reconciliation of the baseline dissertation methodology against the implemented frozen v2.6 study.
+- Created `docs/final_report_support/chapter3_methodology_reconciliation.md`.
+- Reviewed 36 baseline methodology items:
+  - KEEP: 1
+  - KEEP_WITH_REVISION: 8
+  - REWRITE: 4
+  - REMOVE: 17
+  - MOVE_TO_LIMITATIONS: 3
+  - MOVE_TO_FUTURE_WORK: 3
+- Confirmed the final methodology as a Node.js/npm-only study with 30 frozen tasks, six categories, four frozen model conditions, three planned repetitions, and 360 planned observations.
+- Reconciled the implemented analysis pipeline from PIPE-03 through PIPE-10, including conservative adjudication under D037, primary PHR/SHR metrics, secondary DFR/RDFR metrics, grouped statistical analysis, and `risk-model-1.0.0`.
+- Removed or reclassified unsupported baseline methodology including Java/Maven/PyPI experimentation, surveys/human participants, autonomy comparisons, mitigation experiments, predictive ML, 70/30 train-test modelling, Cohen’s Kappa, expert validation, temporal holdout, package execution/installation, and the superseded 0–12 risk model.
+- Final Chapter 3 structure, figure plan, table plan, methodological limitations, and prohibited/outdated statements were established.
+- Chapter 3 drafting status: READY WITH RESTRICTIONS.
+- Restrictions: final collection/results remain pending; detailed manual-interface operational prose must remain limited to verified collection records; no expert/inter-rater validation may be claimed.
+- `git diff --check` passed.
+- Frozen experiment inputs and raw evidence were not modified.
+
+Next:
+- draft Chapter 3 prose from the verified reconciliation;
+- keep final achieved sample counts and empirical findings out of Chapter 3 until final collection/analysis is complete;
+- verify the completed Chapter 3 draft against repository evidence before Word integration.
+
+### 2026-09-24 — Chapter 3 final assembly verified
+
+- Assembled Chapter 3: Research Methodology from three separately drafted and verified blocks.
+- Saved the authoritative final draft at `docs/report_drafts/chapter3_complete_draft.md` and its final verification at `docs/final_report_support/chapter3_final_verification.md`.
+- The chapter covers Sections 3.1–3.16 and contains 12,249 Markdown words.
+- It retains five planned figures and 14 methodology tables numbered consecutively from Table 3-1 through Table 3-14.
+- Three `[APPENDIX REFERENCE PENDING]` placeholders remain for later dissertation assembly.
+- The final-result leakage check passed; the obsolete-methodology leakage check passed; and the em-dash count was zero.
+- The final verification verdict is `READY_FOR_WORD`.
+- Chapter 3 contains no empirical final results. Final collection and provenance-consistent final analysis remain pending.
+- Finalized Chapter 3 assembly commit: `0bb0f1b` (`docs: finalize verified Chapter 3 methodology`).
+
+Next:
+- prepare Chapter 4 around verified final analytical outputs once they are available; do not imply that Chapter 4 results already exist.
+
+### 2026-09-25 — Chapter 3 visual, table, and style refinement completed
+
+- Completed the Chapter 3 visual, table, and style refinement; the authoritative chapter remains `docs/report_drafts/chapter3_complete_draft.md`.
+- Reviewed six baseline Chapter 3 figures/tables from `IM2021101.pdf` as design references only, not as methodology authority.
+- Retained five planned Chapter 3 figures; all five remain detailed production placeholders.
+- Retained Tables 3-1 through 3-14; no table was removed or merged. Five tables were flagged/revised in the presentation audit, including the terminology correction in Table 3-1.
+- Applied 13 targeted academic-style edits. Prose double-hyphen count = 0; em-dash count = 0; final-result leakage = NO; obsolete-methodology leakage = NO.
+- Review evidence: `docs/final_report_support/chapter3_visual_table_style_review.md`.
+- `git diff --check` passed.
+- Refinement commit: `1fd19b1` (`docs: refine Chapter 3 visuals tables and style`).
+
+Next:
+- create publication-quality Chapter 3 figures from the five approved placeholders;
+- preserve the implemented v2.6 methodology while drawing them.
+
+### 2026-09-25 — Compact verified Chapter 3 promoted as authoritative
+
+- Promoted the compact verified Chapter 3 as the authoritative methodology chapter at `docs/report_drafts/chapter3_complete_draft.md`.
+- Compact-equivalence verification: `docs/final_report_support/chapter3_compact_equivalence_verification.md`.
+- The final chapter contains 7,501 Markdown words, reduced from the approximately 12.3k-word previous verified version by approximately 39%.
+- The final structure contains 9 tables, 5 approved figure placeholders, and 6 unresolved appendix-reference placeholders.
+- The compact-equivalence review found no material methodology loss. PHR/SHR, DFR/RDFR, the PIPE-09 statistical procedure, the risk model, safety controls, and limitations remained equivalent.
+- Final-result leakage: NO. Obsolete-methodology leakage: NO. Em-dash count: 0. Prose double-hyphen count: 0.
+- Final status: `READY_FOR_WORD`.
+- Compact-promotion commit: `0c82c82ef3207706529f9ea92da0351ebeba0925` (`docs: promote compact verified Chapter 3`).
+
+Next:
+- create the five approved Chapter 3 figures;
+- transfer the verified compact Chapter 3 to Word;
+- check actual pagination after the figures and university formatting are applied.
+
+### 2026-09-25 — Chapter 2 v2.7 reconciliation
+
+- Reviewed the complete Chapter 2 literature-review draft against the frozen v2.7.0 three-model final study.
+- No Chapter 2 prose changes were required.
+- Chapter 2 contains no current-study model count, planned observation total, API/manual split, M2 inclusion, or active-study version that conflicts with v2.7.
+- Section 2.9.3 remains valid because it refers generically to frozen model conditions and leaves implementation detail to Chapter 3.
+- Figures 2-1 and 2-2 are conceptual and independent of the number of retained model conditions.
+- References were unchanged.
+- Verification recorded in `docs/final_report_support/chapter2_v2.7_reconciliation_verification.md`.
+- Outstanding supporting-document reconciliation: `claims_evidence_matrix.md` contains stale Chapter 1 claims CH1-004, CH1-006, and CH1-014, and this worktree's `docs/current_research_status.md` still reflects v2.6.
+
+### 2026-09-25 — Chapter 1 reconciled to frozen v2.7 final study
+
+- Updated `docs/report_drafts/chapter1_complete_draft.md` to align with the frozen v2.7.0 three-model design.
+- Current Chapter 1 reports M1, M3, and M4 as the retained model conditions.
+- Updated the planned design from the superseded four-condition/360-observation description to 270 planned observations.
+- Updated assignment totals to 140 API-assigned and 130 manual-assigned observations.
+- Added a concise disclosure that M2 was removed after partial collection and before final analysis because its intended collection protocol could not be completed consistently; historical M2 evidence remains preserved but excluded from final analysis.
+- Research questions and objectives were unchanged.
+- No empirical findings were introduced.
+- Verification recorded in `docs/final_report_support/chapter1_v2.7_reconciliation_verification.md`.
+- Chapter 1 reconciliation committed as `7442715`.
+
+### 2026-09-25 — Decision-ID collision resolved for M2 removal
+
+- Resolved the cross-worktree D036 decision-ID collision before Chapter 3 reconciliation.
+- Integration/report D036 remains the existing DFR/RDFR secondary dependency-reliability decision unchanged.
+- The M2-removal decision originally recorded as D036 in the data-collection worktree is represented in the integration worktree as D039.
+- D039 preserves the source decision meaning and records provenance to `feature/data-collection`, freeze commit `bba890d9aa5838f06bee4b1bd0e85d9e61b444f8`, and tag `v2.7.0-freeze`.
+- Updated `docs/current_research_status.md` and `docs/final_report_support/claims_evidence_matrix.md` to use the unambiguous D039 mapping.
+- Added `docs/final_report_support/decision_id_collision_reconciliation.md`.
+- No chapter draft, figure asset, frozen experimental input, or empirical result was modified.
+- Remaining cross-worktree decision-ID collisions D033–D035 require reconciliation if they are referenced by the dissertation or current methodology documentation.
+
+### 2026-09-25 — Remaining decision-ID collisions reconciled
+
+- Resolved the remaining cross-worktree decision-ID collisions D033, D034, and D035 before Chapter 3 v2.7 reconciliation.
+- Existing integration/report decisions remain unchanged:
+  - D033: primary PHR/SHR analytical units and truncated-response exclusion.
+  - D034: primary PHR/SHR retained; external-dependency eligibility handled separately in secondary sensitivity analysis.
+  - D035: abnormal provider termination other than `stop` or `length` is FAILED and metric-ineligible.
+- Added integration aliases for the corresponding data-collection decisions:
+  - data-collection D033 → integration D040: deterministic HYBRID API/manual allocation.
+  - data-collection D034 → integration D041: API collection restricted to eligible never-attempted API-assigned rows.
+  - data-collection D035 → integration D042: offline manual observation capture and preservation workflow.
+- Source decisions remain preserved unchanged in the data-collection repository.
+- Updated `docs/current_research_status.md` and `docs/final_report_support/claims_evidence_matrix.md` to use the unambiguous aliases where relevant.
+- Added `docs/final_report_support/remaining_decision_id_collision_reconciliation.md`.
+- No chapter draft, figure asset, frozen experiment input, or empirical result was modified.
+- Future Chapter 3 references to HYBRID allocation, API row selection, or manual capture must use D040, D041, and D042 respectively.
+
+### 2026-09-25 — Chapter 3 reconciled to v2.7.0 three-condition final study
+
+- Reconciled `docs/report_drafts/chapter3_complete_draft.md` from the superseded v2.6.0 design to frozen v2.7.0 (tag `v2.7.0-freeze`, commit `bba890d9aa5838f06bee4b1bd0e85d9e61b444f8`): M1, M3, M4; 270 planned observations; 45 per category; 140 API / 130 manual (deterministic, not balanced).
+- Added M2 exclusion disclosure (Section 3.5.1; integrated D039) and retained-evidence reuse statement (Section 3.5.2).
+- Tables 3-1, 3-2, 3-3 updated; Tables 3-4 to 3-9 unchanged. Word count 7,501 to 8,055.
+- Figures 3-1 and 3-2 require regeneration; Figures 3-3 to 3-5 unaffected.
+- Verification: `docs/final_report_support/chapter3_v2.7_reconciliation_verification.md`. No empirical results added.

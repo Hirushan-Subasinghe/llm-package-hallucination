@@ -17,6 +17,7 @@ from pathlib import Path
 from collect_api_batch import run_batch
 from collect_api_run import DEFAULT_CONFIG, DEFAULT_RAW_ROOT, load_config
 from collect_api_batch import ordered_rows
+from repository_guard import assert_live_collection_allowed
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -34,6 +35,7 @@ def main() -> int:
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     try:
+        assert_live_collection_allowed()
         if args.limit < 1:
             raise ValueError("--limit must be at least 1")
         manifest_bytes = args.manifest.read_bytes()

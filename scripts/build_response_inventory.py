@@ -4,6 +4,12 @@
 This script never modifies manifests, state files, or raw model responses.
 It inspects the planned manifest rows alongside any immutable raw run directories
 and outputs a structured inventory in results/ (or specified path).
+
+Decision D035 is applied here as a derived status overlay: a raw observation
+recorded as completed/truncated whose provider finish_reason is neither "stop"
+nor "length" (e.g. "error") is inventoried as failed/FAILED.  The raw metadata
+is never rewritten; the row keeps the raw status and finish reason and carries
+``status_correction = "D035"``.
 """
 
 from __future__ import annotations
@@ -42,7 +48,13 @@ INVENTORY_COLUMNS = [
     "truncated",
     "token_count",
     "interface_pass",
+    "raw_collection_status",
+    "provider_finish_reason",
+    "status_correction",
 ]
+
+D035_STATUS_CORRECTION = "D035"
+NORMAL_FINISH_REASONS = frozenset({"stop", "length"})
 
 
 def load_manifest_rows(manifest_path: Path) -> list[dict[str, str]]:
@@ -68,31 +80,56 @@ def relative_to_root(path: Path, root: Path = ROOT) -> str:
         return str(path)
 
 
-def inspect_run_directory(
-    run_dir: Path,
-    root: Path = ROOT,
-) -> tuple[str, Optional[str], Optional[bool], Optional[int], Optional[str]]:
+def empty_run_status(collection_status: str = "pending") -> dict[str, Any]:
+    return {
+        "collection_status": collection_status,
+        "completion_status": None,
+        "truncated": None,
+        "token_count": None,
+        "response_artifact_path": None,
+        "raw_collection_status": None,
+        "provider_finish_reason": None,
+        "status_correction": None,
+    }
+
+
+def inspect_run_directory(run_dir: Path, root: Path = ROOT) -> dict[str, Any]:
     """Inspect an immutable raw run directory (read-only).
 
-    Returns:
-        tuple of (collection_status, completion_status, truncated, token_count, response_artifact_path)
+    Returns the derived inventory status fields for the run.  The raw
+    ``collection_status`` and ``finish_reason`` are reported unchanged; only
+    the derived ``collection_status``/``completion_status`` reflect D035.
     """
     if not run_dir.is_dir():
-        return "pending", None, None, None, None
+        return empty_run_status()
 
     metadata_path = run_dir / "metadata.json"
     if not metadata_path.is_file():
-        return "pending", None, None, None, None
+        return empty_run_status()
 
     try:
         with metadata_path.open(encoding="utf-8") as handle:
             metadata: dict[str, Any] = json.load(handle)
     except (OSError, json.JSONDecodeError):
-        return "failed", None, None, None, None
+        return empty_run_status("failed")
 
-    collection_status = str(metadata.get("collection_status", "pending"))
+    raw_collection_status = str(metadata.get("collection_status", "pending"))
+    collection_status = raw_collection_status
     completion_status: Optional[str] = metadata.get("response_completion_status")
     finish_reason = metadata.get("finish_reason")
+    status_correction: Optional[str] = None
+
+    # D035: a provider-declared abnormal termination is failed even when
+    # partial content was preserved.  Records without a finish_reason field
+    # (non-API pilot collections) are outside the rule.
+    if (
+        collection_status in {"completed", "truncated"}
+        and "finish_reason" in metadata
+        and finish_reason not in NORMAL_FINISH_REASONS
+    ):
+        collection_status = "failed"
+        completion_status = "FAILED"
+        status_correction = D035_STATUS_CORRECTION
 
     is_truncated: Optional[bool] = None
     if collection_status in {"completed", "truncated"}:
@@ -126,7 +163,16 @@ def inspect_run_directory(
     if response_file.is_file():
         response_artifact_path = relative_to_root(response_file, root)
 
-    return collection_status, completion_status, is_truncated, token_count, response_artifact_path
+    return {
+        "collection_status": collection_status,
+        "completion_status": completion_status,
+        "truncated": is_truncated,
+        "token_count": token_count,
+        "response_artifact_path": response_artifact_path,
+        "raw_collection_status": raw_collection_status,
+        "provider_finish_reason": finish_reason,
+        "status_correction": status_correction,
+    }
 
 
 def failed_run_ids_from_state(state_path: Path) -> set[str]:
@@ -184,13 +230,8 @@ def build_inventory_row(
     expected_prompt_sha256 = manifest_row.get("expected_prompt_sha256", "")
 
     run_dir = raw_root / run_id
-    (
-        collection_status,
-        completion_status,
-        truncated,
-        token_count,
-        response_artifact_path,
-    ) = inspect_run_directory(run_dir, root=root)
+    run_status = inspect_run_directory(run_dir, root=root)
+    collection_status = run_status["collection_status"]
 
     # Metadata is authoritative.  Only in its absence do collector-preserved
     # failure artifacts or a terminal batch failure event distinguish a failed
@@ -216,12 +257,15 @@ def build_inventory_row(
         "manifest_path": manifest_rel_path,
         "rendered_prompt_path": rendered_prompt_path,
         "expected_prompt_sha256": expected_prompt_sha256,
-        "response_artifact_path": response_artifact_path,
+        "response_artifact_path": run_status["response_artifact_path"],
         "collection_status": collection_status,
-        "completion_status": completion_status,
-        "truncated": truncated,
-        "token_count": token_count,
+        "completion_status": run_status["completion_status"],
+        "truncated": run_status["truncated"],
+        "token_count": run_status["token_count"],
         "interface_pass": None,
+        "raw_collection_status": run_status["raw_collection_status"],
+        "provider_finish_reason": run_status["provider_finish_reason"],
+        "status_correction": run_status["status_correction"],
     }
 
 
@@ -300,6 +344,10 @@ def main() -> int:
         print(f"Total planned runs: {len(inventory)}")
         for status, count in sorted(counts.items()):
             print(f"  {status}: {count}")
+        corrected = [item["run_id"] for item in inventory if item["status_correction"] == D035_STATUS_CORRECTION]
+        print(f"D035 status corrections (raw completed/truncated -> failed): {len(corrected)}")
+        for run_id in corrected:
+            print(f"  {run_id}")
         if args.output_json:
             print(f"Wrote JSON inventory: {args.output_json}")
         if args.output_csv:

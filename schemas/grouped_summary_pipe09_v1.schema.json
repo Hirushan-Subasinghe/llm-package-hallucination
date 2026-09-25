@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/grouped_summary_pipe09_v1.schema.json",
+  "title": "PIPE-09 grouped descriptive summary",
+  "description": "One record per requested group value (model_condition_id, category, repetition, or model_condition_id x category), each carrying the same PHR/SHR/count fields as PIPE-08 but scoped to that group. Contains no ranking, comparison, or model-ordering field.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["format_version", "analysis_version", "source_version_label", "group_by", "methodology_note", "provenance", "records"],
+  "properties": {
+    "format_version": {"const": "pipe-09-grouped-summary-1.1.0"},
+    "analysis_version": {"const": "pipe-09-group-comparisons-1.1.0"},
+    "source_version_label": {"type": "string", "minLength": 1},
+    "group_by": {
+      "type": "array", "minItems": 1, "maxItems": 2,
+      "items": {"enum": ["model_condition_id", "category", "repetition"]}
+    },
+    "methodology_note": {"type": "string", "minLength": 1},
+    "provenance": {
+      "type": "object", "additionalProperties": false,
+      "required": ["package_dataset_input_hash", "response_dataset_input_hash"],
+      "properties": {
+        "package_dataset_input_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "response_dataset_input_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+      }
+    },
+    "records": {"type": "array", "items": {"$ref": "#/$defs/groupRecord"}}
+  },
+  "$defs": {
+    "groupRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "group", "phr", "shr", "eligible_response_count", "eligible_package_row_count",
+        "ambiguous_package_row_count", "unresolved_package_row_count",
+        "truncated_response_count", "ineligible_response_count"
+      ],
+      "properties": {
+        "group": {"type": "object", "minProperties": 1, "maxProperties": 2},
+        "phr": {"$ref": "primary_metrics_pipe08_v1.schema.json#/$defs/rate"},
+        "shr": {"$ref": "primary_metrics_pipe08_v1.schema.json#/$defs/rate"},
+        "eligible_response_count": {"type": "integer", "minimum": 0},
+        "eligible_package_row_count": {"type": "integer", "minimum": 0},
+        "ambiguous_package_row_count": {"type": "integer", "minimum": 0},
+        "unresolved_package_row_count": {"type": "integer", "minimum": 0},
+        "truncated_response_count": {"type": "integer", "minimum": 0},
+        "ineligible_response_count": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

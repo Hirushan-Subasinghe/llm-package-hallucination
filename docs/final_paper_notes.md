@@ -554,3 +554,364 @@ Discussion / Dependency Reliability.
 - Completion evidence is preserved on branch `collection/m4-manual-v2.6` at commit `44d3e24b4f19b34cd68d8389dd85375ad5c1700e`.
 - No hallucination-rate, package-hallucination-rate, supply-chain-risk, or comparative model-result claim should be made from this collection milestone alone; those require downstream validated analysis.
 - The final dissertation must describe the actual HYBRID API/manual collection procedure and the OpenRouter Chatroom-based M4 manual workflow rather than any earlier all-API or planned methodology.
+
+### 2026-09-22 — accidental duplicate generation excluded from study data
+
+- **Affected sections:** Methodology / Data Collection Integrity, Reproducibility, Limitations.
+- One accidental duplicate live generation occurred outside the official collection workspace when the v2.6 collector was mistakenly run from the analysis repository.
+- The accidental completed run used the same request bytes as the official observation but produced a different provider response ID and response content, confirming it was a second generation rather than a copy of the official observation.
+- The accidental run and associated failed attempt were quarantined and excluded from all study datasets and downstream metrics.
+- The official v2.6 dataset remains the copy collected under `~/Dev/ai-hallucination-study/data/final/raw/`.
+- The analysis repository now contains a hard guard that blocks all collection CLI entry points before network access or data/state mutation.
+- The guard is recorded in commit `fa01ad4`.
+- This incident did not change the frozen v2.6 experimental inputs or the official observation set.
+- Avoid wording that implies the accidental duplicate contributed to sample size, SHR, PHR, validation counts, or risk-model results.
+
+### 2026-09-22 — PIPE-06 risk-scoring infrastructure implemented (no results yet)
+
+**Affected sections:** Chapter 3 / Risk Assessment; Methodology / Reproducibility.
+
+- The implemented risk model is `risk-model-1.0.0` from `docs/risk_assessment_protocol.md`: Impact (1-5) x Detectability (1-4), with bands LOW 1-4 / MODERATE 5-8 / HIGH 9-14 / CRITICAL 15-20.
+- `security_sensitive_context` is recorded as a separate boolean flag with its own rationale and does not change the numeric score.
+- The model is a deterministic, rule-based ordinal prioritization aid; it is not a probability or predictive model.
+- Only a finding whose research classification is an eligible hallucination category and whose evidence is resolved can be scored. Every other finding remains unscored, encoded as `null` risk_score/risk_band, never zero.
+- The implementation (`scripts/score_risk_findings.py`, `schemas/risk_finding_pipe06_v1.schema.json`) is currently validated only against synthetic fixtures (`tests/test_score_risk_findings.py`, 24/24 passing).
+- No real finding has been scored and no real risk result exists yet. Do not report any risk score, band, or distribution until real eligible confirmed findings exist and are scored under this implementation.
+
+### 2026-09-22 — PIPE-07 derived analysis-dataset infrastructure implemented; primary PHR/SHR unit formalized (no results yet)
+
+**Affected sections:** Chapter 3 / Analysis Pipeline; Results-method definitions.
+
+- A version-agnostic builder (`scripts/build_analysis_dataset.py`) now joins the response inventory with PIPE-03/04/05 derived evidence into two reusable datasets: package/response-level (one row per `(run_id, normalized_package)`) and response-level (one row per planned run, including pending/failed/truncated).
+- **Primary package-level unit (decision D033):** one unique normalized package per response, `(run_id, normalized_package)`. A package mentioned, imported, or installed multiple times in one response counts once in the primary PHR numerator/denominator. This resolves the "Open metric-wording check" flagged above and corrects `docs/package_hallucination_taxonomy.md`'s earlier "occurrences" PHR wording; occurrence-level provenance remains fully preserved separately.
+- **Primary response-level (SHR) unit (decision D033, confirming the existing taxonomy rule):** one completed, non-truncated evaluable response. Numerator: eligible responses with at least one confirmed package-name hallucination. Denominator: all eligible completed, non-truncated responses, including zero-package responses.
+- **Truncation eligibility:** `TRUNCATED` observations are preserved in derived datasets but excluded from primary PHR/SHR, reaffirming that `docs/analysis_specification_v1.0.md` Sections 10 and 17's earlier "may include truncated responses" wording is superseded for primary metrics (both sections now carry an inline marker to this effect).
+- The builder performs fail-safe cross-input validation (duplicate keys, metadata conflicts between the response inventory and PIPE-03/04/05 outputs, unsupported classification labels) and refuses to write output rather than silently produce an inconsistent dataset.
+- This implementation is validated only against synthetic fixtures (21/21 tests passing; verified full-suite result after this change: 200 run, 198 passed, 2 failed — the same 2 pre-existing, unrelated `test_api_freeze.py` failures caused by historical raw artifacts absent from this worktree). No PHR, SHR, prevalence, or model comparison exists yet, and none was computed here.
+- An attempted v2.2 dry-run failed cleanly and safely: this worktree no longer holds the physical v2.2 raw response files that the existing `results/*_v2.2.0.json` snapshots were built from, so a freshly built v2.2 response inventory (360/360 pending) disagreed with those snapshots. This is a worktree/provenance state issue, not a study finding, and no dataset was generated from it.
+- Final reported analyses must use provenance-consistent v2.6-derived inputs — a response inventory and PIPE-03/04/05/07 outputs all built from the same v2.6 collection snapshot — not the historical, interim v2.2 snapshots.
+
+### 2026-09-22 — DESIGN/SIGNAL-01: v2.6 prompt-to-analysis alignment audit (no final results yet)
+
+**Affected sections:** Chapter 3 / Experimental Design; Chapter 3 / Measurement Validity; Chapter 5 / Threats to Validity / Interpretation.
+
+- v2.6 prompts provide substantial external-package choice opportunity: all 30 tasks require a complete package.json with exact dependencies and documented API usage, across dependency-intensive specialized domains with no Node built-in equivalent.
+- Package names are not pre-specified in any task; selection is left entirely to the model.
+- Early v2.6 responses show dense actual package usage: all 28 completed/truncated responses audited so far contained at least one explicit external package reference (576 occurrences; 292 unique `(run_id, normalized_package)` rows; 87 distinct normalized package names).
+- Therefore, a low or zero confirmed package-name hallucination result in the final v2.6 analysis should not automatically be interpreted as a failed measurement design; the opportunity and extraction-coverage evidence available at audit time supports treating such a result as potentially a legitimate null finding.
+- Interpretation must still acknowledge documented limitations: narrative-only false package claims (never appearing in an actual import/require/install/package.json statement) are out of scope under the existing taxonomy; theoretical extractor gaps (`export ... from` re-exports, yarn/pnpm install syntax, `require.resolve`) exist but were not observed in the audited sample; and category/model coverage was incomplete at audit time (3 of 6 categories and 3 of 4 model conditions had zero eligible observations so far, reflecting collection progress rather than a design defect).
+- Do not treat the audited 28-response snapshot as final results. This audit is a design/measurement-validity check, not a hallucination-prevalence finding.
+
+### 2026-09-22 — PIPE-08 primary metric implementation completed (no results yet)
+
+**Affected sections:** Chapter 3 / Analysis Pipeline; Chapter 3 / Metric Definitions; Results methodology.
+
+- PHR unit is unique `(run_id, normalized_package)`.
+- SHR unit is one completed, non-truncated response.
+- Zero-package eligible responses remain in the SHR denominator.
+- Occurrence repetition cannot inflate primary PHR.
+- Zero denominator returns undefined/null rather than 0%.
+- PIPE-08 performs cross-input consistency validation before calculation.
+- Implementation was validated with synthetic fixtures only.
+- No real PHR/SHR exists yet.
+- Final execution must use a provenance-consistent v2.6 analysis snapshot.
+
+### 2026-09-22 — Planned secondary dependency-reliability analysis
+
+**Affected sections:** Research Questions/Objectives (pending evidence), Chapter 3 /
+Analysis Methodology, Results structure, Discussion.
+
+- The primary research outcome remains strict confirmed package-name hallucination
+  measured through PHR/SHR.
+- A secondary exploratory analysis is planned for package recommendations that require
+  manual review after registry validation/classification.
+- `REVIEW_REQUIRED` must not be treated as equivalent to hallucination or dependency
+  failure.
+- Real cases will first undergo evidence-based adjudication; only then may additional
+  failure subtypes and secondary reliability metrics be frozen.
+- Possible secondary outputs include package-level review/failure rates,
+  response-level review/failure rates, error-type distributions, and qualitative case
+  studies.
+- No secondary reliability result should be written as a study finding until the
+  adjudication taxonomy and metrics are formally defined and applied to real v2.6 data.
+
+### 2026-09-22 — PIPE-05B secondary dependency-reliability adjudication infrastructure implemented
+
+**Affected sections:** Chapter 3 / Secondary Analysis Method; Results methodology; Discussion / Dependency Reliability.
+
+- To characterize `AMBIGUOUS` / `REVIEW_REQUIRED` package references without weakening the primary conservative hallucination definition, a separate manual adjudication layer was implemented.
+- PIPE-05B distinguishes confirmed package-name hallucination from other evidence-backed dependency-reliability outcomes: legacy/removed package, namespace confusion, package-name confusion, invalid/redundant types package, ecosystem confusion, other dependency error, and unresolved cases.
+- `dependency_failure` is tracked independently from `confirmed_package_hallucination`.
+- PIPE-05B is additive and does not feed back into the frozen primary PHR/SHR definitions.
+- The implementation was validated with synthetic fixtures only; no real review-required package had been adjudicated at this milestone.
+
+### 2026-09-22 — Self-referential package names and external-dependency sensitivity eligibility (D034; no results yet)
+
+**Affected sections:** Chapter 3 / Metric Definitions; Chapter 3 / Secondary Analysis Method; Results methodology; Threats to Validity.
+
+- Self-referential generated-project names (the generated project's own package name, or a generated local/workspace package) are distinct from external npm dependencies. PIPE-05B.1 records them as `SELF_REFERENCE_OR_LOCAL_PACKAGE` only on response-internal evidence.
+- A registry 404 for such a name is not evidence of dependency failure or package-name hallucination.
+- Primary PHR remains frozen under D033 (unique `(run_id, normalized_package)` rows); it is not retroactively changed by adjudication, because doing so after self-reference cases were observed would risk outcome-dependent methodology. Primary SHR is also unchanged.
+- Secondary external-dependency sensitivity metrics, labelled secondary/exploratory, exclude adjudicated local/self references (`external_dependency_eligible=false`) from both numerator and denominator.
+- Unresolved external/local status (`external_dependency_eligible=null`) is reported separately and does not silently enter any denominator.
+- No real result is claimed at this stage: no real package has been adjudicated and no primary or secondary rate has been calculated.
+
+### 2026-09-22 — provider error finish reasons classified as failed (D035)
+
+- **Affected sections:** Data Collection (outcome classification), Dataset Completion, Limitations.
+- One v2.6 M4 observation received HTTP 200 with partial assistant content but a provider-declared `finish_reason: "error"`, far below its output ceiling. The collector originally recorded it as completed.
+- Under D035, only `stop` is a completed generation and only `length` is a truncation. Any other provider finish reason, including `error`, is a failed observation even when partial text was returned.
+- Report it as a provider/infrastructure failure, not as a truncation or a hallucination result. It is excluded from primary SHR/PHR, preserved once, and was not regenerated.
+- Methods text should state that the correction was applied as a derived, documented status overlay without editing raw data, and that the rule depends only on the provider's termination status, not on response content.
+
+### 2026-09-22 — PIPE-09 grouped comparison infrastructure implemented (no final inference yet)
+
+**Affected sections:** Chapter 3 / Statistical Methods; Results methodology.
+
+- Grouped descriptive analysis is implemented for model condition, task category, repetition, and model-condition × category views.
+- Statistical infrastructure supports Fisher's exact testing for 2×2 comparisons, assumption-gated chi-square or deterministic Monte Carlo handling for sparse multi-group tables, Holm-Bonferroni correction for pairwise comparisons, and odds-ratio/risk-difference effect sizes with 95% confidence intervals.
+- Sparse, zero-event, and insufficient-group situations are handled explicitly rather than forcing a significance result.
+- No ranking or best/worst model label is produced.
+- PIPE-09 has been validated with synthetic fixtures only; no final v2.6 inferential result exists yet.
+
+### 2026-09-23 — First real PIPE-05B adjudication reproducibly archived
+
+**Affected sections:** Chapter 3 / Dependency Adjudication; Results / Secondary Dependency Reliability; Threats to Validity.
+
+- A real interim v2.6 `REVIEW_REQUIRED` case, `mtls-pfx-loader`, was adjudicated as `SELF_REFERENCE_OR_LOCAL_PACKAGE`.
+- The generated response declared `mtls-pfx-loader` as its own project name and used that name in documentation examples referring to symbols implemented by the generated project itself.
+- Therefore the npm registry 404 did not indicate an external dependency failure or confirmed package hallucination.
+- The adjudication was reproduced from a permanent derived evidence snapshot with verified source and response hashes.
+- This observation supports the methodological requirement that registry non-existence alone is insufficient to establish package hallucination.
+- The row remains part of the frozen D033 primary metric definition but is excluded from the D034 secondary external-dependency sensitivity denominator.
+- This is an interim adjudication and does not constitute a final research result or final PHR/SHR value.
+
+### 2026-09-23 — Remaining interim PIPE-05B cases: confusion rather than confirmed package hallucination
+
+**Affected sections:** Results / Secondary Dependency Reliability; Discussion; Threats to Validity.
+
+- Three interim v2.6 package references returning npm 404 were traceable to legitimate package/module concepts:
+  - `@xmldom/xpath` → namespace confusion involving the real `xpath` package and `@xmldom` scope.
+  - `pkcs12` → package-name confusion; the generated implementation actually uses `node-forge` / `forge.pkcs12`.
+  - `mime-node` → package-name confusion involving Nodemailer's `lib/mime-node` / `MimeNode` implementation.
+- All three are adjudicated as dependency failures because the generated dependency declaration would fail installation, but none is classified as a confirmed package-name hallucination.
+- No evidence of historical existence was found with the sources checked; the paper must not state that these packages definitively "never existed".
+- Registry absence alone did not determine the classification. Positive evidence identifying the intended legitimate package/module was used.
+- Together with the separately adjudicated `mtls-pfx-loader` self-reference, all four metric-eligible interim REVIEW_REQUIRED rows have now been resolved.
+- These remain interim checkpoint observations and must not be reported as final rates or final v2.6 findings.
+- An additional `node-forge` API-use anomaly (`forge.pkcs12.load`) was observed during review. It is outside the current dependency/package-reference adjudication scope and should not be promoted into a new measured category without a separately defined and validated method.
+
+### 2026-09-23 — Confirmed hallucinations counted regardless of adjudication path (D037; no results yet)
+
+**Affected sections:** Chapter 3 / Classification and Adjudication; Chapter 3 / Metric Definitions; Threats to Validity.
+
+- Registry-404 package names can be confirmed as package-name hallucinations through either the original PIPE-05 review or the later, stricter PIPE-05B adjudication. Methods text should state that a confirmation from either path counts once in primary PHR and SHR, with the confirming path recorded for every counted row.
+- PIPE-05B confirmation requires every PIPE-05 conservative check plus namespace, ecosystem, and types-package exclusion, so no weaker evidence enters the primary metrics.
+- Confusion outcomes (namespace, package-name, ecosystem, types-package), legacy/removed, other dependency errors, self/local references, and unresolved cases never enter the primary numerators.
+- Units, denominators, and eligibility are unchanged from D033. This is a routing correction adopted before any PIPE-05B confirmation existed, and it changed no interim figure.
+- Report how many eligible review-required rows were left unadjudicated or unresolved, because they stay in the PHR denominator without being able to enter its numerator.
+- No final PHR/SHR exists at this stage.
+
+### 2026-09-23 — Secondary dependency-reliability metrics defined (D036; no results yet)
+
+**Affected sections:** Chapter 3 / Secondary Analysis Method; Results / Secondary Dependency Reliability; Threats to Validity.
+
+- DFR and RDFR are secondary/exploratory and must be labelled as such. They are not hallucination rates and never replace PHR/SHR.
+- Methods text: "DFR measures exact-name npm dependency-resolution failures under the defined adjudication rules. It does not capture all forms of dependency unreliability, including wrong-but-existing packages, version-resolution errors, API errors, capability mismatches, or functional-unsuitability errors." Do not describe DFR as a lower bound on all dependency unreliability.
+- VALID packages count as non-failures. Self/local references are excluded. Unresolved or unadjudicated rows are excluded from point estimates but reported with lower/upper bounds and counts by reason. Zero-package responses remain RDFR negatives.
+- Report the DFR numerator by adjudication outcome, so that confusion cases (namespace, package-name) are never presented as confirmed hallucinations. Confirmed hallucinations inside the failure breakdown follow D037 routing.
+- Threats to validity: semantic review is asymmetric (registry-404 names receive deeper adjudication than registry-valid names); wrong-but-existing packages, version failures, and API/capability errors are outside DFR; registry state is time-sensitive; adjudication relies on researcher review; grouped estimates may be sparse and clustered; the metrics were defined after four interim adjudications were seen, but before any rate was computed and before v2.6 collection completed.
+- No DFR/RDFR result exists at this stage.
+
+### 2026-09-23 — D037 routing and D036 secondary metric infrastructure implemented
+
+**Affected sections:** Chapter 3 / Classification and Adjudication; Metric Definitions; Secondary Analysis Method; Threats to Validity.
+
+- D037 is implemented at PIPE-07 as the single primary-confirmation resolution point. Guarded confirmations from either the PIPE-05 reviewed path or PIPE-05B can enter primary PHR/SHR exactly once, while D033 units and denominators remain unchanged.
+- PIPE-08 and PIPE-09 consume the resolved confirmation fields produced by PIPE-07.
+- D036 is implemented separately as PIPE-10 for secondary/exploratory DFR and RDFR. These metrics measure exact-name npm dependency-resolution failures under the defined adjudication rules and must not be described as hallucination rates.
+- PIPE-10 explicitly represents external failures, external non-failures, self/local exclusions, and undetermined cases, and reports uncertainty bounds and completeness status.
+- Synthetic validation passed for the new routing and secondary-metric infrastructure. No real v2.6 PHR, SHR, DFR, or RDFR result had been calculated at this milestone.
+
+### 2026-09-23 — v2.6 hybrid interface-allocation clarification
+
+- **Affected section:** Methodology / Experimental Design / Data Collection.
+- The final v2.6 hybrid interface assignment is 180 API rows and 180 Manual rows across the 360-row manifest.
+- Preserved failed API observations remain classified as API-assigned for interface-allocation accounting even though they are excluded from metric eligibility.
+- `API-v2.6-ENT-INT-01-M1-R01` is one such preserved failed API observation and must not be reassigned or regenerated.
+- Final reporting should distinguish interface assignment from analytical eligibility so failed API observations are not mistaken for completed metric-eligible runs.
+
+### 2026-09-23 — Chapter 1 support-document synchronization
+
+**Affected sections:** Chapter 1 Research Problem, Research Gap, Aim, Objectives, Research Questions, Scope/Delimitations, Contributions, and Dissertation Structure.
+
+- The existing title remains unchanged.
+- Chapter 1 must explicitly delimit the empirical study to direct Node.js/npm dependency references and replace SLR-as-final-study framing.
+- Replace the old root-cause, slopsquatting, and mitigation research questions with the repository-grounded empirical RQ1–RQ4.
+- PHR/SHR are primary; DFR/RDFR remain secondary/exploratory. Grouped comparisons are descriptive and, where estimable, compared.
+- Risk statements apply only to eligible confirmed package-hallucination findings.
+- Unsupported baseline percentages and literature-wide novelty claims must not appear.
+- Slopsquatting, autonomy, and mitigation remain background/literature topics only unless discussing future work or implications.
+- Final empirical contribution wording remains pending final v2.6 results.
+
+### 2026-09-23 — Chapter 1 verified for dissertation use
+
+- **Affected section:** Chapter 1 — Introduction.
+- The complete Chapter 1 draft (Sections 1.1–1.11) has passed repository-grounded factual and citation verification, subject to one verified wording correction in Section 1.8.
+- Final Chapter 1 preserves the existing dissertation title while explicitly delimiting the implemented empirical study to direct Node.js/npm dependency references.
+- Primary outcomes are PHR and SHR; DFR and RDFR remain secondary/exploratory dependency-reliability measures.
+- Group comparisons remain descriptive and where-estimable, and practical-risk assessment is limited to eligible confirmed package-hallucination findings.
+- No final empirical findings are stated in Chapter 1; result-dependent contributions remain pending final v2.6 analysis.
+- The verified Chapter 1 is suitable for transfer into the final Word dissertation after the Section 1.8 wording correction.
+
+### 2026-09-23 — Chapter 2 literature review reconciliation
+
+- **Affected section:** Chapter 2 — Literature Review.
+- The final literature review should be organized around LLM-assisted software development, code hallucination, dependency/package ecosystems, software supply-chain threats, package hallucination, validation/classification approaches, reliability/risk, comparative dimensions, and a bounded synthesis/research gap.
+- Cross-ecosystem literature on PyPI, Maven, Java, Python, autonomous systems, slopsquatting, mitigation, and other topics may remain as literature context where supported, but must not be described as part of the performed Node.js/npm experiment.
+- Unsupported baseline prevalence/adoption/detection percentages must not be carried into the final dissertation until source-level verification supports them.
+- Chapter 2 must not claim that no prior work exists or that this dissertation is the first study of package hallucination.
+- Source-level verification of priority approved references is required before final Chapter 2 prose is written.
+- Final literature claims must remain within the approved 34-reference citation set.
+
+### 2026-09-23 — Chapter 2 reference policy frozen before drafting
+
+- **Affected section:** Chapter 2 — Literature Review.
+- All 34 approved references in `docs/references/approved_references.md` must appear at least once in final Chapter 2.
+- Citation frequency and argumentative weight follow evidence strength, not equal distribution. Citation dumping to satisfy coverage is not permitted.
+- The 11 full-text-verified sources should carry the central literature synthesis: Spracklen et al. (2025), Al-Zofi (2025), Gao et al. (2025), Ladisa et al. (2023), Duan et al. (2020), Williams et al. (2025), Zhao et al. (2025), Tian et al. (2025), Liu et al. (2026), Woesle et al. (2025), and Twist et al. (2026). Detailed claims must stay within the verified evidence summaries in `docs/final_report_support/chapter2_source_verification.md`.
+- Metadata-only references should normally be used only once, for bounded contextual coverage, and must not be the sole support for a detailed finding, number, comparison, causal conclusion, or superiority claim.
+- No unsupported numeric or prevalence claim from the baseline should be restored. The six `USE_ONLY_WITH_CONTEXT` numeric claims may be used only with their exact source-specific population, ecosystem, model, and task/prompt context, and only if analytically needed.
+- Spracklen et al.'s 19.7% figure uses approximately 2.23 million recommended packages (440,445 hallucinated) as its denominator, not 576,000 code samples; 576,000 is that study's code-sample count.
+- No broad "first study", "no prior work", "unexplored", or equivalent novelty claim may appear.
+- Gandhi citation rule: cite as **Gandhi (2026)**, matching the baseline reference list and the approved entry. The baseline in-text `Gandhi, 2025` citations are a citation-year error and must not be reused. Gandhi (2026) remains metadata-only: one conservative contextual use in the autonomous-development security-risk context only, with no agentic finding and no implication that autonomy was a performed study variable.
+- Chapter 2 prose may now be drafted with restricted claims (`READY_WITH_RESTRICTED_CLAIMS`).
+
+### 2026-09-24 — Chapter 2 verified for dissertation use
+
+- **Affected section:** Chapter 2 — Literature Review.
+- The assembled Chapter 2 draft (`docs/report_drafts/chapter2_complete_draft.md`) has passed final structural, citation, factual, and consistency verification and is ready for transfer into the dissertation Word document.
+- All 34 approved references are represented at least once; citation weight remains evidence-dependent, with full-text-verified sources carrying the substantive literature synthesis and metadata-only sources restricted to conservative contextual use.
+- Table 2.1 may be retained as the conceptual distinction table for package-naming/dependency threats.
+- Table 2.2 may be retained as a study-design synthesis table; evidence-limited cells must remain `—`.
+- Unsupported baseline percentages and broad novelty claims must not be reintroduced during Word editing.
+- The final literature synthesis distinguishes package hallucination from broader dependency failure and from downstream adversarial actions such as slopsquatting.
+- Chapter 2 does not treat the study-defined PHR/SHR, DFR/RDFR, or Impact × Detectability framework as prior-literature standards.
+- Detailed execution-safety and non-installation rationale removed from Chapter 2 should be documented in Chapter 3 Methodology.
+
+### 2026-09-24 — Chapter 2 final figure plan
+
+- **Affected section:** Chapter 2 — Literature Review / List of Figures.
+- Do not retain the baseline PRISMA figure, autonomous-agent lifecycle/slopsquatting execution diagram, multi-stage defensive architecture, hybrid mitigation pipeline, or sandboxed-execution evaluation framework as figures representing the performed research.
+- Final Figure 2-1 should depict the conceptual relationship between LLM package-name hallucination, dependency resolution, and possible downstream software supply-chain risk, while explicitly showing that package hallucination itself is not an attack.
+- Final Figure 2-2 should summarize the literature progression from LLM-assisted software development and code hallucination through dependency reliability and supply-chain implications to the bounded Node.js/npm research rationale.
+- Table 2.2 already covers comparative methodological dimensions, so no Figure 2-3 is currently required.
+- Detailed experimental workflow, extraction/validation/adjudication pipeline, metric derivation, and practical-risk framework figures should be placed in Chapter 3 rather than Chapter 2.
+
+### 2026-09-24 — Chapter 3 methodology reconciliation
+
+**Affected section:** Chapter 3 — Methodology
+
+The final dissertation methodology must describe the implemented frozen v2.6 Node.js/npm study rather than the methodology proposed in the original draft.
+
+Verified methodology to report:
+- Node.js/npm empirical scope only.
+- 30 final coding tasks across six categories.
+- Four frozen model conditions.
+- Three planned repetitions.
+- 360 planned observations.
+- Frozen task/template/rendered-prompt and manifest provenance.
+- Hybrid API/manual collection assignment where supported by authoritative records.
+- Explicit response-status and analytical-eligibility rules.
+- PIPE-03 package-reference extraction and normalisation.
+- PIPE-04 read-only npm registry validation.
+- PIPE-05/PIPE-05B classification and adjudication.
+- D037 single hallucination-resolution path.
+- PHR and SHR as primary hallucination measures.
+- DFR and RDFR as secondary/exploratory dependency-resolution measures, not hallucination rates.
+- PIPE-09 grouped/statistical analysis.
+- `risk-model-1.0.0`: Impact 1–5 × Detectability 1–4, with LOW/MODERATE/HIGH/CRITICAL bands and separate `security_sensitive_context`.
+- No generated dependency installation/execution or package claiming/registration.
+- Validation evidence must be described as infrastructure/pipeline validation, not expert or inter-rater validation.
+
+The final Chapter 3 must remove or avoid:
+- Java/Maven or PyPI as performed experiments;
+- multi-ecosystem empirical claims;
+- surveys/human participants;
+- autonomy/agentic comparison;
+- mitigation experiments;
+- predictive ML or 70/30 validation;
+- Cohen’s Kappa or expert review;
+- temporal holdout;
+- static/dynamic execution comparison;
+- package installation/execution;
+- superseded 0–12 risk scoring;
+- claims that npm 404/not_found automatically means hallucination;
+- claims that DFR/RDFR are hallucination rates.
+
+Methodological limitations to include:
+- single ecosystem;
+- bounded 30-task/four-condition/three-repetition design;
+- medium difficulty is study metadata, not externally calibrated;
+- direct explicit package references only;
+- no transitive-dependency analysis;
+- no functional execution/correctness testing;
+- time-bounded registry/provider evidence;
+- unresolved adjudications;
+- rule-based study-specific risk model.
+
+Evidence:
+`docs/final_report_support/chapter3_methodology_reconciliation.md`
+
+Drafting status:
+READY WITH RESTRICTIONS — final collection/results remain pending, and manual-interface operational details must not exceed what is supported by authoritative collection records.
+
+### 2026-09-24 — Chapter 3 final methodology and Word-transfer note
+
+Chapter 3 is `READY_FOR_WORD`. The final dissertation methodology must describe the implemented study as Node.js/npm only: 30 frozen tasks across six categories, four frozen model conditions, three planned repeated generations per task/model condition, and 360 planned observations. It must describe the hybrid 180 API / 180 manual assignment, while keeping collection assignment distinct from analytical eligibility.
+
+The methodology must state that deterministic package-reference extraction uses unique `(run_id, normalized_package)` package rows; official npm registry validation is read-only; and npm `404`/`not_found` alone does not establish a hallucination. It must preserve conservative classification and adjudication with one controlled confirmation path. PHR and SHR are the primary hallucination metrics. DFR and RDFR are secondary/exploratory exact-name dependency-reliability metrics and must not be described as hallucination rates. Grouped analysis must use the verified PIPE-09 statistical procedure.
+
+Practical risk must use `risk-model-1.0.0`: Impact 1–5 × Detectability 1–4, with LOW 1–4, MODERATE 5–8, HIGH 9–14, and CRITICAL 15–20. `security_sensitive_context` remains a separate non-scored field. No generated package installation, execution, claiming, registration, reservation, or active exploitation occurred.
+
+Validation status is `FINAL-ANALYSIS-VALIDATION-01 = PASS WITH DOCUMENTED LIMITATIONS`. The medium-difficulty designation came from pre-freeze qualitative task design; it was not externally calibrated and was not an analytical variable. Wording implying formal statistical independence of repetitions must be avoided.
+
+Potential final-paper assets are:
+
+- Figure 3-1: Frozen task-condition-repetition design.
+- Figure 3-2: Experimental workflow and preservation boundary.
+- Figure 3-3: Extraction, registry, and adjudication pipeline.
+- Figure 3-4: Primary and secondary metric derivation.
+- Figure 3-5: Impact × Detectability risk framework.
+
+Final empirical results must be added only after verified final analysis. Do not add empirical values or findings to Chapter 3.
+
+### 2026-09-25 — Chapter 3 visual plan fixed
+
+The Chapter 3 visual plan is fixed as:
+
+- Figure 3-1: Frozen task-condition-repetition design.
+- Figure 3-2: Final v2.6 experimental workflow and preservation boundary.
+- Figure 3-3: Direct npm extraction, registry evidence, and conservative adjudication pipeline.
+- Figure 3-4: Derivation of primary and secondary metrics.
+- Figure 3-5: `risk-model-1.0.0` Impact × Detectability framework.
+
+Baseline `IM2021101.pdf` visuals were reviewed. Outdated conceptual, workflow, survey, and exploitability constructs must not be reused. The old dependency-classification flow may inspire layout only; substantive content must follow the implemented npm-only pipeline. Old risk, severity, and exploitability graphics must not reintroduce the superseded risk model. Current Chapter 3 tables remain Tables 3-1 through 3-14. Chapter 3 prose contains zero em dashes and zero prose double hyphens. Final empirical results remain excluded.
+
+### 2026-09-25 — Compact verified Chapter 3 promoted
+
+The authoritative Chapter 3 is now the compact verified version at `docs/report_drafts/chapter3_complete_draft.md`. Use the 7,501-word, 9-table version for final dissertation assembly. Do not use the older approximately 12.3k-word, 14-table version except as Git history. The condensation was verified not to alter the implemented methodology.
+
+The five approved figure slots remain unchanged:
+
+- Figure 3-1: task-condition-repetition design.
+- Figure 3-2: experimental workflow and preservation boundary.
+- Figure 3-3: extraction/registry/adjudication pipeline.
+- Figure 3-4: metric derivation.
+- Figure 3-5: Impact × Detectability framework.
+
+Six appendix references remain unresolved and must be assigned during final dissertation assembly. Check the final Word page count after inserting the figures. If further shortening is required, use actual Word pagination rather than deleting methodology speculatively.
+
+### 2026-09-25 — Chapter 3 v2.7 reconciliation
+
+Chapter 3 now describes the frozen v2.7.0 final study: three retained conditions (M1, M3, M4; not renumbered), 30 tasks, 3 repetitions, 270 planned observations, 45 per category, and a deterministic, unbalanced 140 API / 130 manual assignment (M1 40/50, M3 41/49, M4 59/31). The earlier 2026-09-24 Chapter 3 note specifying four conditions, 360 observations, and 180 / 180 is superseded. Section 3.5.1 discloses that M2 was removed after partial collection and before final analysis for operational reasons, with no result outputs in existence (integrated D039). Retained M1/M3/M4 evidence is reused without regeneration where provenance matched. Figures 3-1 and 3-2 must be regenerated before Word transfer.

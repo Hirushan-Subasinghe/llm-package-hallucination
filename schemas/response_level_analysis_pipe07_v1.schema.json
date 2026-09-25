@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/schemas/response_level_analysis_pipe07_v1.schema.json",
+  "title": "PIPE-07 response-level analysis record",
+  "description": "PIPE-07 v1.1 response row; confirmed counts are resolved under D037 and zero-package completed rows remain in the D033 SHR denominator.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id", "collection_order", "model_condition_id", "task_id", "category",
+    "repetition", "collection_status", "completion_status", "truncated",
+    "package_reference_count", "unique_package_count",
+    "confirmed_hallucinated_package_count", "ambiguous_package_count",
+    "unresolved_package_count", "contains_confirmed_package_hallucination",
+    "metric_eligible"
+  ],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "collection_order": {"type": "integer", "minimum": 1},
+    "model_condition_id": {"type": "string", "minLength": 1},
+    "task_id": {"type": "string", "minLength": 1},
+    "category": {"type": "string", "minLength": 1},
+    "repetition": {"type": "string", "minLength": 1},
+    "collection_status": {"enum": ["pending", "requesting", "completed", "truncated", "failed", "suspended"]},
+    "completion_status": {"type": ["string", "null"]},
+    "truncated": {"type": ["boolean", "null"]},
+    "package_reference_count": {
+      "type": "integer", "minimum": 0,
+      "description": "Sum of occurrence_count across all unique normalized packages for this response."
+    },
+    "unique_package_count": {"type": "integer", "minimum": 0},
+    "confirmed_hallucinated_package_count": {"type": "integer", "minimum": 0},
+    "ambiguous_package_count": {"type": "integer", "minimum": 0},
+    "unresolved_package_count": {"type": "integer", "minimum": 0},
+    "contains_confirmed_package_hallucination": {"type": "boolean"},
+    "metric_eligible": {
+      "type": "boolean",
+      "description": "True only when collection_status == 'completed' (frozen truncation-exclusion rule); false for pending, requesting, truncated, failed, and suspended rows. PHR/SHR are not computed by this dataset."
+    }
+  }
+}

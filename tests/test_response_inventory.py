@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import build_response_inventory
+import extract_package_references
 
 
 class ResponseInventoryTests(unittest.TestCase):
@@ -45,8 +46,10 @@ class ResponseInventoryTests(unittest.TestCase):
             metadata_path = self.raw_root / item["run_id"] / "metadata.json"
             if metadata_path.is_file():
                 metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
-                self.assertEqual(item["collection_status"], metadata["collection_status"])
-                self.assertEqual(item["completion_status"], metadata.get("response_completion_status"))
+                self.assertEqual(item["raw_collection_status"], metadata["collection_status"])
+                if item["status_correction"] is None:
+                    self.assertEqual(item["collection_status"], metadata["collection_status"])
+                    self.assertEqual(item["completion_status"], metadata.get("response_completion_status"))
 
         manifest_bytes_after = self.manifest_path.read_bytes()
         self.assertEqual(hashlib.sha256(manifest_bytes_after).hexdigest(), manifest_hash_before)
@@ -81,11 +84,12 @@ class ResponseInventoryTests(unittest.TestCase):
                 self.assertIsNone(item["token_count"])
                 self.assertIsNone(item["response_artifact_path"])
             else:
-                self.assertIn(item["completion_status"], {"COMPLETED", "TRUNCATED", None})
+                self.assertIn(item["completion_status"], {"COMPLETED", "TRUNCATED", "FAILED", None})
                 self.assertIn(item["truncated"], {True, False, None})
                 if item["token_count"] is not None:
                     self.assertIsInstance(item["token_count"], int)
             self.assertIsNone(item["interface_pass"])
+            self.assertIn(item["status_correction"], {None, "D035"})
 
     def test_isolated_fixture_pipeline(self):
         """Test with temporary directory fixture covering various states."""
@@ -271,6 +275,155 @@ class ResponseInventoryTests(unittest.TestCase):
             self.assertEqual(loaded_csv[0]["collection_status"], "completed")
             self.assertEqual(loaded_csv[2]["collection_status"], "failed")
             self.assertEqual(loaded_csv[2]["completion_status"], "")
+
+
+def write_metadata(run_dir, metadata, response_text):
+    run_dir.mkdir(parents=True)
+    (run_dir / "response.md").write_text(response_text, encoding="utf-8")
+    (run_dir / "metadata.json").write_text(json.dumps(metadata, indent=2), encoding="utf-8")
+
+
+def tree_hashes(root):
+    return {
+        str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in sorted(root.rglob("*")) if path.is_file()
+    }
+
+
+class D035ProviderAbnormalFinishTests(unittest.TestCase):
+    """Synthetic fixtures only; no real observation is read or represented."""
+
+    RUNS = [
+        # run_id, raw collection_status, raw completion status, finish_reason, response text
+        ("RUN-STOP", "completed", "COMPLETED", "stop", "import express from 'express';\n"),
+        ("RUN-LENGTH", "truncated", "TRUNCATED", "length", "import zod from 'zod';\nconst x"),
+        ("RUN-ERROR-FULL", "completed", "COMPLETED", "error",
+         "import samlify from 'samlify';\nconsole.log('done');\n"),
+        ("RUN-ERROR-PARTIAL", "completed", "COMPLETED", "error",
+         "import xpath from 'xpath';\nconst familyName = getAttr('familyName"),
+        ("RUN-PILOT", "completed", None, None, "import lodash from 'lodash';\n"),
+    ]
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        self.root = Path(self._tmp.name)
+        self.raw_root = self.root / "raw"
+        self.manifest_path = self.root / "manifest.csv"
+        fields = ["collection_order", "run_id", "task_id", "category", "model_condition_id",
+                  "model_id", "api_provider", "run_repetition", "rendered_prompt_path",
+                  "expected_prompt_sha256", "collection_status"]
+        with self.manifest_path.open("w", encoding="utf-8", newline="") as handle:
+            writer = csv.DictWriter(handle, fieldnames=fields)
+            writer.writeheader()
+            for order, (run_id, *_rest) in enumerate(self.RUNS, start=1):
+                writer.writerow({
+                    "collection_order": str(order), "run_id": run_id, "task_id": "TASK-01",
+                    "category": "AUTH-FED", "model_condition_id": "M4", "model_id": "synthetic-model",
+                    "api_provider": "OpenRouter", "run_repetition": "R01",
+                    "rendered_prompt_path": "prompts/p.txt", "expected_prompt_sha256": "a" * 64,
+                    "collection_status": "pending",
+                })
+        for run_id, status, completion, finish_reason, text in self.RUNS:
+            metadata = {"run_id": run_id, "collection_status": status, "response_path": "response.md",
+                        "token_usage": {"completion_tokens": 7599}}
+            if completion is not None:
+                metadata["response_completion_status"] = completion
+            if run_id != "RUN-PILOT":
+                metadata["finish_reason"] = finish_reason
+            write_metadata(self.raw_root / run_id, metadata, text)
+
+    def build(self):
+        return {row["run_id"]: row for row in build_response_inventory.build_response_inventory(
+            manifest_path=self.manifest_path, raw_root=self.raw_root, root=self.root)}
+
+    def test_stop_and_length_behaviour_unchanged(self):
+        inventory = self.build()
+        stop, length = inventory["RUN-STOP"], inventory["RUN-LENGTH"]
+        self.assertEqual((stop["collection_status"], stop["completion_status"], stop["truncated"]),
+                         ("completed", "COMPLETED", False))
+        self.assertEqual((length["collection_status"], length["completion_status"], length["truncated"]),
+                         ("truncated", "TRUNCATED", True))
+        for row in (stop, length):
+            self.assertIsNone(row["status_correction"])
+            self.assertEqual(row["raw_collection_status"], row["collection_status"])
+
+    def test_error_finish_with_non_empty_or_partial_content_is_failed(self):
+        inventory = self.build()
+        for run_id in ("RUN-ERROR-FULL", "RUN-ERROR-PARTIAL"):
+            with self.subTest(run_id=run_id):
+                row = inventory[run_id]
+                self.assertEqual(row["collection_status"], "failed")
+                self.assertEqual(row["completion_status"], "FAILED")
+                self.assertIs(row["truncated"], False)
+                self.assertEqual(row["status_correction"], "D035")
+                self.assertEqual(row["raw_collection_status"], "completed")
+                self.assertEqual(row["provider_finish_reason"], "error")
+
+    def test_failed_response_remains_preserved_and_referenced(self):
+        inventory = self.build()
+        for run_id in ("RUN-ERROR-FULL", "RUN-ERROR-PARTIAL"):
+            path = inventory[run_id]["response_artifact_path"]
+            self.assertEqual(path, f"raw/{run_id}/response.md")
+            self.assertTrue((self.root / path).is_file())
+            self.assertEqual(inventory[run_id]["token_count"], 7599)
+
+    def test_record_without_finish_reason_field_is_outside_the_rule(self):
+        row = self.build()["RUN-PILOT"]
+        self.assertEqual(row["collection_status"], "completed")
+        self.assertIsNone(row["status_correction"])
+
+    def test_raw_metadata_and_responses_are_not_rewritten(self):
+        before = tree_hashes(self.raw_root)
+        inventory = list(self.build().values())
+        build_response_inventory.write_inventory_json(inventory, self.root / "out" / "inventory.json")
+        build_response_inventory.write_inventory_csv(inventory, self.root / "out" / "inventory.csv")
+        self.assertEqual(tree_hashes(self.raw_root), before)
+        metadata = json.loads((self.raw_root / "RUN-ERROR-PARTIAL" / "metadata.json").read_text())
+        self.assertEqual(metadata["collection_status"], "completed")
+        self.assertEqual(metadata["response_completion_status"], "COMPLETED")
+
+    def test_d035_marker_is_serialized_to_json_and_csv(self):
+        inventory = list(self.build().values())
+        json_path, csv_path = self.root / "inventory.json", self.root / "inventory.csv"
+        build_response_inventory.write_inventory_json(inventory, json_path)
+        build_response_inventory.write_inventory_csv(inventory, csv_path)
+        loaded = {row["run_id"]: row for row in json.loads(json_path.read_text())}
+        self.assertEqual(loaded["RUN-ERROR-PARTIAL"]["status_correction"], "D035")
+        with csv_path.open(encoding="utf-8", newline="") as handle:
+            rows = {row["run_id"]: row for row in csv.DictReader(handle)}
+        self.assertEqual(rows["RUN-ERROR-PARTIAL"]["status_correction"], "D035")
+        self.assertEqual(rows["RUN-ERROR-PARTIAL"]["raw_collection_status"], "completed")
+        self.assertEqual(rows["RUN-STOP"]["status_correction"], "")
+
+    def test_schema_declares_every_inventory_column(self):
+        schema = json.loads((ROOT / "schemas" / "response_inventory_item.schema.json").read_text())
+        self.assertEqual(set(schema["required"]), set(build_response_inventory.INVENTORY_COLUMNS))
+        self.assertEqual(set(schema["properties"]), set(build_response_inventory.INVENTORY_COLUMNS))
+        for row in self.build().values():
+            self.assertEqual(set(row), set(schema["required"]))
+
+    def test_rerun_is_byte_identical(self):
+        outputs = []
+        for attempt in ("a", "b"):
+            inventory = build_response_inventory.build_response_inventory(
+                manifest_path=self.manifest_path, raw_root=self.raw_root, root=self.root)
+            json_path = self.root / attempt / "inventory.json"
+            csv_path = self.root / attempt / "inventory.csv"
+            build_response_inventory.write_inventory_json(inventory, json_path)
+            build_response_inventory.write_inventory_csv(inventory, csv_path)
+            outputs.append((json_path.read_bytes(), csv_path.read_bytes()))
+        self.assertEqual(outputs[0], outputs[1])
+
+    def test_pipe03_does_not_extract_packages_from_failed_response(self):
+        inventory = build_response_inventory.build_response_inventory(
+            manifest_path=self.manifest_path, raw_root=self.raw_root, root=self.root)
+        occurrences = extract_package_references.build_occurrences(inventory, self.raw_root, root=self.root)
+        run_ids = {occurrence["run_id"] for occurrence in occurrences}
+        self.assertIn("RUN-STOP", run_ids)
+        self.assertIn("RUN-LENGTH", run_ids)
+        self.assertNotIn("RUN-ERROR-FULL", run_ids)
+        self.assertNotIn("RUN-ERROR-PARTIAL", run_ids)
 
 
 if __name__ == "__main__":
