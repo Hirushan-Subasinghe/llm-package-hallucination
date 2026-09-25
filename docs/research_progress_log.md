@@ -744,3 +744,11 @@
 - Timing provenance: 85 manual captures (M1 36, M3 49) predate the v2.7 freeze timestamp `2026-09-24T23:22:58.369305Z`, and 45 (M1 14, M4 31) postdate it. The 85 were reused as compatible retained v2.6 evidence without regeneration, not produced by a new v2.7 collection event. Details: `reports/final_v2.7_manual_timing_provenance.md`.
 - Verification: `v2.7.0-freeze` → `bba890d9aa5838f06bee4b1bd0e85d9e61b444f8`. All 39 frozen v2.7 input hashes match, and `create_experiment_freeze_v2_7.py --check` passes. All 140 API evidence directories hash-match the frozen state. Raw evidence verifies against the inventory, and no raw evidence is Git-tracked.
 - Next: consolidation into the canonical final worktree (`docs/final_v2.7_consolidation_preflight.md`), an append-only derived record of manual completion, and a v2.7-aware analysis pipeline.
+
+### 2026-09-25 — fake-auth provenance audit completed; accidental npm dependency removed
+
+- Completed the provenance audit of `fake-auth@0.1.7` (`docs/fake_auth_dependency_provenance_audit.md`, re-verified in its §9). It confirms an accidental development-time install, first made on 2026-09-21T04:31:02Z and tracked in `5333f9e`. The package did not come from any AI-generated experimental response.
+- The package was not used for registry validation or any other experimental purpose, and its code was never executed by the research pipeline or the tests.
+- Recorded D044. The tracked accidental manifests `package.json` and `package-lock.json` were removed with `git rm`. The history is preserved as evidence. The local, gitignored `node_modules/` in this worktree was deleted as environment cleanup only. The analysis worktree is untouched.
+- The PIPE-03 test string that contains `fake-auth` is unchanged.
+- Experiment evidence and frozen inputs are unchanged. This resolves the `RESEARCHER_DECISION_REQUIRED` item in preflight §8 for the study worktree.

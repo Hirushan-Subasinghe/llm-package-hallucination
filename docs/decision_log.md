@@ -635,3 +635,20 @@ Each decision record contains the following standardized fields:
 - **impact_on_data_collection:** None. No observation is generated, regenerated, retried, moved, renamed, or modified. Manual evidence (`data/final/manual_raw/v2.6.0/`) is already Git-tracked on the manual collection branches and is outside the scope of this decision.
 - **impact_on_analysis:** Before any final analysis in the canonical worktree, `sha256sum -c reports/final_v2.7_raw_evidence_inventory.sha256` must pass. Any mismatch blocks analysis.
 - **affected_research_questions:** none directly (provenance and reproducibility control).
+
+---
+
+### D044 — Record the Accidental `fake-auth` npm Install and Remove Its Tracked Manifests
+
+- **decision_id:** D044
+- **date:** 2026-09-25
+- **status:** IMPLEMENTED
+- **approved_by:** researcher, via instruction FAKE-AUTH-GOVERNANCE-CLEANUP-01 (formal supervisor approval: not_recorded)
+- **context:** `docs/final_v2.7_consolidation_preflight.md` §8 flagged `fake-auth@0.1.7` (with transitive `js-base64@2.6.4`) in `node_modules/`, and flagged tracked root `package.json`/`package-lock.json`, as `RESEARCHER_DECISION_REQUIRED`. The provenance was established in `docs/fake_auth_dependency_provenance_audit.md`, which was independently re-verified in its §9.
+- **finding:** `fake-auth@0.1.7` entered the repository accidentally during development. It was first installed locally on 2026-09-21T04:31:02Z. Its manifests were tracked in commit `5333f9e` and were never mentioned in the commit message or in any decision. The most likely source is the illustrative `npm install fake-auth` line of the researcher-authored PIPE-03 specification. It did **not** originate from any AI-generated experimental response. The name appears in no prompt, raw or manual response, extraction, validation, or classification record.
+- **use and execution:** The package was not used for registry validation, adjudication, package-existence confirmation, or any research analysis. PIPE-04 validation uses only read-only HTTP to the npm registry. Package code was never executed by the research pipeline or by the tests. No lifecycle script runs on a dependency install, and no repository file imports the package.
+- **decision:** `package.json` and `package-lock.json` exist solely because of this accidental install. The `package.json` contains only `{"dependencies": {"fake-auth": "^0.1.7"}}`, and no repository tooling uses either file. Both are removed from the active repository state with `git rm`. The historical Git commits (`5333f9e` and later) are preserved unchanged as evidence of the incident. `node_modules/` stays gitignored, was never tracked, and is not research evidence. The local copy in this worktree is deleted as environment cleanup only.
+- **retained:** The PIPE-03 test string in `tests/test_extract_package_references.py`, which contains `fake-auth`, is unchanged. It is text input to the extractor, not an installed dependency.
+- **impact_on_data_collection:** None. No frozen input, manifest, raw or manual response, collection state, or evidence inventory is modified.
+- **impact_on_analysis:** None. The experimental methodology and findings are unaffected, and no Chapter 3 correction is required.
+- **affected_research_questions:** none (development-environment hygiene and provenance record).
